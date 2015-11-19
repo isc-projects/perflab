@@ -51,6 +51,18 @@ function execMatch(cmd, args, opts, match)
 class ServerAgent {
 	constructor(perfPath, repo, config) {
 
+		var target = (stage, prev, action) => {
+			this[stage] = () => {
+				var guard = `${path}/.dep/${stage}`;
+				if (fs.existsSync(guard)) {
+					return Promise.resolve();
+				} else {
+					var dep = prev ? this[prev] : Promise.resolve;
+					return dep().then(action).then(() => fs.outputFileAsync(guard, ''));
+				}
+			}
+		}
+
 		config.name = config.name.toLowerCase();
 		config.configure = config.configure || [];
 		config.options = config.options || "";
@@ -73,17 +85,7 @@ class ServerAgent {
 
 		var linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
-		var checkout = () => exec('/usr/bin/git', [
-			'clone', '--depth', 1, '-b', config.branch, repo, '.'
-		], {cwd: buildPath});
-
-		var done = (stage) => (() => {
-			return fs.outputFileAsync(`${path}/.dep/${stage}`, '');
-		});
-
-		var depends = (stage) => fs.exists(`${path}/.dep/${stage}`) ? Promise.resolve() : this[stage]();
-
-		this.prepare = () =>
+		target('prepare', '', () =>
 			fs.emptyDirAsync(path)
 				.then(createEtc)
 				.then(createRun)
@@ -92,23 +94,22 @@ class ServerAgent {
 				.then(createOptions)
 				.then(createGlobal)
 				.then(createZoneConf)
-				.then(linkZones)
-				.then(done('prepare'));
+				.then(linkZones));
 
-		this.checkout = () => depends('prepare')
-				.then(checkout)
-				.then(done('checkout'));
+		target('checkout', 'prepare', () => exec('/usr/bin/git', [
+			'clone', '--depth', 1, '-b', config.branch, repo, '.'
+		], {cwd: buildPath}));
 
-		this.configure = () => {
+		target('configure', 'checkout', () => {
 			var args = ['--prefix', runPath].concat(config.configure);
-			return exec('./configure', args, {cwd: buildPath}).then(done('configure'));
-		}
+			return exec('./configure', args, {cwd: buildPath});
+		});
 
-		this.build = () => exec('make', [], {cwd: buildPath}).then(done('build'));
+		target('build', 'configure', () => exec('/usr/bin/make', [], {cwd: buildPath}));
 
-		this.install = () => exec('make', ['install'], {cwd: buildPath}).then(done('install'));
+		target('install', 'build', () => exec('/usr/bin/make', ['install'], {cwd: buildPath}));
 
-		this.start = () => execMatch('./sbin/named', ['-g', '-p', 8053], {cwd: runPath}, / running$/m);
+		this.start = () => this.install().then(() => execMatch('./sbin/named', ['-g', '-p', 8053], {cwd: runPath}, / running$/m));
 	}
 }
 

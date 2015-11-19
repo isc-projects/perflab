@@ -20,13 +20,7 @@ function firstOrReject(a) {
 }
 
 function install(config) {
-	var s = new ServerAgent(perfPath, repoUrl, config);
-	return s.checkout()
-		.then(s.checkout)
-		.then(s.configure)
-		.then(s.build)
-		.then(s.install)
-		.then(s.start);
+	new ServerAgent(perfPath, repoUrl, config).start();
 }
 
 function get_config(db, config_name) {
