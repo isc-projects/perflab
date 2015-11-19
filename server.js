@@ -21,7 +21,7 @@ function firstOrReject(a) {
 
 function install(config) {
 	var s = new ServerAgent(perfPath, repoUrl, config);
-	return s.prepare()
+	return s.checkout()
 		.then(s.checkout)
 		.then(s.configure)
 		.then(s.build)

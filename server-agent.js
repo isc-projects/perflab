@@ -60,37 +60,53 @@ class ServerAgent {
 		var buildPath = path + '/build';
 		var runPath = path + '/run';
 		var etcPath = runPath + '/etc';
+		var zonePath = runPath + '/zones';
 
 		var createEtc = () => fs.mkdirsAsync(etcPath);
+		var createRun = () => fs.mkdirsAsync(runPath);
+		var createBuild = () => fs.mkdirsAsync(buildPath);
+
 		var createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
 		var createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
 		var createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
 		var createZoneConf = () => fs.copyAsync(`config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
 
+		var linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
+
 		var checkout = () => exec('/usr/bin/git', [
 			'clone', '--depth', 1, '-b', config.branch, repo, '.'
 		], {cwd: buildPath});
 
+		var done = (stage) => (() => {
+			return fs.outputFileAsync(`${path}/.dep/${stage}`, '');
+		});
+
+		var depends = (stage) => fs.exists(`${path}/.dep/${stage}`) ? Promise.resolve() : this[stage]();
+
 		this.prepare = () =>
 			fs.emptyDirAsync(path)
 				.then(createEtc)
+				.then(createRun)
+				.then(createBuild)
 				.then(createConfig)
 				.then(createOptions)
 				.then(createGlobal)
-				.then(createZoneConf);
+				.then(createZoneConf)
+				.then(linkZones)
+				.then(done('prepare'));
 
-		this.checkout = () =>
-			fs.mkdirsAsync(buildPath)
-				.then(checkout);
+		this.checkout = () => depends('prepare')
+				.then(checkout)
+				.then(done('checkout'));
 
 		this.configure = () => {
 			var args = ['--prefix', runPath].concat(config.configure);
-			return exec('./configure', args, {cwd: buildPath});
+			return exec('./configure', args, {cwd: buildPath}).then(done('configure'));
 		}
 
-		this.build = () => exec('make', [], {cwd: buildPath});
+		this.build = () => exec('make', [], {cwd: buildPath}).then(done('build'));
 
-		this.install = () => exec('make', ['install'], {cwd: buildPath});
+		this.install = () => exec('make', ['install'], {cwd: buildPath}).then(done('install'));
 
 		this.start = () => execMatch('./sbin/named', ['-g', '-p', 8053], {cwd: runPath}, / running$/m);
 	}
