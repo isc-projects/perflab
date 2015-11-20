@@ -1,0 +1,17 @@
+{
+  "name": "bind-perflab",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "dependencies": {
+    "bluebird": "^3.0.5",
+    "fs-extra": "^0.26.2",
+    "mongodb": "^2.0.48"
+  },
+  "author": "Ray Bellis",
+  "license": "ISC",
+  "description": "BIND9 Performance Lab",
+  "devDependencies": {}
+}

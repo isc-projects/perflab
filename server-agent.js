@@ -4,61 +4,28 @@
 
 var Promise = require('bluebird'),
 	fs = Promise.promisifyAll(require('fs-extra')),
-	spawn = require('child_process').spawn;
+	exec = require('executor'),
+	EventEmitter = require('events');
 
-function exec(cmd, args, opts) {
-	var stdout = '', stderr = '';
-	var child = spawn(cmd, args, opts);
-	child.stdout.on('data', (data) => stdout += data);
-	child.stderr.on('data', (data) => stderr += data);
-	console.log(cmd + ' ' + args.join(' '));
-	return new Promise((resolve, reject) => {
-		child.on('exit', (status) => {
-			if (status) {
-				reject({stdout, stderr, status});
-			} else {
-				resolve({stdout, stderr});
-			}
-		});
-	});
-}
-
-function execMatch(cmd, args, opts, match)
-{
-	console.log(cmd + ' ' + args.join(' '));
-	return new Promise((resolve, reject) => {
-		var matched = false;
-		var stdout = '', stderr = '';
-		var child = spawn(cmd, args, opts);
-		child.stdout.on('data', (data) => stdout += data);
-		child.stderr.on('data', (data) => {
-			stderr += data;
-			if (!matched && stderr.match(match)) {
-				matched = true;
-				resolve({stdout, stderr});
-			}
-		});
-		child.on('exit', (status) => {
-			if (matched) {
-				// do nothing
-			} else {
-				reject({stdout, stderr, status});
-			}
-		});
-	});
-}
-
-class ServerAgent {
+class ServerAgent extends EventEmitter {
 	constructor(perfPath, repo, config) {
-
+		super();
 		var target = (stage, prev, action) => {
 			this[stage] = () => {
 				var guard = `${path}/.dep/${stage}`;
 				if (fs.existsSync(guard)) {
 					return Promise.resolve();
 				} else {
-					var dep = prev ? this[prev] : Promise.resolve;
-					return dep().then(action).then(() => fs.outputFileAsync(guard, ''));
+					var before = prev ? this[prev] : Promise.resolve;
+					var task = () => {
+						this.emit('targetStart', stage);
+						return action();
+					};
+					var after = () => {
+						this.emit('targetFinish', stage);
+						return stage === "run" ? Promise.resolve() : fs.outputFileAsync(guard, '');
+					};
+					return before().then(task).then(after);
 				}
 			}
 		}
@@ -67,6 +34,7 @@ class ServerAgent {
 		config.configure = config.configure || [];
 		config.options = config.options || "";
 		config.global = config.global || "";
+		config.cmdline = config.cmdline || [];
 
 		var path = perfPath + '/tests/' + config.name.replace(/[\s\/]/g, '_');
 		var buildPath = path + '/build';
@@ -96,20 +64,23 @@ class ServerAgent {
 				.then(createZoneConf)
 				.then(linkZones));
 
-		target('checkout', 'prepare', () => exec('/usr/bin/git', [
+		target('checkout', 'prepare', () => exec.run('/usr/bin/git', [
 			'clone', '--depth', 1, '-b', config.branch, repo, '.'
 		], {cwd: buildPath}));
 
 		target('configure', 'checkout', () => {
 			var args = ['--prefix', runPath].concat(config.configure);
-			return exec('./configure', args, {cwd: buildPath});
+			return exec.run('./configure', args, {cwd: buildPath});
 		});
 
-		target('build', 'configure', () => exec('/usr/bin/make', [], {cwd: buildPath}));
+		target('build', 'configure', () => exec.run('/usr/bin/make', [], {cwd: buildPath}));
 
-		target('install', 'build', () => exec('/usr/bin/make', ['install'], {cwd: buildPath}));
+		target('install', 'build', () => exec.run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
-		this.start = () => this.install().then(() => execMatch('./sbin/named', ['-g', '-p', 8053], {cwd: runPath}, / running$/m));
+		target('run', 'install', () => {
+			var args = ['-g', '-p', 8053].concat(config.cmdline);
+			return exec.runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
+		});
 	}
 }
 

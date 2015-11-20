@@ -20,19 +20,22 @@ function firstOrReject(a) {
 }
 
 function install(config) {
-	new ServerAgent(perfPath, repoUrl, config).start();
+	var agent = new ServerAgent(perfPath, repoUrl, config);
+	agent.on('targetStart', (t) => console.log(`starting target ${t}`));
+	agent.on('targetFinish', (t) => console.log(`finished target ${t}`));
+	return agent.run();
 }
 
 function get_config(db, config_name) {
 	return db.collection('config')
-		.find({name: config_name}).toArray()
-		.then(firstOrReject);
+		.find({name: config_name}).next();
+		// .then(firstOrReject);
 }
 
 try {
 	MongoClient.connect(mongoUrl).then((db) => {
 		var close = () => db.close();
-		var res = get_config(db, "v9_10");
+		var res = get_config(db, "v9_9");
 		res.then(close, close);
 		return res.then(install);
 	}).catch(console.error);
