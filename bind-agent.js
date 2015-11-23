@@ -4,37 +4,18 @@
 
 var Promise = require('bluebird'),
 	fs = Promise.promisifyAll(require('fs-extra')),
-	exec = require('executor'),
+	Executor = require('executor'),
 	EventEmitter = require('events');
 
-class ServerAgent extends EventEmitter {
-	constructor(perfPath, repo, config) {
+class BindAgent extends Executor {
+
+	constructor(config, perfPath, repo) {
 		super();
-		var target = (stage, prev, action) => {
-			this[stage] = () => {
-				var guard = `${path}/.dep/${stage}`;
-				if (fs.existsSync(guard)) {
-					return Promise.resolve();
-				} else {
-					var before = prev ? this[prev] : Promise.resolve;
-					var task = () => {
-						this.emit('targetStart', stage);
-						return action();
-					};
-					var after = () => {
-						this.emit('targetFinish', stage);
-						return stage === "run" ? Promise.resolve() : fs.outputFileAsync(guard, '');
-					};
-					return before().then(task).then(after);
-				}
-			}
-		}
 
 		config.name = config.name.toLowerCase();
-		config.configure = config.configure || [];
+		config.args = config.args || {};
 		config.options = config.options || "";
 		config.global = config.global || "";
-		config.cmdline = config.cmdline || [];
 
 		var path = perfPath + '/tests/' + config.name.replace(/[\s\/]/g, '_');
 		var buildPath = path + '/build';
@@ -53,7 +34,9 @@ class ServerAgent extends EventEmitter {
 
 		var linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
-		target('prepare', '', () =>
+		this._depPath(path);
+
+		this._target('prepare', '', () =>
 			fs.emptyDirAsync(path)
 				.then(createEtc)
 				.then(createRun)
@@ -64,24 +47,27 @@ class ServerAgent extends EventEmitter {
 				.then(createZoneConf)
 				.then(linkZones));
 
-		target('checkout', 'prepare', () => exec.run('/usr/bin/git', [
+		this._target('checkout', 'prepare', () => this._run('/usr/bin/git', [
 			'clone', '--depth', 1, '-b', config.branch, repo, '.'
 		], {cwd: buildPath}));
 
-		target('configure', 'checkout', () => {
-			var args = ['--prefix', runPath].concat(config.configure);
-			return exec.run('./configure', args, {cwd: buildPath});
+		this._target('configure', 'checkout', () => {
+			var args = ['--prefix', runPath].concat(config.args.configure || []);
+			return this._run('./configure', args, {cwd: buildPath});
 		});
 
-		target('build', 'configure', () => exec.run('/usr/bin/make', [], {cwd: buildPath}));
+		this._target('build', 'configure', () => {
+			var args = config.args.make || [];
+			return this._run('/usr/bin/make', args, {cwd: buildPath});
+		});
 
-		target('install', 'build', () => exec.run('/usr/bin/make', ['install'], {cwd: buildPath}));
+		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
-		target('run', 'install', () => {
-			var args = ['-g', '-p', 8053].concat(config.cmdline);
-			return exec.runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
+		this._target('run', 'install', () => {
+			var args = ['-g', '-p', 8053].concat(config.args.bind || []);
+			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
 		});
 	}
 }
 
-module.exports = ServerAgent;
+module.exports = BindAgent;
