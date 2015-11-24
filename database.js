@@ -8,34 +8,23 @@ var notNull = (o) => o === null ? Promise.reject('npe') : Promise.resolve(o);
 
 class Database {
 	constructor (url) {
-		var db;
-		var connect = () => MongoClient.connect(url).then((_db) => db = _db);
-		var open = () => db ? Promise.resolve(db) : connect();
-		var close = () => {
-			db.close();
-			db = null;
-		}
 
-		var getConfig = (db, name) => 
-			db.collection('config')
-				.findOne({name})
-				.then(notNull);
+		var query = (f) => 
+			MongoClient.connect(url).then((db) => {
+				var close = () => db.close();
+				var res = f.call(null, db);
+				res.then(close, close);
+				return res;
+			});
 
-		var insertRun = (db, results) =>
-			db.collection('run')
-				.insert(results);
+		this.getConfig = (name) =>
+			query((db) => db.collection('config')
+					.findOne({name})
+					.then(notNull));
 
-		this.getConfig = (name) => {
-			var res = open().then((db) => getConfig(db, name));
-			res.then(close, close);
-			return res;
-		}
-
-		this.insertRun = (results) => {
-			var res = open().then((db) => insertRun(db, results));
-			res.then(close, close);
-			return res;
-		}
+		this.insertRun = (results) =>
+			query((db) => db.collection('run')
+					.insertOne(results));
 	}
 }
 
