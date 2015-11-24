@@ -2,7 +2,8 @@
 
 'use strict';
 
-var MongoClient = require('mongodb');
+var MongoClient = require('mongodb'),
+	ObjectID = MongoClient.ObjectID;
 
 var notNull = (o) => o === null ? Promise.reject('npe') : Promise.resolve(o);
 
@@ -25,6 +26,13 @@ class Database {
 		this.insertRun = (results) =>
 			query((db) => db.collection('run')
 					.insertOne(results));
+
+		this.insertTest = (results) =>
+			query((db) => db.collection('test')
+					.insertOne(results));
+
+		this.getId = () => new ObjectID(Math.floor(new Date().getTime()/1000));
+
 	}
 }
 
