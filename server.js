@@ -53,11 +53,12 @@ try {
 
 		return runBind(bind, config_id, run_id).then(() => {
 			var iter = 4;
-			(function loop() {
+			return (function loop() {
 				var res = runTest(dnsperf, run_id);
 				return --iter ? res.then(loop) : res;
 			})();
-		});
+		}).then(bind.stop);
+
 	}) .catch(console.error);
 
 } catch (e) {
