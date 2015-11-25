@@ -2,7 +2,7 @@
 
 'use strict';
 
-var Promise = require('bluebird'),
+let Promise = require('bluebird'),
 	fs = Promise.promisifyAll(require('fs-extra')),
 	Executor = require('executor'),
 	EventEmitter = require('events');
@@ -17,22 +17,22 @@ class BindAgent extends Executor {
 		config.options = config.options || "";
 		config.global = config.global || "";
 
-		var path = perfPath + '/tests/' + config.name.replace(/[\s\/]/g, '_');
-		var buildPath = path + '/build';
-		var runPath = path + '/run';
-		var etcPath = runPath + '/etc';
-		var zonePath = runPath + '/zones';
+		let path = perfPath + '/tests/' + config.name.replace(/[\s\/]/g, '_');
+		let buildPath = path + '/build';
+		let runPath = path + '/run';
+		let etcPath = runPath + '/etc';
+		let zonePath = runPath + '/zones';
 
-		var createEtc = () => fs.mkdirsAsync(etcPath);
-		var createRun = () => fs.mkdirsAsync(runPath);
-		var createBuild = () => fs.mkdirsAsync(buildPath);
+		let createEtc = () => fs.mkdirsAsync(etcPath);
+		let createRun = () => fs.mkdirsAsync(runPath);
+		let createBuild = () => fs.mkdirsAsync(buildPath);
 
-		var createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
-		var createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
-		var createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
-		var createZoneConf = () => fs.copyAsync(`config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
+		let createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
+		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
+		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
+		let createZoneConf = () => fs.copyAsync(`config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
 
-		var linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
+		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
 		this._depPath(path);
 
@@ -52,19 +52,19 @@ class BindAgent extends Executor {
 		], {cwd: buildPath}));
 
 		this._target('configure', 'checkout', () => {
-			var args = ['--prefix', runPath].concat(config.args.configure || []);
+			let args = ['--prefix', runPath].concat(config.args.configure || []);
 			return this._run('./configure', args, {cwd: buildPath});
 		});
 
 		this._target('build', 'configure', () => {
-			var args = config.args.make || [];
+			let args = config.args.make || [];
 			return this._run('/usr/bin/make', args, {cwd: buildPath});
 		});
 
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
 		this._target('run', 'install', () => {
-			var args = ['-g', '-p', 8053].concat(config.args.bind || []);
+			let args = ['-g', '-p', 8053].concat(config.args.bind || []);
 			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
 		});
 	}

@@ -2,17 +2,17 @@
 
 'use strict';
 
-var	Database = require('./database.js'),
+let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
 	DNSPerfAgent = require('./dnsperf-agent.js');
 
-var mongoUrl = 'mongodb://localhost/perflab';
-var perfPath = '/home/ray/bind-perflab';
-var repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
+const mongoUrl = 'mongodb://localhost/perflab';
+const perfPath = '/home/ray/bind-perflab';
+const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
 function run(agent) {
-	var now = new Date();
-	var stdout = '', stderr = '';
+	let now = new Date();
+	let stdout = '', stderr = '';
 	agent.on('stdout', (t) => stdout += t);
 	agent.on('stderr', (t) => stderr += t);
 	return agent.run().then((result) => {
@@ -42,19 +42,23 @@ function runTest(agent, run_id)
 }
 
 try {
-	var db = new Database(mongoUrl);
-	var run_id = db.getId();
+	var db = new Database(mongoUrl);	// NB: hoisted
+	let run_id = db.getId();
 
 	db.getConfig("v9_10").then((config) => {
 
-		var bind = new BindAgent(config, perfPath, repoUrl);
-		var dnsperf = new DNSPerfAgent(config, perfPath);
-		var config_id = config._id;
+		if (config === null) {
+			return Promise.reject(new Error("named config not found"));
+		}
+
+		let bind = new BindAgent(config, perfPath, repoUrl);
+		let dnsperf = new DNSPerfAgent(config, perfPath);
+		let config_id = config._id;
 
 		return runBind(bind, config_id, run_id).then(() => {
-			var iter = 4;
+			let iter = 4;
 			return (function loop() {
-				var res = runTest(dnsperf, run_id);
+				let res = runTest(dnsperf, run_id);
 				return --iter ? res.then(loop) : res;
 			})();
 		}).then(bind.stop);
