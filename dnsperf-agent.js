@@ -15,7 +15,7 @@ class DNSPerfAgent extends Executor {
 		this.run = () => {
 			var args = ['-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
 			args = args.concat(args.dnsperf || []);
-			return this._run('/usr/bin/dnsperf', args, {cwd: path});
+			return this._ssh('localhost', '/usr/bin/dnsperf', args);
 		}
 	}
 }
