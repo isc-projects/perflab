@@ -18,13 +18,30 @@ class Database {
 				return res;
 			});
 
+		this.getConfigByName = (name) =>
+			query((db) => db.collection('config')
+					.findOne({name}));
+
 		this.getConfigById = (id) =>
 			query((db) => db.collection('config')
 					.findOne({_id: oid(id)}));
 
-		this.getConfig = (name) =>
-			query((db) => db.collection('config')
-					.findOne({name}));
+		this.updateConfigById = (id, config) =>
+			query((db) => {
+				delete config._id;
+				config.created = new Date(config.created);
+				config.updated = new Date();
+				return db.collection('config')
+					.update({_id: oid(id)}, config);
+			});
+
+		this.insertConfig = (config) =>
+			query((db) => {
+				config.created = new Date();
+				config.updated = new Date();
+				return db.collection('config')
+					.insert(config).then(() => config._id);
+			});
 
 		this.getAllConfigs = () =>
 			query((db) => db.collection('config').find().toArray());

@@ -1,0 +1,11 @@
+html, body {
+	font-family: verdana;
+}
+
+body {
+	padding-top: 70px;
+}
+
+td.id {
+	font-family: "courier";
+}

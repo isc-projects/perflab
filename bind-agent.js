@@ -17,7 +17,7 @@ class BindAgent extends Executor {
 		config.options = config.options || "";
 		config.global = config.global || "";
 
-		let path = perfPath + '/tests/' + config.name.replace(/[\s\/]/g, '_');
+		let path = perfPath + '/tests/' + config._id;
 		let buildPath = path + '/build';
 		let runPath = path + '/run';
 		let etcPath = runPath + '/etc';
