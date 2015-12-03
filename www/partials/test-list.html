@@ -2,28 +2,27 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Configurations</div>
+	  <div class="panel-heading">Tests for Run {{run_id}}</div>
 	  <div class="panel-body">
 	  <table class="table table-hover">
 		<thead>
 		  <tr>
-			<!-- <th>ID</th> -->
-			<th>Name</th>
+			<th>ID</th>
 			<th>Created</th>
 		  </tr>
 		</thead>
 		<tbody>
-		  <tr ng-repeat="config in configs">
-			<!-- <td class="id">{{config._id}}</td> -->
-			<td class="name"><a href="#/config/run/{{config._id}}/">{{config.name}}</a></td>
-			<td class="created">{{config.created}}</td>
+		  <tr ng-repeat="test in tests">
+			<td class="id"><a href="#/test/{{test._id}}">{{test._id}}</td>
+			<td class="created">{{test.created}}</td>
+<!--
 			<td class="text-right">
 			  <a href="#/config/{{config._id}}/edit" class="btn btn-xs btn-primary">Edit</a>
 			</td>
+-->
 		  </tr>
 		</tbody>
 	  </table>
-	  <a href="#/config/new" class="btn btn-sm btn-primary">New...</a>
 	  </div>
 	  </div>
 	  </div>

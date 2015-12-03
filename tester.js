@@ -10,42 +10,33 @@ const mongoUrl = 'mongodb://localhost/perflab';
 const perfPath = '/home/ray/bind-perflab';
 const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
-function run(agent) {
-	let now = new Date();
+function execute(agent, data) {
 	let stdout = '', stderr = '';
 	agent.on('stdout', (t) => stdout += t);
 	agent.on('stderr', (t) => stderr += t);
-	return agent.run().then((result) => {
-		return {
+	return agent.run().then((result) =>
+		Object.assign(data, {
 			stdout, stderr, 
-			created: now,
 			status: result.status
-		};
-	});
+		}));
 }
 
-function runBind(agent, config_id, run_id)
+function runBind(agent, config_id)
 {
-	return run(agent).then((results) => {
-		results.config_id = config_id;
-		results._id = run_id;
-		return db.insertRun(results);
-	});
+	return db.insertRun({config_id}).then((run) =>
+		execute(agent, run).then(db.updateRun));
 }
 
 function runTest(agent, run_id)
 {
-	return run(agent).then((results) => {
-		results.run_id = run_id;
-		return db.insertTest(results);
-	});
+	return db.insertTest({run_id}).then((test) =>
+		execute(agent, test).then(db.updateTest));
 }
 
 try {
 	var db = new Database(mongoUrl);	// NB: hoisted
-	let run_id = db.getId();
 
-	db.getConfig("v9_10").then((config) => {
+	db.getConfigByName("Master").then((config) => {
 
 		if (config === null) {
 			return Promise.reject(new Error("named config not found"));
@@ -55,15 +46,18 @@ try {
 		let dnsperf = new DNSPerfAgent(config, perfPath);
 		let config_id = config._id;
 
-		return runBind(bind, config_id, run_id).then(() => {
-			let iter = 4;
+		return runBind(bind, config_id).then((run) => {
+			let iter = 10;
 			return (function loop() {
-				let res = runTest(dnsperf, run_id);
+				let res = runTest(dnsperf, run._id);
 				return --iter ? res.then(loop) : res;
 			})();
 		}).then(bind.stop);
 
-	}) .catch(console.error);
+	}).catch((e) => {
+		e.trace();
+		console.error(e);
+	});
 
 } catch (e) {
 	console.error('catch: ' + e);

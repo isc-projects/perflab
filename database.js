@@ -26,13 +26,17 @@ class Database {
 			query((db) => db.collection('config')
 					.findOne({_id: oid(id)}));
 
-		this.updateConfigById = (id, config) =>
+		this.deleteConfigById = (id) =>
+			query((db) => db.collection('config')
+					.remove({_id: oid(id)}));
+
+		this.updateConfig = (id, config) =>
 			query((db) => {
-				delete config._id;
+				config._id = oid(config._id);
 				config.created = new Date(config.created);
 				config.updated = new Date();
 				return db.collection('config')
-					.update({_id: oid(id)}, config);
+					.update({_id: config._id}, config);
 			});
 
 		this.insertConfig = (config) =>
@@ -40,21 +44,61 @@ class Database {
 				config.created = new Date();
 				config.updated = new Date();
 				return db.collection('config')
-					.insert(config).then(() => config._id);
+					.insert(config).then(() => config);
 			});
 
 		this.getAllConfigs = () =>
 			query((db) => db.collection('config').find().toArray());
 
-		this.insertRun = (results) =>
-			query((db) => db.collection('run')
-					.insertOne(results));
+		this.insertRun = (run) =>
+			query((db) => {
+				run.created = new Date();
+				run.updated = new Date();
+				return db.collection('run')
+					.insertOne(run).then(() => run);
+			});
 
-		this.insertTest = (results) =>
+		this.updateRun = (run) =>
+			query((db) => {
+				run._id = oid(run._id);
+				run.created = new Date(run.created);
+				run.updated = new Date();
+				return db.collection('run')
+					.update({_id: run._id}, run).then(() => run);
+			});
+
+		this.insertTest = (test) =>
+			query((db) => {
+				test.created = new Date();
+				test.updated = new Date();
+				return db.collection('test')
+					.insertOne(test).then(() => test);
+			});
+
+		this.updateTest = (test) =>
+			query((db) => {
+				test._id = oid(test._id);
+				test.created = new Date(test.created);
+				test.updated = new Date();
+				return db.collection('test')
+					.update({_id: test._id}, test).then(() => test);
+			});
+
+		this.getAllRunsByConfigId = (config_id) =>
+			query((db) => {
+				config_id = oid(config_id);
+				return db.collection('run').find({config_id}).toArray();
+			});
+
+		this.getAllTestsByRunId = (run_id) =>
+			query((db) => {
+				run_id = oid(run_id);
+				return db.collection('test').find({run_id}).toArray();
+			});
+
+		this.getTestById = (id) =>
 			query((db) => db.collection('test')
-					.insertOne(results));
-
-		this.getId = () => new ObjectID(Math.floor(new Date().getTime()/1000));
+					.findOne({_id: oid(id)}));
 
 	}
 }

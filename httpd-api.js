@@ -6,35 +6,30 @@ const mongoUrl = 'mongodb://localhost/perflab';
 
 let db = new Database(mongoUrl);
 
-let getAllConfigs = (req, res, next) =>
-	db.getAllConfigs().then(
-		(data) => res.json(data),
-		(e) => res.error(e.message)
-	);
-
-let getConfigById = (req, res, next, id) =>
-	db.getConfigById(id).then(
-		(data) => data ? res.json(data) : res.error("ID not found"),
-		(e) => res.error(e.message)
-	);
-
-let insertConfig = (req, res, next) =>
-	db.insertConfig(req.body).then(
-		(data) => data ? res.json(data) : res.error(),
-		(e) => res.error(e.message)
-	);
-
-let updateConfig = (req, res, next, id) =>
-	db.updateConfigById(id, req.body).then(
-		(data) => data ? res.json(data) : res.error("ID not found"),
-		(e) => res.error(e.message)
-	);
+function handler(f) {
+	return function(req, res, next) {
+		var args = [].slice.call(arguments, 3);
+		args.push(req.body);		// implicit additional arg
+		return f.apply(this, args).then(
+			(data) => data ? res.json(data) : res.error(),
+			(e) => res.error(e.message)
+		);
+	}
+}
 
 module.exports = {
 	'/config': {
-		'GET /': getAllConfigs,
-		'GET /:id': getConfigById,
-		'PUT /:id': updateConfig,
-		'POST /': insertConfig
+		'GET /':			handler(db.getAllConfigs),
+		'GET /:id':			handler(db.getConfigById),
+		'DELETE /:id':		handler(db.deleteConfigById),
+		'PUT /:id':			handler(db.updateConfig),
+		'POST /':			handler(db.insertConfig),
+		'GET /run/:id/':	handler(db.getAllRunsByConfigId)
+	},
+	'/run': {
+		'GET /test/:id/':	handler(db.getAllTestsByRunId)
+	},
+	'/test': {
+		'GET /:id':			handler(db.getTestById)
 	}
 }
