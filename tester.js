@@ -15,9 +15,8 @@ function execute(agent, data) {
 	agent.on('stdout', (t) => stdout += t);
 	agent.on('stderr', (t) => stderr += t);
 	return agent.run().then((result) =>
-		Object.assign(data, {
+		Object.assign(data, result, {
 			stdout, stderr, 
-			status: result.status
 		}));
 }
 
@@ -36,24 +35,22 @@ function runTest(agent, run_id)
 function runConfig(config)
 {
 	let bind = new BindAgent(config, perfPath, repoUrl);
-	let dnsperf = new DNSPerfAgent(config, perfPath);
-	let config_id = config._id;
 
-	return runBind(bind, config_id).then((run) => {
-		let times = 10;
-		return (function loop() {
-			let res = runTest(dnsperf, run._id);
-			return --times ? res.then(loop) : res;
-		})();
+	return runBind(bind, config._id).then((run) => {
+		return (function loop(n) {
+			let dnsperf = new DNSPerfAgent(config, perfPath);
+			let res = runTest(dnsperf, run._id).catch(console.error);
+			return (n > 0) ? res.then(() => loop(n - 1)) : res;
+		})(10);
 	}).then(bind.stop);
 }
 
 function handleQueue() {
-	db.getNextFromQueue().then((queue) => {
+	db.takeNextFromQueue().then((queue) => {
 		if (!queue) {
 			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
 		} else {
-			var done = () => db.markQueueDone(queue._id);
+			var done = () => db.markQueueDone(queue._id, queue.repeat);
 			return db.getConfigById(queue.config_id)
 				.then(runConfig)
 				.then(done, done);

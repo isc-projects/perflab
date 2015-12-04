@@ -18,7 +18,10 @@ class Database {
 				return res;
 			});
 
-		this.getNextFromQueue = () =>
+		this.getQueue = () =>
+			query((db) => db.collection('queue').find().toArray());
+
+		this.takeNextFromQueue = () =>
 			query((db) => db.collection('queue')
 					.findOneAndUpdate(
 						{processing: false, done: false},
@@ -26,17 +29,19 @@ class Database {
 							processing: true,
 							started: new Date()
 						}},
-						{sort: {_id: 1}}
+						{sort: {completed: 1}}
 					)).then((res) => res.value);
 
-		this.markQueueDone = (id) =>
-			query((db) => db.collection('queue')
+		this.markQueueDone = (id, repeat) =>
+			query((db) => {
+				return db.collection('queue')
 					.update({_id: oid(id)},
 							{$set: {
-								done: true,
+								done: !repeat,
 								processing: false,
 								completed: new Date()
-							}}));
+							}})
+			});
 
 		this.getConfigByName = (name) =>
 			query((db) => db.collection('config')

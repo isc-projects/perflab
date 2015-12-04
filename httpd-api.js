@@ -31,5 +31,8 @@ module.exports = {
 	},
 	'/test': {
 		'GET /:id':			handler(db.getTestById)
+	},
+	'/queue': {
+		'GET /':			handler(db.getQueue)
 	}
 }
