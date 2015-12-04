@@ -9,3 +9,8 @@ body {
 td.id {
 	font-family: "courier";
 }
+
+.cssfade.ng-hide {
+	transition:0.2s linear all;
+	opacity: 0;
+}

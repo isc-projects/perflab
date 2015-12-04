@@ -1,4 +1,29 @@
-var app = angular.module('perflabApp', ['ngRoute']);
+var app = angular.module('perflabApp', ['ngRoute', 'ngAnimate']);
+
+$.notifyDefaults({
+	placement: { from: 'bottom', align: 'right' },
+	newest_on_top: true,
+	allow_dismiss: false,
+	animate: {
+		enter: 'animated fadeInUp',
+		exit: 'animated fadeOutRight'
+	},
+});
+
+var notify = function(message, level) {
+	if (message instanceof Error) {
+		message = message.message;
+		level = 'danger';
+	} else if (typeof message === 'object' && message.data) {
+		message = message.data;
+		level = 'danger';
+	}
+	$.notify({
+		message: message,
+	}, {
+		type: level,
+	});
+}
 
 app.config(['$routeProvider',
 	function($routeProvider) {
@@ -36,17 +61,16 @@ app.controller('configListController', ['$scope', '$http',
 	function($scope, $http) {
 		$http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
-		})
+		}).catch(notify);
 	}
 ]);
-
 
 app.controller('runListController', ['$scope', '$http', '$route', '$location', '$routeParams',
 	function($scope, $http, $route, $location, $routeParams) {
 		$scope.config_id = $routeParams.config_id;
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
 			$scope.runs = res.data;
-		})
+		}).catch(notify);
 	}
 ]);
 
@@ -55,7 +79,7 @@ app.controller('testListController', ['$scope', '$http', '$route', '$location', 
 		$scope.run_id = $routeParams.run_id;
 		$http.get('/api/run/test/' + $scope.run_id + '/').then(function(res) {
 			$scope.tests = res.data;
-		})
+		}).catch(notify);
 	}
 ]);
 
@@ -64,7 +88,7 @@ app.controller('testDetailController', ['$scope', '$http', '$route', '$location'
 		$scope.test_id = $routeParams.test_id;
 		$http.get('/api/test/' + $scope.test_id).then(function(res) {
 			$scope.run = res.data;
-		})
+		}).catch(notify);
 	}
 ]);
 
@@ -79,13 +103,11 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			$http.get('/api/config/' + $scope.id).then(function(res) {
 				$scope.config = res.data;
 				setDefaults();
-			}).catch(function(e) {
-				redirectError(e.data || e.message);
-			});
+			}).catch(redirectError);
 		}
 
-		function redirectError(text) {
-			$scope.status = { level: 'danger', text: text };
+		function redirectError(e) {
+			notify(e);
 			// $scope.configEdit.$setDisabled();
 			setTimeout(function() {
 				$location.path('/config/');
@@ -118,11 +140,9 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			} else {
 				$http.put('/api/config/' + $scope.id, $scope.config)
 					.then(function() {
-						$scope.status = { level: 'info', text: 'Saved' };
+						$.notify('Saved');
 						$scope.configEdit.$setPristine();
-					}).catch(function(e) {
-						$scope.status = { level: 'danger', text: e.data || e.message };
-					});
+					}).catch(notify);
 			}
 		}
 
@@ -130,9 +150,7 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			if ($scope.id !== undefined) {
 				$http.delete('/api/config/' + $scope.id).then(function(res) {
 					redirectError('Configuration deleted');
-				}).catch(function(e) {
-					$scope.status = { level: 'danger', text: e.data || e.message };
-				});
+				}).catch(notify);
 			}
 		}
 	}
