@@ -4,7 +4,8 @@
 	  <div class="panel panel-default">
 	  <div class="panel-heading">Tests for Run {{run_id}}</div>
 	  <div class="panel-body">
-	  <table class="table table-hover">
+	  <div class="alert alert-warning" ng-show="tests && !tests.length">None recorded</div>
+	  <table class="table table-hover" ng-show="tests.length">
 		<thead>
 		  <tr>
 			<th>ID</th>

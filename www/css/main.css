@@ -14,3 +14,7 @@ td.id {
 	transition:0.2s linear all;
 	opacity: 0;
 }
+
+.table, .alert {
+	margin-bottom: 0px;
+}

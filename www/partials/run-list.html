@@ -4,7 +4,8 @@
 	  <div class="panel panel-default">
 	  <div class="panel-heading">Runs for Configuration {{config_id}}</div>
 	  <div class="panel-body">
-	  <table class="table table-hover">
+	  <div class="alert alert-warning" ng-show="runs && !runs.length">None recorded</div>
+	  <table class="table table-hover" ng-show="runs.length">
 		<thead>
 		  <tr>
 			<th>ID</th>

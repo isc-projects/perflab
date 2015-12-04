@@ -17,12 +17,14 @@ var notify = function(message, level) {
 	} else if (typeof message === 'object' && message.data) {
 		message = message.data;
 		level = 'danger';
+	} else if (typeof message === 'object' && message.status) {
+		if (message.status === -1 && message.statusText === '') {
+			message = 'could not connect to server';
+		}
+		level = 'danger';
 	}
-	$.notify({
-		message: message,
-	}, {
-		type: level,
-	});
+
+	$.notify({message}, {type: level});
 }
 
 app.config(['$routeProvider',
@@ -62,6 +64,13 @@ app.controller('configListController', ['$scope', '$http',
 		$http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
 		}).catch(notify);
+
+		// (function loop() {
+			$http.get('/api/queue/').then(function(res) {
+				$scope.queue = res.data;
+			}).catch(notify);
+		// 	setTimeout(loop, 5000);
+		// })();
 	}
 ]);
 
@@ -133,6 +142,7 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 				$http.post('/api/config/', $scope.config).then(function(res) {
 					$scope.id = res.data._id;
 					$location.path('/config/' + $scope.id + '/edit').replace();
+					notify('Saved');
 					$route.reload();
 				}).catch(function(e) {
 					$scope.error = { level: 'danger', text: e.data || e.message };
@@ -140,7 +150,7 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			} else {
 				$http.put('/api/config/' + $scope.id, $scope.config)
 					.then(function() {
-						$.notify('Saved');
+						notify('Saved');
 						$scope.configEdit.$setPristine();
 					}).catch(notify);
 			}
