@@ -33,32 +33,37 @@ function runTest(agent, run_id)
 		execute(agent, test).then(db.updateTest));
 }
 
+function runConfig(config)
+{
+	let bind = new BindAgent(config, perfPath, repoUrl);
+	let dnsperf = new DNSPerfAgent(config, perfPath);
+	let config_id = config._id;
+
+	return runBind(bind, config_id).then((run) => {
+		let times = 10;
+		return (function loop() {
+			let res = runTest(dnsperf, run._id);
+			return --times ? res.then(loop) : res;
+		})();
+	}).then(bind.stop);
+}
+
+function handleQueue() {
+	db.getNextFromQueue().then((queue) => {
+		if (!queue) {
+			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
+		} else {
+			var done = () => db.markQueueDone(queue._id);
+			return db.getConfigById(queue.config_id)
+				.then(runConfig)
+				.then(done, done);
+		}
+	}).catch(console.error).then(handleQueue);
+}
+
 try {
 	var db = new Database(mongoUrl);	// NB: hoisted
-
-	db.getConfigByName("Master").then((config) => {
-
-		if (config === null) {
-			return Promise.reject(new Error("named config not found"));
-		}
-
-		let bind = new BindAgent(config, perfPath, repoUrl);
-		let dnsperf = new DNSPerfAgent(config, perfPath);
-		let config_id = config._id;
-
-		return runBind(bind, config_id).then((run) => {
-			let iter = 10;
-			return (function loop() {
-				let res = runTest(dnsperf, run._id);
-				return --iter ? res.then(loop) : res;
-			})();
-		}).then(bind.stop);
-
-	}).catch((e) => {
-		e.trace();
-		console.error(e);
-	});
-
+	handleQueue();
 } catch (e) {
 	console.error('catch: ' + e);
 }

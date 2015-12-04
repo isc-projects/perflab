@@ -18,6 +18,26 @@ class Database {
 				return res;
 			});
 
+		this.getNextFromQueue = () =>
+			query((db) => db.collection('queue')
+					.findOneAndUpdate(
+						{processing: false, done: false},
+						{$set: {
+							processing: true,
+							started: new Date()
+						}},
+						{sort: {_id: 1}}
+					)).then((res) => res.value);
+
+		this.markQueueDone = (id) =>
+			query((db) => db.collection('queue')
+					.update({_id: oid(id)},
+							{$set: {
+								done: true,
+								processing: false,
+								completed: new Date()
+							}}));
+
 		this.getConfigByName = (name) =>
 			query((db) => db.collection('config')
 					.findOne({name}));
@@ -33,10 +53,10 @@ class Database {
 		this.updateConfig = (id, config) =>
 			query((db) => {
 				config._id = oid(config._id);
-				config.created = new Date(config.created);
 				config.updated = new Date();
+				delete config.created;
 				return db.collection('config')
-					.update({_id: config._id}, config);
+					.update({_id: config._id}, {$set: config});
 			});
 
 		this.insertConfig = (config) =>
@@ -61,10 +81,10 @@ class Database {
 		this.updateRun = (run) =>
 			query((db) => {
 				run._id = oid(run._id);
-				run.created = new Date(run.created);
 				run.updated = new Date();
+				delete run.created;
 				return db.collection('run')
-					.update({_id: run._id}, run).then(() => run);
+					.update({_id: run._id}, {$set: run}).then(() => run);
 			});
 
 		this.insertTest = (test) =>
@@ -78,10 +98,10 @@ class Database {
 		this.updateTest = (test) =>
 			query((db) => {
 				test._id = oid(test._id);
-				test.created = new Date(test.created);
 				test.updated = new Date();
+				delete test.created;
 				return db.collection('test')
-					.update({_id: test._id}, test).then(() => test);
+					.update({_id: test._id}, {$set: test}).then(() => test);
 			});
 
 		this.getAllRunsByConfigId = (config_id) =>
