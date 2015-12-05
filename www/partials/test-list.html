@@ -10,17 +10,14 @@
 		  <tr>
 			<th>ID</th>
 			<th>Created</th>
+			<th class="text-right">QPS</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr ng-repeat="test in tests">
 			<td class="id"><a href="#/test/{{test._id}}">{{test._id}}</td>
 			<td class="created">{{test.created}}</td>
-<!--
-			<td class="text-right">
-			  <a href="#/config/{{config._id}}/edit" class="btn btn-xs btn-primary">Edit</a>
-			</td>
--->
+			<td class="count text-right">{{test.count.toFixed(1)}}</td>
 		  </tr>
 		</tbody>
 	  </table>

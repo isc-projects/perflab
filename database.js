@@ -83,13 +83,17 @@ class Database {
 					.insertOne(run).then(() => run);
 			});
 
-		this.updateRun = (run) =>
+		this.updateRunById = (id, data) =>
 			query((db) => {
-				run._id = oid(run._id);
-				run.updated = new Date();
-				delete run.created;
+				data.updated = new Date();
 				return db.collection('run')
-					.update({_id: run._id}, {$set: run}).then(() => run);
+					.update({_id: oid(id)}, {$set: data});
+			});
+
+		this.updateRunCountById = (id, count) =>
+			query((db) => {
+				return db.collection('run')
+					.update({_id: oid(id)}, {$push: {counts: count}, $inc: {tests: 1}});
 			});
 
 		this.insertTest = (test) =>
@@ -100,13 +104,11 @@ class Database {
 					.insertOne(test).then(() => test);
 			});
 
-		this.updateTest = (test) =>
+		this.updateTestById = (id, data) =>
 			query((db) => {
-				test._id = oid(test._id);
-				test.updated = new Date();
-				delete test.created;
+				data.updated = new Date();
 				return db.collection('test')
-					.update({_id: test._id}, {$set: test}).then(() => test);
+					.update({_id: oid(id)}, {$set: data});
 			});
 
 		this.getAllRunsByConfigId = (config_id) =>
