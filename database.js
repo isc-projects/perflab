@@ -5,6 +5,48 @@
 let MongoClient = require('mongodb'),
 	ObjectID = MongoClient.ObjectID;
 
+//
+// NB: below functions must use Mongo JS compatible syntax
+//     as they are serialised and sent to the Mongo server.
+//
+function test_stats_map() {
+	emit(this.run_id, {
+		sum: this.count, // the field you want stats for
+		min: this.count,
+		max: this.count,
+		count: 1,
+		diff: 0
+	});
+}
+
+function test_stats_reduce(key, values) {
+	return values.reduce(function reduce(previous, current, index, array) {
+		var delta = previous.sum/previous.count - current.sum/current.count;
+		var weight = (previous.count * current.count)/(previous.count + current.count);
+
+		return {
+			sum: previous.sum + current.sum,
+			min: Math.min(previous.min, current.min),
+			max: Math.max(previous.max, current.max),
+			count: previous.count + current.count,
+			diff: previous.diff + current.diff + delta*delta*weight
+		};
+	})
+}
+
+function test_stats_finalize(key, value) { 
+	if (value.count > 1) {
+		var variance = value.diff / (value.count - 1);
+		value.stddev = Math.sqrt(variance);
+	}
+	if (value.count > 0) {
+		value.average = value.sum / value.count;
+	}
+	delete value.sum;
+	delete value.diff;
+	return value;
+}
+
 class Database {
 	constructor (url) {
 
@@ -21,27 +63,44 @@ class Database {
 		this.getQueue = () =>
 			query((db) => db.collection('queue').find().toArray());
 
+		this.insertQueue = (config_id, repeat) =>
+			query((db) => db.collection('queue')
+				.insert({
+					config_id: oid(config_id),
+					running: false,
+					queued: false,
+					repeat
+				}));
+
 		this.takeNextFromQueue = () =>
 			query((db) => db.collection('queue')
 					.findOneAndUpdate(
-						{processing: false, done: false},
+						{running: false, queued: true},
 						{$set: {
-							processing: true,
+							running: true,
+							queued: false,
 							started: new Date()
 						}},
 						{sort: {completed: 1}}
 					)).then((res) => res.value);
 
-		this.markQueueDone = (id, repeat) =>
+		this.markQueueEntryDone = (id) =>
 			query((db) => {
 				return db.collection('queue')
 					.update({_id: oid(id)},
 							{$set: {
-								done: !repeat,
-								processing: false,
+								running: false,
 								completed: new Date()
 							}})
 			});
+
+		this.reQueueEntry = (id) =>
+			query((db) => db.collection('queue')
+					.findOneAndUpdate(
+						{running: false, queued: false, repeat: true},
+						{$set: { queued: true }},
+						{sort: {completed: 1}}
+					)).then((res) => res.value);
 
 		this.getConfigByName = (name) =>
 			query((db) => db.collection('config')
@@ -52,8 +111,10 @@ class Database {
 					.findOne({_id: oid(id)}));
 
 		this.deleteConfigById = (id) =>
-			query((db) => db.collection('config')
-					.remove({_id: oid(id)}));
+			query((db) => Promise.all([
+				db.collection('config').remove({_id: oid(id)}),
+				db.collection('queue').remove({config_id: oid(id)})
+			]));
 
 		this.updateConfig = (id, config) =>
 			query((db) => {
@@ -90,11 +151,16 @@ class Database {
 					.update({_id: oid(id)}, {$set: data});
 			});
 
-		this.updateRunCountById = (id, count) =>
-			query((db) => {
-				return db.collection('run')
-					.update({_id: oid(id)}, {$push: {counts: count}, $inc: {tests: 1}});
-			});
+		this.updateStatsByRunId = (run_id) =>
+			query((db) => db.collection('test')
+				.mapReduce(test_stats_map, test_stats_reduce, {
+					finalize: test_stats_finalize,
+					query: { run_id: oid(run_id) },
+					out: { inline: 1 }
+				}).then((mr) => db.collection('run').update(
+					{_id: mr.results[0]._id},
+					{$set: { stats: mr.results[0].value }}
+				)));
 
 		this.insertTest = (test) =>
 			query((db) => {

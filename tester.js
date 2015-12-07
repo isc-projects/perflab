@@ -29,13 +29,10 @@ function runBind(agent, config_id)
 
 function runTest(agent, run_id)
 {
-	return db.insertTest({run_id}).then((test) => {
-		var promise = execute(agent);
-		return Promise.all([
-			promise.then((result) => db.updateRunCountById(run_id, result.count)),
-			promise.then((result) => db.updateTestById(test._id, result))
-		]);
-	});
+	return db.insertTest({run_id}).then((test) =>
+		execute(agent)
+			.then((result) => db.updateTestById(test._id, result))
+			.then(() => db.updateStatsByRunId(run_id)));
 }
 
 function runConfig(config)
@@ -57,10 +54,12 @@ function handleQueue() {
 		if (!queue) {
 			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
 		} else {
-			var done = () => db.markQueueDone(queue._id, queue.repeat);
+			var requeue = () => db.reQueueEntry(queue._id);
+			var done = () => db.markQueueEntryDone(queue._id);
 			return db.getConfigById(queue.config_id)
 				.then(runConfig)
-				.then(done, done);
+				.then(done, done)
+				.then(requeue);
 		}
 	}).catch(console.error).then(handleQueue);
 }

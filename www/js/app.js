@@ -59,24 +59,37 @@ app.config(['$routeProvider',
 			});
 }]);
 
-app.controller('configListController', ['$scope', '$http',
-	function($scope, $http) {
-		$http.get('/api/config/').then(function(res) {
+app.controller('configListController', ['$scope', '$http', '$q',
+	function($scope, $http, $q) {
+		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
+			$scope.configsById = $scope.configs.reduce(function(p, c) {
+				p[c._id] = c; return p;
+			}, {});
+		});
+
+		var p2 = $http.get('/api/queue/').then(function(res) {
+			$scope.queue = res.data;
+		});
+
+		$q.all([p1, p2]).then(function() {
+			$scope.queue.forEach(function(queue) {
+				if (queue.config_id in $scope.configsById) {
+					$scope.configsById[queue.config_id].queue = queue;
+				}
+			});
 		}).catch(notify);
 
-		// (function loop() {
-			$http.get('/api/queue/').then(function(res) {
-				$scope.queue = res.data;
-			}).catch(notify);
-		// 	setTimeout(loop, 5000);
-		// })();
+		$scope.tick = function(b) {
+			return 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
+		}
 	}
 ]);
 
 app.controller('runListController', ['$scope', '$http', '$route', '$location', '$routeParams',
 	function($scope, $http, $route, $location, $routeParams) {
 		$scope.config_id = $routeParams.config_id;
+
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
 			$scope.runs = res.data;
 		}).catch(notify);
