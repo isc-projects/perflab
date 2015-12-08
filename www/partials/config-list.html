@@ -7,19 +7,16 @@
 	  <table class="table table-hover">
 		<thead>
 		  <tr>
-			<!-- <th>ID</th> -->
-			<th>Name</th>
-			<th>Created</th>
+			<th width="60%">Name</th>
 			<th class="text-center">Queued</th>
 			<th class="text-center">Running</th>
 			<th class="text-center">Repeat</th>
+			<th>&nbsp;</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr ng-repeat="config in configs">
-			<!-- <td class="id">{{config._id}}</td> -->
 			<td class="name"><a href="#/config/run/{{config._id}}/">{{config.name}}</a></td>
-			<td class="created">{{config.created}}</td>
 			<td class="queued text-center"><span ng-class="tick(config.queue.queued)"></span></td>
 			<td class="running text-center"><span ng-class="tick(config.queue.running)"></span></td>
 			<td class="repeat text-center"><span ng-class="tick(config.queue.repeat)"></span></td>

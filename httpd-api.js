@@ -34,5 +34,8 @@ module.exports = {
 	},
 	'/queue': {
 		'GET /':			handler(db.getQueue)
+	},
+	'/log': {
+		'GET /':			handler(db.getLog)
 	}
 }

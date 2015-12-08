@@ -20,12 +20,19 @@ td.id {
 }
 
 pre.log {
-	border: none !important;
-	margin: 0px !important;
-	padding: 0px !important;
+	padding: 0px;
+	margin: 0px;
+}
+
+.log.stdout, .log.stderr {
+	background-color: inherit;
+	border: none;
 }
 
 .log.command {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 8px;
 	font-weight: bold;
 }
 

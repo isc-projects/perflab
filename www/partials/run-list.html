@@ -8,18 +8,16 @@
 	  <table class="table table-hover" ng-show="runs.length">
 		<thead>
 		  <tr>
-			<th>ID</th>
-			<th>Created</th>
-			<th class="text-right">Runs</th>
+			<th>Time</th>
+			<th class="text-right">Tests</th>
 			<th class="text-right">QPS</th>
 			<th class="text-right">StdDev</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr ng-repeat="run in runs">
-			<td class="id"><a href="#/run/test/{{run._id}}/">{{run._id}}</td>
-			<td class="created">{{run.created}}</td>
-			<td class="runs text-right">{{run.stats.count}}</td>
+			<td class="time"><a href="#/run/test/{{run._id}}/">{{run.created}}</td>
+			<td class="tests text-right">{{run.stats.count}}</td>
 			<td class="average text-right">{{run.stats.average.toFixed(1)}}</td>
 			<td class="stddev text-right">{{run.stats.stddev.toFixed(1)}}</td>
 		  </tr>

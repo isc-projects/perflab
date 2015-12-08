@@ -11,44 +11,36 @@ const mongoUrl = 'mongodb://localhost/perflab';
 const perfPath = '/home/ray/bind-perflab';
 const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
-function execute(agent) {
-	let stdout = '', stderr = '';
+try {
+	var wss = new WebSocketServer({port: 8001});
+	var db = new Database(mongoUrl);				// NB: hoisted
+	handleQueue();
+} catch (e) {
+	console.error('catch: ' + e);
+}
+function handleQueue() {
+	db.getPaused().then((paused) => {
+		if (paused) {
+			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
+		} else {
+			return runQueue();
+		}
+	}).catch(console.error).then(handleQueue);
+}
 
-	agent.on('cmd', (t) => {
-		wss.clients.forEach((client) => {
-			client.send(JSON.stringify({channel: 'command', text: t}));
-		});
-	});
-
-	agent.on('stdout', (t) => {
-		stdout += t;
-		try {
-			var text = '' + t;
-			wss.clients.forEach((client) => {
-				client.send(JSON.stringify({channel: 'stdout', text: text}));
-			});
-		} catch (e) {
-			console.trace();
-			console.error(e);
+function runQueue() {
+	return db.takeNextFromQueue().then((queue) => {
+		if (!queue) {
+			return Promise.resolve();
+		} else {
+			let requeue = () => db.reQueueEntry(queue._id);
+			let done = () => db.markQueueEntryDone(queue._id);
+			return db.getConfigById(queue.config_id)
+				.then(runConfig)
+				.then(done, done)
+				.then(requeue);
 		}
 	});
-
-	agent.on('stderr', (t) => {
-		stderr += t;
-		try {
-			var text = '' + t;
-			wss.clients.forEach((client) => {
-				client.send(JSON.stringify({channel: 'stderr', text: text}));
-			});
-		} catch (e) {
-			console.trace();
-			console.error(e);
-		}
-	});
-
-	return agent.run().then((result) => Object.assign(result, {
-			stdout, stderr
-	}));
 }
 
 function runBind(agent, config_id)
@@ -81,25 +73,49 @@ function runConfig(config)
 	}).then(bind.stop);
 }
 
-function handleQueue() {
-	db.takeNextFromQueue().then((queue) => {
-		if (!queue) {
-			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
-		} else {
-			var requeue = () => db.reQueueEntry(queue._id);
-			var done = () => db.markQueueEntryDone(queue._id);
-			return db.getConfigById(queue.config_id)
-				.then(runConfig)
-				.then(done, done)
-				.then(requeue);
-		}
-	}).catch(console.error).then(handleQueue);
-}
+function execute(agent) {
+	let stdout = '', stderr = '';
 
-try {
-	var wss = new WebSocketServer({port: 8001});
-	var db = new Database(mongoUrl);				// NB: hoisted
-	handleQueue();
-} catch (e) {
-	console.error('catch: ' + e);
+	agent.on('cmd', (t) => {
+		try {
+			let log = {channel: 'command', text: t, time: new Date()}
+			db.insertLog(log);
+			wss.clients.forEach((client) => {
+				client.send(JSON.stringify(log));
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	});
+
+	agent.on('stdout', (t) => {
+		stdout += t;
+		try {
+			let log = {channel: 'stdout', text: '' + t, time: new Date()}
+			db.insertLog(log);
+			wss.clients.forEach((client) => {
+				client.send(JSON.stringify(log));
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	});
+
+	agent.on('stderr', (t) => {
+		stderr += t;
+		try {
+			let log = {channel: 'stderr', text: '' + t, time: new Date()}
+			db.insertLog(log);
+			wss.clients.forEach((client) => {
+				client.send(JSON.stringify(log));
+			});
+		} catch (e) {
+			console.trace();
+			console.error(e);
+		}
+	});
+
+	return agent.run().then((result) => Object.assign(result, {
+			stdout, stderr
+	}));
 }

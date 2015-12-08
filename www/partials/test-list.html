@@ -8,15 +8,13 @@
 	  <table class="table table-hover" ng-show="tests.length">
 		<thead>
 		  <tr>
-			<th>ID</th>
-			<th>Created</th>
+			<th>Time</th>
 			<th class="text-right">QPS</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr ng-repeat="test in tests">
-			<td class="id"><a href="#/test/{{test._id}}">{{test._id}}</td>
-			<td class="created">{{test.created}}</td>
+			<td class="time"><a href="#/test/{{test._id}}">{{test.created}}</td>
 			<td class="count text-right">{{test.count.toFixed(1)}}</td>
 		  </tr>
 		</tbody>

@@ -180,19 +180,33 @@ class Database {
 		this.getAllRunsByConfigId = (config_id) =>
 			query((db) => {
 				config_id = oid(config_id);
-				return db.collection('run').find({config_id}).toArray();
+				return db.collection('run').find({config_id}).sort({created: -1}).toArray();
 			});
 
 		this.getAllTestsByRunId = (run_id) =>
 			query((db) => {
 				run_id = oid(run_id);
-				return db.collection('test').find({run_id}).toArray();
+				return db.collection('test').find({run_id}).sort({created: -1}).toArray();
 			});
 
 		this.getTestById = (id) =>
 			query((db) => db.collection('test')
 					.findOne({_id: oid(id)}));
 
+		this.setPaused = (paused) =>
+			query((db) => db.collection('control')
+					.updateOne({}, {$set: {paused: !!paused}}, {upsert: true}));
+
+		this.getPaused = () =>
+			query((db) => db.collection('control')
+					.findOne({}, {paused: 1, _id: 0}))
+			.then((r) => (r === null) ? false : !!r.paused);
+
+		this.insertLog = (log) =>
+			query((db) => db.collection('log').insert(log));
+
+		this.getLog = () =>
+			query((db) => db.collection('log').find().toArray());
 	}
 }
 

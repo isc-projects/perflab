@@ -63,26 +63,30 @@ app.config(['$routeProvider',
 			});
 }]);
 
-var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
-var id = 0;
-var log = [];
+app.controller('logViewController', ['$scope', '$http',
+	function ($scope, $http) {
 
-app.controller('logViewController', ['$scope',
-	function ($scope) {
-		$scope.lines = log;
-		$scope.$watchCollection('lines', function(){});
-		ws.onmessage = function(ev) {
-			var obj = JSON.parse(ev.data);
-			obj.id = ++id;
-			log.push(obj);
-			if (log.length > 100) {
-				log.shift();
+		$http.get('/api/log/').then(function(res) {
+			var log = res.data || [];
+			$scope.lines = log;
+			$scope.$watchCollection('lines', function(){});
+
+			if (!ws) {
+				var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
+				ws.onerror = function() {
+					notify('WebSocket error', 'danger');
+				}
 			}
-			$scope.$digest();
-		}
-		ws.onerror = function() {
-			notify('WebSocket error', 'danger');
-		}
+
+			ws.onmessage = function(ev) {
+				var obj = JSON.parse(ev.data);
+				log.push(obj);
+				if (log.length > 100) {
+					log.shift();
+				}
+				$scope.$digest();
+			}
+		});
 	}
 ]);
 
