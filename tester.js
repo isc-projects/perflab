@@ -4,7 +4,8 @@
 
 let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
-	DNSPerfAgent = require('./dnsperf-agent.js');
+	DNSPerfAgent = require('./dnsperf-agent.js'),
+	WebSocketServer = require('ws').Server;
 
 const mongoUrl = 'mongodb://localhost/perflab';
 const perfPath = '/home/ray/bind-perflab';
@@ -12,8 +13,39 @@ const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
 function execute(agent) {
 	let stdout = '', stderr = '';
-	agent.on('stdout', (t) => stdout += t);
-	agent.on('stderr', (t) => stderr += t);
+
+	agent.on('cmd', (t) => {
+		wss.clients.forEach((client) => {
+			client.send(JSON.stringify({channel: 'command', text: t}));
+		});
+	});
+
+	agent.on('stdout', (t) => {
+		stdout += t;
+		try {
+			var text = '' + t;
+			wss.clients.forEach((client) => {
+				client.send(JSON.stringify({channel: 'stdout', text: text}));
+			});
+		} catch (e) {
+			console.trace();
+			console.error(e);
+		}
+	});
+
+	agent.on('stderr', (t) => {
+		stderr += t;
+		try {
+			var text = '' + t;
+			wss.clients.forEach((client) => {
+				client.send(JSON.stringify({channel: 'stderr', text: text}));
+			});
+		} catch (e) {
+			console.trace();
+			console.error(e);
+		}
+	});
+
 	return agent.run().then((result) => Object.assign(result, {
 			stdout, stderr
 	}));
@@ -65,7 +97,8 @@ function handleQueue() {
 }
 
 try {
-	var db = new Database(mongoUrl);	// NB: hoisted
+	var wss = new WebSocketServer({port: 8001});
+	var db = new Database(mongoUrl);				// NB: hoisted
 	handleQueue();
 } catch (e) {
 	console.error('catch: ' + e);

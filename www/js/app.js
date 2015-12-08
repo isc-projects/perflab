@@ -30,6 +30,10 @@ var notify = function(message, level) {
 app.config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider
+			.when('/logs/', {
+				templateUrl: 'partials/log-view.html',
+				controller: 'logViewController'
+			})
 			.when('/config/', {
 				templateUrl: 'partials/config-list.html',
 				controller: 'configListController'
@@ -58,6 +62,29 @@ app.config(['$routeProvider',
 				redirectTo: '/config/'
 			});
 }]);
+
+var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
+var id = 0;
+var log = [];
+
+app.controller('logViewController', ['$scope',
+	function ($scope) {
+		$scope.lines = log;
+		$scope.$watchCollection('lines', function(){});
+		ws.onmessage = function(ev) {
+			var obj = JSON.parse(ev.data);
+			obj.id = ++id;
+			log.push(obj);
+			if (log.length > 100) {
+				log.shift();
+			}
+			$scope.$digest();
+		}
+		ws.onerror = function() {
+			notify('WebSocket error', 'danger');
+		}
+	}
+]);
 
 app.controller('configListController', ['$scope', '$http', '$q',
 	function($scope, $http, $q) {
