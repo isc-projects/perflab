@@ -12,23 +12,29 @@ const perfPath = '/home/ray/bind-perflab';
 const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
 try {
-	var wss = new WebSocketServer({port: 8001});
 	var db = new Database(mongoUrl);				// NB: hoisted
-	handleQueue();
+	var wss = new WebSocketServer({port: 8001});
+
+	wss.broadcast = function(msg) {
+		let json = JSON.stringify(msg);
+		this.clients.forEach((c) => c.send(json));
+	}
+	runQueue();
+
 } catch (e) {
 	console.error('catch: ' + e);
 }
-function handleQueue() {
+function runQueue() {
 	db.getPaused().then((paused) => {
 		if (paused) {
 			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
 		} else {
-			return runQueue();
+			return doFirstQueueEntry();
 		}
-	}).catch(console.error).then(handleQueue);
+	}).catch(console.error).then(runQueue);
 }
 
-function runQueue() {
+function doFirstQueueEntry() {
 	return db.takeNextFromQueue().then((queue) => {
 		if (!queue) {
 			return Promise.resolve();
@@ -64,7 +70,7 @@ function runConfig(config)
 	let bind = new BindAgent(config, perfPath, repoUrl);
 
 	return runBind(bind, config._id).then((run_id) => {
-		let iter = 10;
+		let iter = config.testsPerRun || 10;
 		return (function loop() {
 			let dnsperf = new DNSPerfAgent(config, perfPath);
 			let res = runTest(dnsperf, run_id).catch(console.error);
@@ -80,9 +86,7 @@ function execute(agent) {
 		try {
 			let log = {channel: 'command', text: t, time: new Date()}
 			db.insertLog(log);
-			wss.clients.forEach((client) => {
-				client.send(JSON.stringify(log));
-			});
+			wss.broadcast(log);
 		} catch (e) {
 			console.error(e);
 		}
@@ -93,9 +97,7 @@ function execute(agent) {
 		try {
 			let log = {channel: 'stdout', text: '' + t, time: new Date()}
 			db.insertLog(log);
-			wss.clients.forEach((client) => {
-				client.send(JSON.stringify(log));
-			});
+			wss.broadcast(log);
 		} catch (e) {
 			console.error(e);
 		}
@@ -106,12 +108,9 @@ function execute(agent) {
 		try {
 			let log = {channel: 'stderr', text: '' + t, time: new Date()}
 			db.insertLog(log);
-			wss.clients.forEach((client) => {
-				client.send(JSON.stringify(log));
-			});
+			wss.broadcast(log);
 		} catch (e) {
 			console.trace();
-			console.error(e);
 		}
 	});
 
