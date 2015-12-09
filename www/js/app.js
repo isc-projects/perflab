@@ -1,4 +1,4 @@
-var app = angular.module('perflabApp', ['ngRoute', 'ngAnimate']);
+var app = angular.module('perflabApp', ['ngRoute', 'ngAnimate', 'nvd3']);
 
 $.notifyDefaults({
 	placement: { from: 'bottom', align: 'right' },
@@ -47,6 +47,12 @@ app.config(['$routeProvider',
 				controller: 'configEditController'
 			})
 			.when('/config/run/:config_id/', {
+				// templateUrl: 'partials/run-list.html',
+				// controller: 'runListController'
+				templateUrl: 'partials/run-graph.html',
+				controller: 'runGraphController'
+			})
+			.when('/config/run/:config_id/list/', {
 				templateUrl: 'partials/run-list.html',
 				controller: 'runListController'
 			})
@@ -123,6 +129,58 @@ app.controller('runListController', ['$scope', '$http', '$route', '$location', '
 
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
 			$scope.runs = res.data;
+		}).catch(notify);
+	}
+]);
+
+app.controller('runGraphController', ['$scope', '$http', '$routeParams',
+	function ($scope, $http, $routeParams) {
+		$scope.config_id = $routeParams.config_id;
+
+		var dateFormat = d3.time.format.multi([
+			["%H:%M:%S", function(d) { return d.getSeconds(); }],
+			["%H:%M", function(d) { return d.getMinutes(); }],
+			["%H:%M", function(d) { return d.getHours(); }],
+			["%Y/%m/%d", function(d) { return true }]
+		]);
+
+		$scope.config = {
+			refreshDataOnly: false,
+			deepWatchData: false
+		};
+
+		$scope.data = [];
+
+		$scope.options = { chart: {
+			type: 'candlestickBarChart',
+			x: function(d) { return d.date; },
+			y: function(d) { return d.close; },
+			xScale: d3.time.scale(),
+			height: 600,
+			xAxis: { axisLabel: 'Date and Time', showMaxMin: false,
+				tickFormat: function(x) { return dateFormat(new Date(x * 1000)) }
+			},
+			yAxis: { axisLabel: 'QPS', showMaxMin: false,
+				tickFormat: d3.format('.3r') },
+			zoom: { enabled: true, horizontalOff: false, verticalOff: true },
+			useInteractiveGuideline: false
+		}};
+
+		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
+			var data = res.data.filter(function(run) {
+				return run.stats !== undefined && run.created !== undefined;
+			}).map(function(run) {
+				return {
+					date: new Date(run.created).valueOf() / 1000,
+					high: run.stats.max,
+					low: run.stats.min,
+					average: run.stats.average,
+					open: run.stats.average - run.stats.stddev,
+					close: run.stats.average + run.stats.stddev
+				}
+			});
+			$scope.api.refresh();
+			$scope.api.updateWithData([{values: data }]);
 		}).catch(notify);
 	}
 ]);
