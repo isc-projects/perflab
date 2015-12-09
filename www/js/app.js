@@ -158,7 +158,7 @@ app.controller('runGraphController', ['$scope', '$http', '$routeParams',
 			xScale: d3.time.scale(),
 			height: 600,
 			xAxis: { axisLabel: 'Date and Time', showMaxMin: false,
-				tickFormat: function(x) { return dateFormat(new Date(x * 1000)) }
+				tickFormat: function(x) { return dateFormat(new Date(x)) }
 			},
 			yAxis: { axisLabel: 'QPS', showMaxMin: false,
 				tickFormat: d3.format('.3r') },
@@ -171,7 +171,7 @@ app.controller('runGraphController', ['$scope', '$http', '$routeParams',
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
 				return {
-					date: new Date(run.created).valueOf() / 1000,
+					date: new Date(run.created).valueOf(),
 					high: run.stats.max,
 					low: run.stats.min,
 					average: run.stats.average,
