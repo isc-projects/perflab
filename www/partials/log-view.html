@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="row">
+	<div class="col-md-12">
+	  <div class="panel panel-default">
+	  <div class="panel-heading">Log Viewer</div>
+	  <div class="panel-body">
+		<div class="alert alert-warning" ng-show="lines && !lines.length">None recorded</div>
+		  <pre ng-repeat="line in lines" class="log" ng-class="line.channel">
+<div ng-show="line.channel === 'command'">{{line.time}}</div>{{line.text}}</pre>
+	    </div>
+	  </div>
+	</div>
+  </div>
+</div>
