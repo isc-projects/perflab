@@ -177,10 +177,16 @@ class Database {
 					.update({_id: oid(id)}, {$set: data});
 			});
 
-		this.getAllRunsByConfigId = (config_id) =>
+		this.getRunsByConfigId = (config_id, skip, limit) =>
 			query((db) => {
+				skip = skip || 0;
+				limit = limit || 0;
 				config_id = oid(config_id);
-				return db.collection('run').find({config_id}).sort({created: -1}).toArray();
+				return db.collection('run')
+					.find({config_id}, {stdout: 0, stderr: 0})
+					.sort({created: -1})
+					.skip(skip).limit(limit)
+					.toArray();
 			});
 
 		this.getAllTestsByRunId = (run_id) =>

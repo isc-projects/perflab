@@ -2,7 +2,9 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Runs for Configuration {{config_id}}</div>
+	  <div class="panel-heading">Runs for Configuration {{config_id}}
+		<span class="pull-right">Page {{page}}</span>
+	  </div>
 	  <div class="panel-body">
 	  <div class="alert alert-warning" ng-show="runs && !runs.length">None recorded</div>
 	  <table class="table table-hover" ng-show="runs.length">
@@ -23,6 +25,8 @@
 		  </tr>
 		</tbody>
 	  </table>
+		<button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="btn btn-sm btn-primary">Newer</button>
+		<button ng-show="link.next" type="button" ng-click="search(link.next)" class="btn btn-sm btn-primary pull-right">Older</button>
 	  </div>
 	  </div>
 	  </div>

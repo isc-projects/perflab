@@ -1,4 +1,37 @@
-var app = angular.module('perflabApp', ['ngRoute', 'ngAnimate', 'nvd3']);
+(function () {
+	angular
+		.module('linkHeaderParser', [])
+		.factory('linkHeaderParser', linkHeaderParser);
+
+	function linkHeaderParser() {
+		return {
+			parse: function(header) {
+				if (header.length === 0) {
+					return {};
+				}
+
+				// Split parts by comma
+				var parts = header.split(',');
+
+				// Parse each part into a named link
+				var links = {};
+				for (var i = 0, n = parts.length; i < n; ++i) {
+					var section = parts[i].split(';');
+					if (section.length !== 2) {
+						throw new Error("section could not be split on ';'");
+					}
+					var url = section[0].replace(/<(.*)>/, '$1').trim();
+					var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+					links[name] = url;
+				}
+				return links;
+			}
+		}
+	}
+})();
+
+var app = angular.module('perflabApp',
+	['ngRoute', 'ngAnimate', 'nvd3', 'linkHeaderParser']);
 
 $.notifyDefaults({
 	placement: { from: 'bottom', align: 'right' },
@@ -47,8 +80,6 @@ app.config(['$routeProvider',
 				controller: 'configEditController'
 			})
 			.when('/config/run/:config_id/', {
-				// templateUrl: 'partials/run-list.html',
-				// controller: 'runListController'
 				templateUrl: 'partials/run-graph.html',
 				controller: 'runGraphController'
 			})
@@ -123,12 +154,28 @@ app.controller('configListController', ['$scope', '$http', '$q',
 	}
 ]);
 
-app.controller('runListController', ['$scope', '$http', '$route', '$location', '$routeParams',
-	function($scope, $http, $route, $location, $routeParams) {
+app.controller('runListController',
+	['$scope', '$http', '$route', '$location', '$routeParams', 'linkHeaderParser',
+	function($scope, $http, $route, $location, $routeParams, lhp) {
 		$scope.config_id = $routeParams.config_id;
 
-		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
+		$scope.search = function(arg) {
+			arg = arg.substr(1);
+			$location.search(arg);
+			$route.reload();
+		};
+
+		var search = $location.search();
+		$scope.skip = search.skip || 0;
+		$scope.limit = search.limit || 15;
+		$scope.page = Math.floor($scope.skip / $scope.limit) + 1;
+		var url = ['/api/config/run/', $scope.config_id, '/?',
+					'skip=', $scope.skip, '&', 'limit=', $scope.limit
+			].join('');
+
+		$http.get(url).then(function(res) {
 			$scope.runs = res.data;
+			$scope.link = lhp.parse(res.headers('link'));
 		}).catch(notify);
 	}
 ]);
