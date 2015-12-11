@@ -140,6 +140,12 @@ app.controller('configListController', ['$scope', '$http', '$q',
 			$scope.queue = res.data;
 		});
 
+		(function pollPause() {
+			$http.get('/api/queue/paused/').then(function(res) {
+				$scope.paused = res.data.paused;
+			}).then(() => new Promise((r) => setTimeout(pollPause, 2000)));
+		})();
+
 		$q.all([p1, p2]).then(function() {
 			$scope.queue.forEach(function(queue) {
 				if (queue.config_id in $scope.configsById) {
@@ -148,8 +154,14 @@ app.controller('configListController', ['$scope', '$http', '$q',
 			});
 		}).catch(notify);
 
-		$scope.tick = function(b) {
-			return 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
+		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
+
+		$scope.pause = function() {
+			$http.put('/api/queue/paused/', true).then(() => $scope.paused = true);
+		}
+
+		$scope.unpause = function() {
+			$http.put('/api/queue/paused/', false).then(() => $scope.paused = false);
 		}
 	}
 ]);

@@ -55,7 +55,7 @@ class Database {
 		let query = (f) => 
 			MongoClient.connect(url).then((db) => {
 				let close = () => db.close();
-				let res = f.call(null, db);
+				let res = f.call(this, db);
 				res.then(close, close);
 				return res;
 			});
@@ -205,8 +205,8 @@ class Database {
 
 		this.getPaused = () =>
 			query((db) => db.collection('control')
-					.findOne({}, {paused: 1, _id: 0}))
-			.then((r) => (r === null) ? false : !!r.paused);
+					.findOne({paused: {$exists: 1}}, {paused: 1, _id: 0})
+					.then((r) => r || {paused: false}));
 
 		this.insertLog = (log) =>
 			query((db) => db.collection('log').insert(log));

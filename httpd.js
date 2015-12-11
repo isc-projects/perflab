@@ -16,7 +16,7 @@ app.use(serveStatic(__dirname + '/www', {
 	index: ['index.htm', 'index.html']
 }));
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({strict: false}));
 
 app.use(dispatch({
 	'/api': require('./httpd-api.js')
