@@ -16,22 +16,25 @@ td.id {
 }
 
 pre.log {
-	padding: 0px;
 	margin: 0px;
+	border-radius: 0px;
+	border: none;
+	padding: 0px 0px 0px 4px;
 }
 
 .log.stdout, .log.stderr {
 	background-color: inherit;
-	border: none;
 }
 
 .log.command {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding: 8px;
+	padding:  10px 0px 10px 8px;
 	font-weight: bold;
 }
 
+.log.stdout, .log.command {
+	border-left: 4px solid #00c000;
+}
+
 .log.stderr {
-	font-color: red;
+	border-left: 4px solid #c00000;
 }

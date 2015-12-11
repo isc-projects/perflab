@@ -25,8 +25,8 @@ try {
 	console.error('catch: ' + e);
 }
 function runQueue() {
-	db.getPaused().then((paused) => {
-		if (paused) {
+	db.getPaused().then((res) => {
+		if (res.paused) {
 			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
 		} else {
 			return doFirstQueueEntry();

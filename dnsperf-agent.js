@@ -7,7 +7,7 @@ let Executor = require('executor');
 class DNSPerfAgent extends Executor {
 
 	constructor(config, path) {
-		super();
+		super("dnsperf");
 
 		let args = config.args = config.args || {};
 		let queryset = config.queryset || 'default';

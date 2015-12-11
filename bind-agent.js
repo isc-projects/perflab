@@ -10,7 +10,7 @@ let Promise = require('bluebird'),
 class BindAgent extends Executor {
 
 	constructor(config, perfPath, repo) {
-		super();
+		super("BIND");
 
 		config.name = config.name.toLowerCase();
 		config.args = config.args || {};
@@ -68,7 +68,7 @@ class BindAgent extends Executor {
 			return this.install().then(() =>
 				this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
 			);
-		});
+		};
 	}
 }
 
