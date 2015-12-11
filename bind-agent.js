@@ -63,9 +63,11 @@ class BindAgent extends Executor {
 
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
-		this._target('run', 'install', () => {
+		this.run = () => {
 			let args = ['-g', '-p', 8053].concat(config.args.bind || []);
-			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
+			return this.install().then(() =>
+				this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m)
+			);
 		});
 	}
 }
