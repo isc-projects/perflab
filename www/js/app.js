@@ -73,30 +73,40 @@ app.service('SystemControl',
 	}
 ]);
 
-app.controller('logViewController', ['$scope', '$http', 'Notify',
-	function ($scope, $http, Notify) {
+app.service('LogWatcher',
+	['$http', '$timeout', 'Notify',
+	function($http, $timeout, Notify) {
+
+		var log = [];
 
 		$http.get('/api/log/').then(function(res) {
-			var log = res.data || [];
-			$scope.lines = log;
-			$scope.$watchCollection('lines', function(){});
+			log.push.apply(log, res.data);
+		}).catch(Notify.danger).then(connect);
 
-			if (!ws) {
-				var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
-				ws.onerror = function() {
-					Notify.danger('WebSocket error');
-				}
+		function connect() {
+			var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
+			ws.onclose = function() {
+				Notify.danger('WebSocket closed - retrying in 30s');
+				$timeout(connect, 10000);
 			}
-
 			ws.onmessage = function(ev) {
 				var obj = JSON.parse(ev.data);
 				log.push(obj);
 				if (log.length > 100) {
 					log.shift();
 				}
-				$scope.$digest();
 			}
-		});
+		}
+
+		return {
+			output: log
+		}
+	}
+]);
+
+app.controller('logViewController', ['$scope', 'LogWatcher',
+	function ($scope, LogWatcher) {
+		$scope.logwatch = LogWatcher;
 	}
 ]);
 
