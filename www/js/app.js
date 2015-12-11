@@ -1,64 +1,5 @@
-(function () {
-	angular
-		.module('linkHeaderParser', [])
-		.factory('linkHeaderParser', linkHeaderParser);
-
-	function linkHeaderParser() {
-		return {
-			parse: function(header) {
-				if (header.length === 0) {
-					return {};
-				}
-
-				// Split parts by comma
-				var parts = header.split(',');
-
-				// Parse each part into a named link
-				var links = {};
-				for (var i = 0, n = parts.length; i < n; ++i) {
-					var section = parts[i].split(';');
-					if (section.length !== 2) {
-						throw new Error("section could not be split on ';'");
-					}
-					var url = section[0].replace(/<(.*)>/, '$1').trim();
-					var name = section[1].replace(/rel="(.*)"/, '$1').trim();
-					links[name] = url;
-				}
-				return links;
-			}
-		}
-	}
-})();
-
 var app = angular.module('perflabApp',
-	['ngRoute', 'ngAnimate', 'nvd3', 'linkHeaderParser']);
-
-$.notifyDefaults({
-	placement: { from: 'bottom', align: 'right' },
-	newest_on_top: true,
-	allow_dismiss: false,
-	animate: {
-		enter: 'animated fadeInUp',
-		exit: 'animated fadeOutRight'
-	},
-});
-
-var notify = function(message, level) {
-	if (message instanceof Error) {
-		message = message.message;
-		level = 'danger';
-	} else if (typeof message === 'object' && message.data) {
-		message = message.data;
-		level = 'danger';
-	} else if (typeof message === 'object' && message.status) {
-		if (message.status === -1 && message.statusText === '') {
-			message = 'could not connect to server';
-		}
-		level = 'danger';
-	}
-
-	$.notify({message}, {type: level});
-}
+	['ngRoute', 'ngAnimate', 'nvd3', 'isc.modules']);
 
 app.config(['$routeProvider',
 	function($routeProvider) {
@@ -100,8 +41,8 @@ app.config(['$routeProvider',
 			});
 }]);
 
-app.controller('logViewController', ['$scope', '$http',
-	function ($scope, $http) {
+app.controller('logViewController', ['$scope', '$http', 'Notify',
+	function ($scope, $http, Notify) {
 
 		$http.get('/api/log/').then(function(res) {
 			var log = res.data || [];
@@ -111,7 +52,7 @@ app.controller('logViewController', ['$scope', '$http',
 			if (!ws) {
 				var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
 				ws.onerror = function() {
-					notify('WebSocket error', 'danger');
+					Notify.danger('WebSocket error');
 				}
 			}
 
@@ -128,8 +69,8 @@ app.controller('logViewController', ['$scope', '$http',
 ]);
 
 app.controller('configListController',
-	['$scope', '$http', '$q', '$timeout',
-	function($scope, $http, $q, $timeout) {
+	['$scope', '$http', '$q', '$timeout', 'Notify',
+	function($scope, $http, $q, $timeout, Notify) {
 		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
 			$scope.configsById = $scope.configs.reduce(function(p, c) {
@@ -143,6 +84,9 @@ app.controller('configListController',
 
 		(function pollPause() {
 			$http.get('/api/queue/paused/').then(function(res) {
+				if (!$scope.paused && res.data.paused) {
+					Notify.danger('Queue paused');
+				}
 				$scope.paused = res.data.paused;
 			}).then(function() { $timeout(pollPause, 2000) });
 		})();
@@ -153,25 +97,24 @@ app.controller('configListController',
 					$scope.configsById[queue.config_id].queue = queue;
 				}
 			});
-		}).catch(notify);
+		}).catch(Notify.danger);
 
 		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
 
 		$scope.pause = function() {
-			$http.put('/api/queue/paused/', {paused: true})
-				 .then(() => $scope.paused = true);
+			$http.put('/api/queue/paused/', {paused: true});
 		}
 
 		$scope.unpause = function() {
-			$http.put('/api/queue/paused/', {paused: false})
-				 .then(() => $scope.paused = false);
+			$http.put('/api/queue/paused/', {paused: false});
 		}
 	}
 ]);
 
 app.controller('runListController',
-	['$scope', '$http', '$route', '$location', '$routeParams', 'linkHeaderParser',
-	function($scope, $http, $route, $location, $routeParams, lhp) {
+	['$scope', '$http', '$route', '$location',
+	 '$routeParams', 'linkHeaderParser', 'Notify',
+	function($scope, $http, $route, $location, $routeParams, lhp, Notify) {
 		$scope.config_id = $routeParams.config_id;
 
 		$scope.search = function(arg) {
@@ -191,12 +134,13 @@ app.controller('runListController',
 		$http.get(url).then(function(res) {
 			$scope.runs = res.data;
 			$scope.link = lhp.parse(res.headers('link'));
-		}).catch(notify);
+		}).catch(Notify.danger);
 	}
 ]);
 
-app.controller('runGraphController', ['$scope', '$http', '$routeParams',
-	function ($scope, $http, $routeParams) {
+app.controller('runGraphController',
+	['$scope', '$http', '$routeParams', 'Notify',
+	function ($scope, $http, $routeParams, Notify) {
 		$scope.config_id = $routeParams.config_id;
 
 		var dateFormat = d3.time.format.multi([
@@ -243,30 +187,33 @@ app.controller('runGraphController', ['$scope', '$http', '$routeParams',
 			});
 			$scope.api.refresh();
 			$scope.api.updateWithData([{values: data }]);
-		}).catch(notify);
+		}).catch(Notify.danger);
 	}
 ]);
 
-app.controller('testListController', ['$scope', '$http', '$route', '$location', '$routeParams',
+app.controller('testListController',
+	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
 	function($scope, $http, $route, $location, $routeParams) {
 		$scope.run_id = $routeParams.run_id;
 		$http.get('/api/run/test/' + $scope.run_id + '/').then(function(res) {
 			$scope.tests = res.data;
-		}).catch(notify);
+		}).catch(Notify.danger);
 	}
 ]);
 
-app.controller('testDetailController', ['$scope', '$http', '$route', '$location', '$routeParams',
+app.controller('testDetailController',
+	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
 	function($scope, $http, $route, $location, $routeParams) {
 		$scope.test_id = $routeParams.test_id;
 		$http.get('/api/test/' + $scope.test_id).then(function(res) {
 			$scope.run = res.data;
-		}).catch(notify);
+		}).catch(Notify.danger);
 	}
 ]);
 
-app.controller('configEditController', ['$scope', '$http', '$route', '$location', '$routeParams',
-	function($scope, $http, $route, $location, $routeParams) {
+app.controller('configEditController',
+	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
+	function($scope, $http, $route, $location, $routeParams, Notify) {
 
 		$scope.id = $routeParams.id;
 
@@ -280,7 +227,7 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 		}
 
 		function redirectNotify(e) {
-			notify(e);
+			Notify.danger(e);
 			setTimeout(function() {
 				$location.path('/config/');
 				$route.reload();
@@ -310,14 +257,14 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 				$http.post('/api/config/', $scope.config).then(function(res) {
 					$scope.id = res.data._id;
 					$location.path('/config/' + $scope.id + '/edit').replace();
-					notify('Saved');
+					Notify.info('Saved');
 					$route.reload();
-				}).catch(notify).then(doneSaving);
+				}).catch(Notify.danger).then(doneSaving);
 			} else {
 				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
-					notify('Saved');
+					Notify.info('Saved');
 					$scope.configEdit.$setPristine();
-				}).catch(notify).then(doneSaving);
+				}).catch(Notify.danger).then(doneSaving);
 			}
 		}
 
@@ -326,7 +273,7 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			if ($scope.id !== undefined) {
 				$http.delete('/api/config/' + $scope.id).then(function(res) {
 					redirectNotify('Configuration deleted');
-				}).catch(notify).then(doneSaving);
+				}).catch(Notify.danger).then(doneSaving);
 			}
 		}
 	}
