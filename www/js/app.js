@@ -193,7 +193,7 @@ app.controller('runGraphController',
 
 app.controller('testListController',
 	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
-	function($scope, $http, $route, $location, $routeParams) {
+	function($scope, $http, $route, $location, $routeParams, Notify) {
 		$scope.run_id = $routeParams.run_id;
 		$http.get('/api/run/test/' + $scope.run_id + '/').then(function(res) {
 			$scope.tests = res.data;
@@ -203,7 +203,7 @@ app.controller('testListController',
 
 app.controller('testDetailController',
 	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
-	function($scope, $http, $route, $location, $routeParams) {
+	function($scope, $http, $route, $location, $routeParams, Notify) {
 		$scope.test_id = $routeParams.test_id;
 		$http.get('/api/test/' + $scope.test_id).then(function(res) {
 			$scope.run = res.data;
