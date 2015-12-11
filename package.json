@@ -1,21 +1,29 @@
 {
-  "name": "bind-perflab",
+  "name": "isc-perflab",
   "version": "0.1.0",
-  "scripts": {
-    "start": "node httpd.js"
-  },
+  "description": "ISC Performance Lab",
   "main": "httpd.js",
-  "author": "Ray Bellis",
-  "license": "ISC",
-  "description": "BIND9 Performance Lab",
-  "devDependencies": {},
   "dependencies": {
     "bluebird": "^3.0.5",
+    "body-parser": "^1.14.1",
     "dispatch": "^1.0.0",
+    "executor": "^0.1.0",
     "fs-extra": "^0.26.2",
     "mongodb": "^2.0.49",
+    "parseurl": "^1.3.0",
+    "quip": "^0.1.2",
     "connect": "^3.4.0",
     "serve-static": "^1.10.0",
-	"quip": "^0.1.2"
-  }
+    "ws": "^0.8.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "isc",
+    "performance"
+  ],
+  "author": "Ray Bellis",
+  "license": "ISC"
 }
