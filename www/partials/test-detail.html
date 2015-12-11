@@ -4,7 +4,8 @@
 	  <div class="panel panel-default">
 	  <div class="panel-heading">Test results for ID {{run._id}}</div>
 	  <div class="panel-body">
-		<pre>{{run.stdout}}</pre>
+		<div class="alert alert-warning" ng-hide="run.stdout">None recorded</div>
+		<pre ng-show="run.stdout">{{run.stdout}}</pre>
 	  </div>
 	  </div>
 	</div>
