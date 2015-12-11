@@ -1,5 +1,5 @@
 var app = angular.module('perflabApp',
-	['ngRoute', 'ngAnimate', 'nvd3', 'isc.modules']);
+	['ngRoute', 'ngAnimate', 'ngSanitize', 'angular-dygraphs', 'isc.modules']);
 
 app.config(['$routeProvider',
 	function($routeProvider) {
@@ -21,8 +21,8 @@ app.config(['$routeProvider',
 				controller: 'configEditController'
 			})
 			.when('/config/run/:config_id/', {
-				templateUrl: 'partials/run-graph.html',
-				controller: 'runGraphController'
+				templateUrl: 'partials/run-dygraph.html',
+				controller: 'runDygraphController'
 			})
 			.when('/config/run/:config_id/list/', {
 				templateUrl: 'partials/run-list.html',

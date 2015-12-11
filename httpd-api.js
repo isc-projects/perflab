@@ -26,6 +26,7 @@ function pageHandler(f) {
 
 		var skip = +query.skip || 0;
 		var limit = +query.limit || 15;
+		if (limit < 0) { limit = 0; }
 		args.push(skip, limit);
 
 		function link(skip, limit, rel) {
@@ -61,28 +62,29 @@ function bodyHandler(f) {
 
 module.exports = {
 	'/config': {
-		'GET /':			handler(db.getAllConfigs),
-		'GET /:id':			handler(db.getConfigById),
-		'DELETE /:id':		handler(db.deleteConfigById),
-		'PUT /:id':			bodyHandler(db.updateConfig),
-		'POST /':			bodyHandler(db.insertConfig),
-		'GET /run/:id/':	pageHandler(db.getRunsByConfigId)
+		'GET /':				handler(db.getAllConfigs),
+		'GET /:id':				handler(db.getConfigById),
+		'DELETE /:id':			handler(db.deleteConfigById),
+		'PUT /:id':				bodyHandler(db.updateConfig),
+		'POST /':				bodyHandler(db.insertConfig),
+		'GET /run/:id/':		handler(db.getRunsByConfigId),
+		'GET /run/:id/paged/':	pageHandler(db.getRunsByConfigId)
 	},
 	'/run': {
-		'GET /test/:id/':	handler(db.getAllTestsByRunId)
+		'GET /test/:id/':		handler(db.getAllTestsByRunId)
 	},
 	'/test': {
-		'GET /:id':			handler(db.getTestById)
+		'GET /:id':				handler(db.getTestById)
 	},
 	'/queue': {
-		'GET /':			handler(db.getQueue),
+		'GET /':				handler(db.getQueue),
 	},
 	'/control': {
-		'GET /':			handler(db.getControl),
-		'GET /paused/':		handler(db.getPaused),
-		'PUT /paused/':		bodyHandler(db.setPaused)
+		'GET /':				handler(db.getControl),
+		'GET /paused/':			handler(db.getPaused),
+		'PUT /paused/':			bodyHandler(db.setPaused)
 	},
 	'/log': {
-		'GET /':			handler(db.getLog)
+		'GET /':				handler(db.getLog)
 	}
 }

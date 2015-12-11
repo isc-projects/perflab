@@ -52,7 +52,7 @@ app.controller('runListController',
 		$scope.skip = search.skip || 0;
 		$scope.limit = search.limit || 15;
 		$scope.page = Math.floor($scope.skip / $scope.limit) + 1;
-		var url = ['/api/config/run/', $scope.config_id, '/?',
+		var url = ['/api/config/run/', $scope.config_id, '/paged/?',
 					'skip=', $scope.skip, '&', 'limit=', $scope.limit
 			].join('');
 
@@ -63,72 +63,30 @@ app.controller('runListController',
 	}
 ]);
 
-app.controller('runGraphController',
+app.controller('runDygraphController',
 	['$scope', '$http', '$routeParams', 'Notify',
 	function ($scope, $http, $routeParams, Notify) {
 		$scope.config_id = $routeParams.config_id;
-
-		var dateFormat = d3.time.format.multi([
-			["%H:%M:%S", function(d) { return d.getSeconds(); }],
-			["%H:%M", function(d) { return d.getMinutes(); }],
-			["%H:%M", function(d) { return d.getHours(); }],
-			["%Y/%m/%d", function(d) { return true }]
-		]);
-
-		$scope.config = {
-			refreshDataOnly: false,
-			deepWatchData: false
+		$scope.graph = {
+			data: [],
+			options: {
+				errorBars: true, labels: ['Date', 'QPS'],
+				sigma: 1
+			},
+			legend: {}
 		};
 
-		$scope.data = [];
-
-		var yFormat = d3.format('.4r');
-
-		$scope.options = { chart: {
-			type: 'candlestickBarChart',
-			x: function(d) { return d.date; },
-			y: function(d) { return d.close; },
-			low: function(d) { return d.min; },
-			high: function(d) { return d.max; },
-			xScale: d3.time.scale(),
-			height: 600,
-			xAxis: { axisLabel: 'Date and Time', showMaxMin: false,
-				tickFormat: function(x) { return dateFormat(new Date(x)) }
-			},
-			yAxis: { axisLabel: 'QPS', showMaxMin: false,
-				tickFormat: yFormat },
-			zoom: { enabled: true, horizontalOff: false, verticalOff: true },
-			interactiveLayer: {
-				tooltip: {
-					contentGenerator: function(d) {
-						var row = function(f, v) {
-							return '<tr><td>' + f + '<td><td align="right">' + v + '</td></tr>';
-						}
-						var data = d.series[0].data;
-						return '<table>' +
-							row('Minimum:', yFormat(data.min)) +
-							row('Maximum:', yFormat(data.max)) +
-							row('Average:', yFormat(data.average)) +
-							row('StdDev:', yFormat(data.stddev)) +
-							'</table>';
-					}
-				}
-			}
-		}};
-
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
-			var data = res.data.filter(function(run) {
+			$scope.graph.data = res.data.filter(function(run) {
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
-				return $.extend({}, {
-						date: new Date(run.created).valueOf(),
-						open: run.stats.average - run.stats.stddev,
-						close: run.stats.average + run.stats.stddev
-					}, run.stats);
-			});
-			$scope.api.refresh();
-			$scope.api.updateWithData([{values: data }]);
+				return [
+					new Date(run.created),
+					[ run.stats.average, run.stats.stddev ]
+				];
+			}).sort(function(a, b) { return a[0] - b[0] });
 		}).catch(Notify.danger);
+
 	}
 ]);
 

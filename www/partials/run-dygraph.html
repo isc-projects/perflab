@@ -4,7 +4,7 @@
 	  <div class="panel panel-default">
 		<div class="panel-heading">Runs for Configuration {{config_id}}</div>
 		<div class="panel-body">
-		  <nvd3 options="options" data="data" config="config" api="api" class="with-3d-shadow with-transitions"></nvd3>
+		  <ng-dygraphs ng-if="graph.data.length" options="graph.options" data="graph.data" legend="graph.legend"></ng-dygraphs>
 		  <a href="#/config/run/{{config_id}}/list" class="btn btn-sm btn-primary">List</a>
 		</div>
 	  </div>
