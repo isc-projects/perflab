@@ -12,10 +12,10 @@
 			<th class="text-center">Queued</th>
 			<th class="text-center">Repeat</th>
 			<th class="text-right">
-			  <button ng-click="pause()" class="btn btn-xs btn-primary" ng-disabled="paused">
+			  <button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused">
 				<span class="glyphicon glyphicon-pause"></span>
 			  </button>
-			  <button ng-click="unpause()" class="btn btn-xs btn-primary" ng-disabled="!paused">
+			  <button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
 				<span class="glyphicon glyphicon-play"></span>
 			  </button>
 			</th>

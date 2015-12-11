@@ -41,6 +41,38 @@ app.config(['$routeProvider',
 			});
 }]);
 
+app.service('SystemControl',
+	['$http', '$timeout', 'Notify',
+	function($http, $timeout, Notify) {
+		var service = {
+			pause: function() {
+				$http.put('/api/control/paused/', {paused: true});
+			},
+			unpause: function() {
+				$http.put('/api/control/paused/', {paused: false});
+			},
+			paused: undefined
+		};
+
+		function update() {
+			return $http.get('/api/control/').then(function(res) {
+				if (service.paused === true && !res.data.paused) {
+					Notify.info('Queue running');
+				} else if (service.paused === false && res.data.paused) {
+					Notify.danger('Queue paused');
+				}
+				service.paused = res.data.paused;
+			});
+		}
+
+		(function loop() {
+			update().then(function() { $timeout(loop, 1000); });
+		})();
+
+		return service;
+	}
+]);
+
 app.controller('logViewController', ['$scope', '$http', 'Notify',
 	function ($scope, $http, Notify) {
 
@@ -69,8 +101,8 @@ app.controller('logViewController', ['$scope', '$http', 'Notify',
 ]);
 
 app.controller('configListController',
-	['$scope', '$http', '$q', '$timeout', 'Notify',
-	function($scope, $http, $q, $timeout, Notify) {
+	['$scope', '$http', '$q', 'Notify', 'SystemControl',
+	function($scope, $http, $q, Notify, SystemControl) {
 		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
 			$scope.configsById = $scope.configs.reduce(function(p, c) {
@@ -82,15 +114,6 @@ app.controller('configListController',
 			$scope.queue = res.data;
 		});
 
-		(function pollPause() {
-			$http.get('/api/queue/paused/').then(function(res) {
-				if (!$scope.paused && res.data.paused) {
-					Notify.danger('Queue paused');
-				}
-				$scope.paused = res.data.paused;
-			}).then(function() { $timeout(pollPause, 2000) });
-		})();
-
 		$q.all([p1, p2]).then(function() {
 			$scope.queue.forEach(function(queue) {
 				if (queue.config_id in $scope.configsById) {
@@ -101,13 +124,7 @@ app.controller('configListController',
 
 		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
 
-		$scope.pause = function() {
-			$http.put('/api/queue/paused/', {paused: true});
-		}
-
-		$scope.unpause = function() {
-			$http.put('/api/queue/paused/', {paused: false});
-		}
+		$scope.control = SystemControl;
 	}
 ]);
 

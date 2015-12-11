@@ -199,6 +199,9 @@ class Database {
 			query((db) => db.collection('test')
 					.findOne({_id: oid(id)}));
 
+		this.getControl = (obj) =>
+			query((db) => db.collection('control').findOne());
+
 		this.setPaused = (obj) =>
 			query((db) => db.collection('control')
 					.updateOne({}, {$set: {paused: !!obj.paused}}, {upsert: true}));

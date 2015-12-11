@@ -76,6 +76,9 @@ module.exports = {
 	},
 	'/queue': {
 		'GET /':			handler(db.getQueue),
+	},
+	'/control': {
+		'GET /':			handler(db.getControl),
 		'GET /paused/':		handler(db.getPaused),
 		'PUT /paused/':		bodyHandler(db.setPaused)
 	},
