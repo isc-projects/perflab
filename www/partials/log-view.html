@@ -5,7 +5,7 @@
 	  <div class="panel-heading">Log Viewer</div>
 	  <div class="panel-body">
 		<div class="alert alert-warning" ng-show="lines && !lines.length">None recorded</div>
-		  <pre ng-repeat="line in lines" class="log" ng-class="line.channel">
+		  <pre ng-repeat="line in lines track by line._id" class="log" ng-class="line.channel">
 <div ng-show="line.channel === 'command'">{{line.time}}</div>{{line.text}}</pre>
 	    </div>
 	  </div>

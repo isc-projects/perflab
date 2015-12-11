@@ -19,6 +19,7 @@ try {
 		let json = JSON.stringify(msg);
 		this.clients.forEach((c) => c.send(json));
 	}
+
 	runQueue();
 
 } catch (e) {
@@ -85,8 +86,7 @@ function execute(agent) {
 	agent.on('cmd', (t) => {
 		try {
 			let log = {channel: 'command', text: t, time: new Date()}
-			db.insertLog(log);
-			wss.broadcast(log);
+			db.insertLog(log).then(() => wss.broadcast(log));
 		} catch (e) {
 			console.error(e);
 		}
@@ -96,8 +96,7 @@ function execute(agent) {
 		stdout += t;
 		try {
 			let log = {channel: 'stdout', text: '' + t, time: new Date()}
-			db.insertLog(log);
-			wss.broadcast(log);
+			db.insertLog(log).then(() => wss.broadcast(log));
 		} catch (e) {
 			console.error(e);
 		}
@@ -107,8 +106,7 @@ function execute(agent) {
 		stderr += t;
 		try {
 			let log = {channel: 'stderr', text: '' + t, time: new Date()}
-			db.insertLog(log);
-			wss.broadcast(log);
+			db.insertLog(log).then(() => wss.broadcast(log));
 		} catch (e) {
 			console.trace();
 		}

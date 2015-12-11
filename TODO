@@ -1,0 +1,15 @@
+pull from source.isc.org for testing
+
+- [DONE] put projection on run list output
+	(and other lists?)
+- [DONE] pagination on run lists
+- extract last git log and store in 'run' table
+- graph tooltips
+- [DONE] global queue pause buttons
+- one-off queue running
+- comparative graphs for different configs
+- long term chart of different releases
+- [DONE] suspend buttons during edit page submit
+- Login system
+  - use Apache reverse proxy with krb5 for WebUI
+  - protection for WebSockets?
