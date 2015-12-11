@@ -30,6 +30,14 @@
 	}
 })();
 
+(function() {
+	Promise.delay = Promise.delay || function(d) {
+		return new Promise((resolve, reject) => {
+			setTimeout(resolve, d);
+		});
+	}
+})();
+
 var app = angular.module('perflabApp',
 	['ngRoute', 'ngAnimate', 'nvd3', 'linkHeaderParser']);
 
@@ -143,7 +151,7 @@ app.controller('configListController', ['$scope', '$http', '$q',
 		(function pollPause() {
 			$http.get('/api/queue/paused/').then(function(res) {
 				$scope.paused = res.data.paused;
-			}).then(() => new Promise((r) => setTimeout(pollPause, 2000)));
+			}).then(() => Promise.delay(2000)).then(pollPause);
 		})();
 
 		$q.all([p1, p2]).then(function() {
@@ -157,11 +165,13 @@ app.controller('configListController', ['$scope', '$http', '$q',
 		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
 
 		$scope.pause = function() {
-			$http.put('/api/queue/paused/', true).then(() => $scope.paused = true);
+			$http.put('/api/queue/paused/', {paused: true})
+				 .then(() => $scope.paused = true);
 		}
 
 		$scope.unpause = function() {
-			$http.put('/api/queue/paused/', false).then(() => $scope.paused = false);
+			$http.put('/api/queue/paused/', {paused: false})
+				 .then(() => $scope.paused = false);
 		}
 	}
 ]);
