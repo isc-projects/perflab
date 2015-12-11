@@ -82,33 +82,49 @@ app.controller('runGraphController',
 
 		$scope.data = [];
 
+		var yFormat = d3.format('.4r');
+
 		$scope.options = { chart: {
 			type: 'candlestickBarChart',
 			x: function(d) { return d.date; },
 			y: function(d) { return d.close; },
+			low: function(d) { return d.min; },
+			high: function(d) { return d.max; },
 			xScale: d3.time.scale(),
 			height: 600,
 			xAxis: { axisLabel: 'Date and Time', showMaxMin: false,
 				tickFormat: function(x) { return dateFormat(new Date(x)) }
 			},
 			yAxis: { axisLabel: 'QPS', showMaxMin: false,
-				tickFormat: d3.format('.3r') },
+				tickFormat: yFormat },
 			zoom: { enabled: true, horizontalOff: false, verticalOff: true },
-			useInteractiveGuideline: false
+			interactiveLayer: {
+				tooltip: {
+					contentGenerator: function(d) {
+						var row = function(f, v) {
+							return '<tr><td>' + f + '<td><td align="right">' + v + '</td></tr>';
+						}
+						var data = d.series[0].data;
+						return '<table>' +
+							row('Minimum:', yFormat(data.min)) +
+							row('Maximum:', yFormat(data.max)) +
+							row('Average:', yFormat(data.average)) +
+							row('StdDev:', yFormat(data.stddev)) +
+							'</table>';
+					}
+				}
+			}
 		}};
 
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
 			var data = res.data.filter(function(run) {
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
-				return {
-					date: new Date(run.created).valueOf(),
-					high: run.stats.max,
-					low: run.stats.min,
-					average: run.stats.average,
-					open: run.stats.average - run.stats.stddev,
-					close: run.stats.average + run.stats.stddev
-				}
+				return $.extend({}, {
+						date: new Date(run.created).valueOf(),
+						open: run.stats.average - run.stats.stddev,
+						close: run.stats.average + run.stats.stddev
+					}, run.stats);
 			});
 			$scope.api.refresh();
 			$scope.api.updateWithData([{values: data }]);
