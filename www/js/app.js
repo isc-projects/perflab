@@ -30,14 +30,6 @@
 	}
 })();
 
-(function() {
-	Promise.delay = Promise.delay || function(d) {
-		return new Promise((resolve, reject) => {
-			setTimeout(resolve, d);
-		});
-	}
-})();
-
 var app = angular.module('perflabApp',
 	['ngRoute', 'ngAnimate', 'nvd3', 'linkHeaderParser']);
 
@@ -135,8 +127,9 @@ app.controller('logViewController', ['$scope', '$http',
 	}
 ]);
 
-app.controller('configListController', ['$scope', '$http', '$q',
-	function($scope, $http, $q) {
+app.controller('configListController',
+	['$scope', '$http', '$q', '$timeout',
+	function($scope, $http, $q, $timeout) {
 		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
 			$scope.configsById = $scope.configs.reduce(function(p, c) {
@@ -151,7 +144,7 @@ app.controller('configListController', ['$scope', '$http', '$q',
 		(function pollPause() {
 			$http.get('/api/queue/paused/').then(function(res) {
 				$scope.paused = res.data.paused;
-			}).then(() => Promise.delay(2000)).then(pollPause);
+			}).then(function() { $timeout(pollPause, 2000) });
 		})();
 
 		$q.all([p1, p2]).then(function() {
@@ -283,12 +276,11 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			$http.get('/api/config/' + $scope.id).then(function(res) {
 				$scope.config = res.data;
 				setDefaults();
-			}).catch(redirectError);
+			}).catch(redirectNotify);
 		}
 
-		function redirectError(e) {
+		function redirectNotify(e) {
 			notify(e);
-			// $scope.configEdit.$setDisabled();
 			setTimeout(function() {
 				$location.path('/config/');
 				$route.reload();
@@ -308,30 +300,33 @@ app.controller('configEditController', ['$scope', '$http', '$route', '$location'
 			data.global = data.global || "";
 		}
 
+		function doneSaving() {
+			$scope.saving = false;
+		}
+
 		$scope.save = function() {
+			$scope.saving = true;
 			if ($scope.id === undefined) {
 				$http.post('/api/config/', $scope.config).then(function(res) {
 					$scope.id = res.data._id;
 					$location.path('/config/' + $scope.id + '/edit').replace();
 					notify('Saved');
 					$route.reload();
-				}).catch(function(e) {
-					$scope.error = { level: 'danger', text: e.data || e.message };
-				});
+				}).catch(notify).then(doneSaving);
 			} else {
-				$http.put('/api/config/' + $scope.id, $scope.config)
-					.then(function() {
-						notify('Saved');
-						$scope.configEdit.$setPristine();
-					}).catch(notify);
+				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+					notify('Saved');
+					$scope.configEdit.$setPristine();
+				}).catch(notify).then(doneSaving);
 			}
 		}
 
 		$scope.delete = function() {
+			$scope.saving = true;
 			if ($scope.id !== undefined) {
 				$http.delete('/api/config/' + $scope.id).then(function(res) {
-					redirectError('Configuration deleted');
-				}).catch(notify);
+					redirectNotify('Configuration deleted');
+				}).catch(notify).then(doneSaving);
 			}
 		}
 	}
