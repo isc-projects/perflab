@@ -70,10 +70,15 @@ app.controller('runDygraphController',
 		$scope.graph = {
 			data: [],
 			options: {
-				errorBars: true, labels: ['Date', 'QPS'],
-				sigma: 1
+				errorBars: true, labels: ['Date', 'A'],
+				sigma: 1, legend: 'always', sigFigs: 4,
+				showRangeSelector: true
 			},
-			legend: {}
+			legend: {
+				series: {
+					A: { label: 'QPS' }
+				}
+			}
 		};
 
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
