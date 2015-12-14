@@ -5,35 +5,35 @@
 	  <div class="panel-heading">Configuration</div>
 	  <div class="panel-body">
 		<form name="configEdit">
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configName">Name</label>
 			<input type="text" required class="form-control" id="configName" placeholder="configuration name" ng-model="config.name"/>
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configBranch">Branch / Tag</label>
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configArgsConfigure">Configure command line options</label><br/>
 			<input class="form-control" id="configArgsConfigure" ng-model="config.args.configure" ng-list=" " ng-trim="false" />
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configArgsMake">Make command line options</label><br/>
 			<input class="form-control" id="configArgsMake" ng-model="config.args.make" ng-list=" " ng-trim="false" />
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configArgsBind">BIND command line options</label>
 			<input class="form-control" id="configArgsBind" ng-model="config.args.bind" ng-list=" " ng-trim="false" />
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configOptions">BIND named.conf options {} statements</label><br/>
 			<textarea class="form-control" id="configOptions" ng-model="config.options" />
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configGlobal">BIND named.conf global configuration</label><br/>
 			<textarea class="form-control" id="configGlobal" ng-model="config.global" />
 		  </div>
-		  <div class="form-group">
+		  <div class="form-group form-group-sm">
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
@@ -42,8 +42,10 @@
 			</select>
 		  </div>
 		  <div class="form-group">
-			<button type="submit" class="btn btn-sm btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">Save</button>
-			<button type="submit" class="btn btn-sm btn-default" data-toggle="modal" data-target="#confirm-delete" ng-show="id !== undefined" ng-disabled="saving">Delete...</button>
+			<button type="submit" class="btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
+			  <span class="glyphicon glyphicon-save"></span>&nbsp;Save</button>
+			<button type="submit" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#confirm-delete" ng-show="id !== undefined" ng-disabled="saving">
+			  <span class="glyphicon glyphicon-trash"></span>&nbsp;Delete...</button>
 		  </div>
 		</form>
 	  </div>
