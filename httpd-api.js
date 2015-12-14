@@ -71,6 +71,7 @@ module.exports = {
 		'GET /run/:id/paged/':	pageHandler(db.getRunsByConfigId)
 	},
 	'/run': {
+		'GET /:id':				handler(db.getRunById),
 		'GET /test/:id/':		handler(db.getAllTestsByRunId)
 	},
 	'/test': {

@@ -1,12 +1,12 @@
 pull from source.isc.org for testing
 
-- [DONE] put projection on run list output
-	(and other lists?)
+- [DONE] put projection on run list output (and other lists?)
 - [DONE] pagination on run lists
-- extract last git log and store in 'run' table
-- graph tooltips
+- [DONE] extract last git commit log and store in 'run' table
+- properly formatted graph tooltips
 - [DONE] global queue pause buttons
 - one-off queue running
+- auto-refresh queue status on job end
 - comparative graphs for different configs
 - long term chart of different releases
 - [DONE] suspend buttons during edit page submit

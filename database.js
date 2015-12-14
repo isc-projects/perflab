@@ -102,10 +102,6 @@ class Database {
 						{sort: {completed: 1}}
 					)).then((res) => res.value);
 
-		this.getConfigByName = (name) =>
-			query((db) => db.collection('config')
-					.findOne({name}));
-
 		this.getConfigById = (id) =>
 			query((db) => db.collection('config')
 					.findOne({_id: oid(id)}));
@@ -143,6 +139,9 @@ class Database {
 				return db.collection('run')
 					.insertOne(run).then(() => run);
 			});
+
+		this.getRunById = (id) =>
+			query((db) => db.collection('run').findOne({_id: oid(id)}));
 
 		this.updateRunById = (id, data) =>
 			query((db) => {
@@ -192,7 +191,7 @@ class Database {
 		this.getAllTestsByRunId = (run_id) =>
 			query((db) => {
 				run_id = oid(run_id);
-				return db.collection('test').find({run_id}).sort({created: -1}).toArray();
+				return db.collection('test').find({run_id}).sort({created: 1}).toArray();
 			});
 
 		this.getTestById = (id) =>

@@ -2,25 +2,28 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Tests for Run {{run_id}}</div>
-	  <div class="panel-body">
-	  <div class="alert alert-warning" ng-show="tests && !tests.length">None recorded</div>
-	  <table class="table table-hover" ng-show="tests.length">
-		<thead>
-		  <tr>
-			<th>Time</th>
-			<th class="text-right">QPS</th>
-		  </tr>
-		</thead>
-		<tbody>
-		  <tr ng-repeat="test in tests">
-			<td class="time"><a href="#/test/{{test._id}}">{{test.created}}</td>
-			<td class="count text-right">{{test.count.toFixed(1)}}</td>
-		  </tr>
-		</tbody>
-	  </table>
-	  </div>
-	  </div>
+		<div class="panel-heading">
+		  Tests of configuration "{{config.name}}" started at {{run.created}}
+		</div>
+		<div class="panel-body">
+		  <div class="alert alert-warning" ng-show="tests && !tests.length">None recorded</div>
+		  <table class="table table-hover" ng-show="tests.length">
+			<thead>
+			  <tr>
+				<th>Time</th>
+				<th class="text-right">QPS</th>
+			  </tr>
+			</thead>
+			<tbody>
+			  <tr ng-repeat="test in tests">
+				<td class="time"><a href="#/test/{{test._id}}">{{test.created}}</td>
+				<td class="count text-right">{{test.count.toFixed(1)}}</td>
+			  </tr>
+			</tbody>
+		  </table>
+		</div>
+		<div class="panel-body"><pre>{{run.stdout}}</pre></div>
+		<div class="panel-body"><pre>{{run.stderr}}</pre></div>
 	  </div>
 	</div>
   </div>

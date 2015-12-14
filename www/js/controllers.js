@@ -11,16 +11,17 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 app.controller('configListController',
 	['$scope', '$http', '$q', 'Notify', 'SystemControl',
 	function($scope, $http, $q, Notify, SystemControl) {
+
 		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
 			$scope.configsById = $scope.configs.reduce(function(p, c) {
 				p[c._id] = c; return p;
 			}, {});
-		});
+		}).catch(Notify.danger);
 
 		var p2 = $http.get('/api/queue/').then(function(res) {
 			$scope.queue = res.data;
-		});
+		}).catch(Notify.danger);
 
 		$q.all([p1, p2]).then(function() {
 			$scope.queue.forEach(function(queue) {
@@ -28,7 +29,7 @@ app.controller('configListController',
 					$scope.configsById[queue.config_id].queue = queue;
 				}
 			});
-		}).catch(Notify.danger);
+		});
 
 		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
 
@@ -40,26 +41,31 @@ app.controller('runListController',
 	['$scope', '$http', '$route', '$location',
 	 '$routeParams', 'linkHeaderParser', 'Notify',
 	function($scope, $http, $route, $location, $routeParams, lhp, Notify) {
+
 		$scope.config_id = $routeParams.config_id;
+
+		var search = $location.search();
+		$scope.skip = search.skip || 0;
+		$scope.limit = search.limit || 15;
+		$scope.page = Math.floor($scope.skip / $scope.limit) + 1;
+
+		$http.get('/api/config/' + $scope.config_id).then(function(res) {
+			$scope.config = res.data;
+		}).catch(Notify.danger);
+
+		var url = ['/api/config/run/', $scope.config_id, '/paged/?',
+					'skip=', $scope.skip, '&', 'limit=', $scope.limit].join('');
+
+		$http.get(url).then(function(res) {
+			$scope.runs = res.data;
+			$scope.link = lhp.parse(res.headers('link'));
+		}).catch(Notify.danger);
 
 		$scope.search = function(arg) {
 			arg = arg.substr(1);
 			$location.search(arg);
 			$route.reload();
 		};
-
-		var search = $location.search();
-		$scope.skip = search.skip || 0;
-		$scope.limit = search.limit || 15;
-		$scope.page = Math.floor($scope.skip / $scope.limit) + 1;
-		var url = ['/api/config/run/', $scope.config_id, '/paged/?',
-					'skip=', $scope.skip, '&', 'limit=', $scope.limit
-			].join('');
-
-		$http.get(url).then(function(res) {
-			$scope.runs = res.data;
-			$scope.link = lhp.parse(res.headers('link'));
-		}).catch(Notify.danger);
 	}
 ]);
 
@@ -70,16 +76,21 @@ app.controller('runDygraphController',
 		$scope.graph = {
 			data: [],
 			options: {
-				errorBars: true, labels: ['Date', 'A'],
-				sigma: 1, legend: 'always', sigFigs: 4,
-				showRangeSelector: true
+				errorBars: true, labels: ['x', 'A'],
+				sigma: 1, legend: 'never', sigFigs: 4,
+				showRangeSelector: false, ylabel: 'Queries per second',
 			},
 			legend: {
 				series: {
-					A: { label: 'QPS' }
-				}
+					A: { label: 'QPS', format: 1 }
+				},
+				dateFormat: 'YYYY/MM/DD HH:mm:ss'
 			}
 		};
+
+		$http.get('/api/config/' + $scope.config_id).then(function(res) {
+			$scope.config = res.data;
+		}).catch(Notify.danger);
 
 		$http.get('/api/config/run/' + $scope.config_id + '/').then(function(res) {
 			$scope.graph.data = res.data.filter(function(run) {
@@ -91,7 +102,6 @@ app.controller('runDygraphController',
 				];
 			}).sort(function(a, b) { return a[0] - b[0] });
 		}).catch(Notify.danger);
-
 	}
 ]);
 
@@ -99,9 +109,18 @@ app.controller('testListController',
 	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
 	function($scope, $http, $route, $location, $routeParams, Notify) {
 		$scope.run_id = $routeParams.run_id;
+
 		$http.get('/api/run/test/' + $scope.run_id + '/').then(function(res) {
 			$scope.tests = res.data;
 		}).catch(Notify.danger);
+
+		$http.get('/api/run/' + $scope.run_id).then(function(res) {
+			$scope.run = res.data;
+			return $http.get('/api/config/' + $scope.run.config_id).then(function(res) {
+				$scope.config = res.data;
+			});
+		}).catch(Notify.danger);
+
 	}
 ]);
 
@@ -109,6 +128,7 @@ app.controller('testDetailController',
 	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
 	function($scope, $http, $route, $location, $routeParams, Notify) {
 		$scope.test_id = $routeParams.test_id;
+
 		$http.get('/api/test/' + $scope.test_id).then(function(res) {
 			$scope.run = res.data;
 		}).catch(Notify.danger);

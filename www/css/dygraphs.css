@@ -1,4 +1,5 @@
 .ng-dygraphs .legend {
+	display: none;
     width: auto;
     margin: 3px 8px;
     padding: 2px 5px;
@@ -23,21 +24,22 @@
 .ng-dygraphs .dypopover {
     position: fixed;
     display: none;
-    background: #808080;
+    background: #e0e0e0;
     border: 1px solid #808080;
     border-radius: 5px;
     opacity: .80;
     padding: 2px;
 }
 .ng-dygraphs .dypopover th {
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
-    border-bottom: 1px solid #ffffff;
     white-space: nowrap;
 }
 .ng-dygraphs .dypopover td {
     white-space: nowrap;
-    padding: 2px 5px;
+}
+.ng-dygraphs .dypopover td:nth-child(2) {
+	text-align: right;
 }
 .ng-dygraphs .left .dypopover:after,
 .ng-dygraphs .left .dypopover:before {
