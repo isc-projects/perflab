@@ -3,8 +3,11 @@
 	<div class="col-md-12">
 	  <div class="panel panel-default">
 	  <div class="panel-heading">
-		<span>Runs of configuration "{{config.name}}"</span>
-		<span class="pull-right">Page {{page}}</span>
+		<span>Runs of configuration "{{config.name}}" (page {{page}})</span>
+		<span class="pull-right">
+		  <a href="#/config/run/{{config._id}}/" class="btn btn-xs btn-primary">
+		  <span class="glyphicon glyphicon-signal"></span>&nbsp;Graph</a>
+		</span>
 	  </div>
 	  <div class="panel-body">
 	  <div class="alert alert-warning" ng-show="runs && !runs.length">None recorded</div>
@@ -26,8 +29,12 @@
 		  </tr>
 		</tbody>
 	  </table>
-		<button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="btn btn-sm btn-primary">Newer</button>
-		<button ng-show="link.next" type="button" ng-click="search(link.next)" class="btn btn-sm btn-primary pull-right">Older</button>
+		<button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="btn btn-xs btn-primary">
+		  <span class="glyphicon glyphicon-backward"></span>&nbsp;Newer
+		</button>
+		<button ng-show="link.next" type="button" ng-click="search(link.next)" class="btn btn-xs btn-primary pull-right">
+		  Older&nbsp;<span class="glyphicon glyphicon-forward"></span>
+		</button>
 	  </div>
 	  </div>
 	  </div>

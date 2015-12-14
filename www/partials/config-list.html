@@ -2,7 +2,16 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Configurations</div>
+	  <div class="panel-heading">Configurations
+		<span class="pull-right">
+			  <button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused" title="pause at end of current run">
+				<span class="glyphicon glyphicon-pause"></span>
+			  </button>
+			  <button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
+				<span class="glyphicon glyphicon-play"></span>
+			  </button>
+		</span>
+	  </div>
 	  <div class="panel-body">
 	  <table class="table table-hover">
 		<thead>
@@ -11,14 +20,7 @@
 			<th class="text-center">Running</th>
 			<th class="text-center">Queued</th>
 			<th class="text-center">Repeat</th>
-			<th class="text-right">
-			  <button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused">
-				<span class="glyphicon glyphicon-pause"></span>
-			  </button>
-			  <button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
-				<span class="glyphicon glyphicon-play"></span>
-			  </button>
-			</th>
+			<th/>
 		  </tr>
 		</thead>
 		<tbody>
@@ -27,13 +29,15 @@
 			<td class="running text-center"><span ng-class="tick(config.queue.running)"></span></td>
 			<td class="queued text-center"><span ng-class="tick(config.queue.queued)"></span></td>
 			<td class="repeat text-center"><span ng-class="tick(config.queue.repeat)"></span></td>
-			<td class="text-right">
+			<td>
 			  <a href="#/config/{{config._id}}/edit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Edit</a>
+			  <a href="#/config/run/{{config._id}}/" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-signal"></span>&nbsp;Graph</a>
+			  <a href="#/config/run/{{config._id}}/list" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-list"></span>&nbsp;List</a>
 			</td>
 		  </tr>
 		</tbody>
 	  </table>
-	  <a href="#/config/new" class="btn btn-sm btn-primary">New...</a>
+	  <a href="#/config/new" class="btn btn-xs btn-primary">New...</a>
 	  </div>
 	  </div>
 	</div>
