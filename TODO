@@ -3,7 +3,8 @@ pull from source.isc.org for testing
 - [DONE] put projection on run list output (and other lists?)
 - [DONE] pagination on run lists
 - [DONE] extract last git commit log and store in 'run' table
-- properly formatted graph tooltips
+- [DONE] properly formatted graph tooltips
+- click graph point to see that run
 - [DONE] global queue pause buttons
 - one-off queue running
 - auto-refresh queue status on job end
