@@ -103,18 +103,17 @@ function plotter(e) {
 }
 
 app.controller('runDygraphController',
-	['$scope', '$http', '$routeParams', 'Notify',
-	function ($scope, $http, $routeParams, Notify) {
+	['$scope', '$http', '$route', '$routeParams', '$location', 'Notify',
+	function ($scope, $http, $route, $routeParams, $location, Notify) {
 		$scope.config_id = $routeParams.config_id;
 		$scope.graph = {
 			data: [],
 			options: {
-				errorBars: true, sigma: 1,
+				errorBars: true, sigma: 1, showRangeSelector: false,
 				labels: ['x', 'Average', 'Range'],
-				legend: 'always',
+				legend: 'follow',
 				ylabel: 'Queries per second',
-				showPopover: false,
-				showRangeSelector: false,
+				labelsSeparateLines: true,
 				dateWindow: [Date.now() - 2 * 86400000, Date.now()],
 				plotter: plotter,
 				series: {
@@ -135,6 +134,11 @@ app.controller('runDygraphController',
 							   + '&nbsp;&dash;&nbsp;' +
 							   Dygraph.numberValueFormatter.call(this, range[0] + range[1], o, s, d, r, c);
 					}
+				},
+				pointClickCallback: function(e, point) {
+					var id = $scope.ids[point.idx];
+					$location.path('/run/test/' + id + '/');
+					$route.reload();
 				}
 			}
 		};
@@ -148,12 +152,18 @@ app.controller('runDygraphController',
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
 				var s = run.stats;
-				return [
+				var r = [
 					new Date(run.created),
 					[s.average, s.stddev],
 					[(s.min + s.max) / 2, (s.max - s.min) / 2],
 				];
+				r.id = run._id;
+				return r;
 			}).sort(function(a, b) { return a[0] - b[0] });
+
+			$scope.ids = $scope.graph.data.map(function(m) {
+				return m.id;
+			});
 		}).catch(Notify.danger);
 	}
 ]);

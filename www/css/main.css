@@ -38,3 +38,10 @@ pre.log {
 .log.stderr {
 	border-left: 4px solid #c00000;
 }
+
+.dygraph-legend {
+	opacity: 0.92;
+	padding: 4px;
+	border-radius: 4px;
+	border: 2px solid #404040;
+}
