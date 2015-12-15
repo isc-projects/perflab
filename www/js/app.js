@@ -1,5 +1,5 @@
 var app = angular.module('perflabApp',
-	['ngRoute', 'ngAnimate', 'ngSanitize', 'angular-dygraphs', 'isc.modules']);
+	['ngRoute', 'ngAnimate', 'ngSanitize', 'dygraphs-directive', 'isc.modules']);
 
 app.config(['$routeProvider',
 	function($routeProvider) {

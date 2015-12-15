@@ -75,54 +75,30 @@ function plotter(e) {
 
 	var BAR_WIDTH = 4;
 	var setCount = e.seriesCount;
-	if (setCount != 4) {
-		throw 'Exactly 4 values for each point must be provided for chart (open close high low)';
-	}
-
-	var prices = [];
-	var price;
-	var sets = e.allSeriesPoints;
-	for (var p = 0 ; p < sets[0].length; p++) {
-		price = {
-			open : sets[0][p].yval,
-			close : sets[1][p].yval,
-			high : sets[2][p].yval,
-			low : sets[3][p].yval,
-			openY : sets[0][p].y,
-			closeY : sets[1][p].y,
-			highY : sets[2][p].y,
-			lowY : sets[3][p].y
-		};
-		prices.push(price);
+	if (setCount != 2) {
+		throw 'Exactly 2 values for each point must be provided for chart ([mid, err], [low, high])';
 	}
 
 	var area = e.plotArea;
 	var ctx = e.drawingContext;
 	ctx.strokeStyle = '#202020';
 	ctx.lineWidth = 0.6;
+	ctx.fillStyle ='rgba(44,224,44,1.0)';
 
-	for (p = 0 ; p < prices.length; p++) {
+	var sets = e.allSeriesPoints;
+	for (p = 0 ; p < sets[0].length; p++) {
 		ctx.beginPath();
-
-		price = prices[p];
-		var topY = area.h * price.highY + area.y;
-		var bottomY = area.h * price.lowY + area.y;
+		var topY = area.h * sets[1][p].y_top + area.y;
+		var bottomY = area.h * sets[1][p].y_bottom + area.y;
 		var centerX = area.x + sets[0][p].x * area.w;
 		ctx.moveTo(centerX, topY);
 		ctx.lineTo(centerX, bottomY);
 		ctx.closePath();
 		ctx.stroke();
-		var bodyY;
-		if (price.open > price.close) {
-			ctx.fillStyle ='rgba(224,44,44,1.0)';
-			bodyY = area.h * price.openY + area.y;
-		}
-		else {
-			ctx.fillStyle ='rgba(44,224,44,1.0)';
-			bodyY = area.h * price.closeY  + area.y;
-		}
-		var bodyHeight = area.h * Math.abs(price.openY - price.closeY);
-		ctx.fillRect(centerX - BAR_WIDTH / 2, bodyY, BAR_WIDTH,  bodyHeight);
+
+		var bodyYmin = area.h * sets[0][p].y_bottom + area.y;
+		var bodyYmax = area.h * sets[0][p].y_top + area.y;
+		ctx.fillRect(centerX - BAR_WIDTH / 2, bodyYmin, BAR_WIDTH, bodyYmax - bodyYmin);
 	}
 }
 
@@ -133,19 +109,33 @@ app.controller('runDygraphController',
 		$scope.graph = {
 			data: [],
 			options: {
-				labels: ['x', 'open', 'close', 'high', 'low'],
-				showRangeSelector: false, ylabel: 'Queries per second',
+				errorBars: true, sigma: 1,
+				labels: ['x', 'Average', 'Range'],
+				legend: 'always',
+				ylabel: 'Queries per second',
+				showPopover: false,
+				showRangeSelector: false,
 				dateWindow: [Date.now() - 2 * 86400000, Date.now()],
-				plotter: plotter
-			},
-			legend: {
+				plotter: plotter,
 				series: {
-					open: { label: 'Open', format: 1 },
-					close: { label: 'Close', format: 1 },
-					high: { label: 'High', format: 1 },
-					low: { label: 'Low', format: 1 }
+					Average: { label: 'Average' },
+					Range: { label: 'Range', highlightCircleSize: 0 }
 				},
-				dateFormat: 'YYYY/MM/DD HH:mm:ss'
+				valueFormatter: function(v, o, s, d, r, c) {
+					if (s === 'x') {
+						return  Dygraph.dateValueFormatter.apply(this, arguments);
+					} else if (s === 'Average') {
+						var range = d.getValue(r, c);
+						return Dygraph.numberValueFormatter.call(this, range[0], o, s, d, r, c)
+							   + '&nbsp;±&nbsp;' +
+							   Dygraph.numberValueFormatter.call(this, range[1], o, s, d, r, c);
+					} else {
+						var range = d.getValue(r, c);
+						return Dygraph.numberValueFormatter.call(this, range[0] - range[1], o, s, d, r, c)
+							   + '&nbsp;&dash;&nbsp;' +
+							   Dygraph.numberValueFormatter.call(this, range[0] + range[1], o, s, d, r, c);
+					}
+				}
 			}
 		};
 
@@ -157,11 +147,11 @@ app.controller('runDygraphController',
 			window.data = $scope.graph.data = res.data.filter(function(run) {
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
+				var s = run.stats;
 				return [
 					new Date(run.created),
-					run.stats.average - run.stats.stddev,
-					run.stats.average + run.stats.stddev,
-					run.stats.max, run.stats.min,
+					[s.average, s.stddev],
+					[(s.min + s.max) / 2, (s.max - s.min) / 2],
 				];
 			}).sort(function(a, b) { return a[0] - b[0] });
 		}).catch(Notify.danger);
