@@ -4,9 +4,9 @@ pull from source.isc.org for testing
 - [DONE] pagination on run lists
 - [DONE] extract last git commit log and store in 'run' table
 - [DONE] properly formatted graph tooltips
-- click graph point to see that run
+- [DONe] click graph point to see that run
 - [DONE] global queue pause buttons
-- one-off queue running
+- [DONE] one-off queue running
 - auto-refresh queue status on job end
 - comparative graphs for different configs
 - long term chart of different releases
@@ -14,3 +14,4 @@ pull from source.isc.org for testing
 - Login system
   - use Apache reverse proxy with krb5 for WebUI
   - protection for WebSockets?
+- fix duplicate IDs in log view

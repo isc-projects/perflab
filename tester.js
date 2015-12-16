@@ -5,25 +5,40 @@
 let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
 	DNSPerfAgent = require('./dnsperf-agent.js'),
-	WebSocketServer = require('ws').Server;
+	WebSocketServer = require('ws').Server,
+	MongoOplog = require('mongo-oplog');
 
 const mongoUrl = 'mongodb://localhost/perflab';
+const oplogUrl = 'mongodb://localhost/local';
 const perfPath = '/home/ray/bind-perflab';
 const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
 
 try {
 	var db = new Database(mongoUrl);				// NB: hoisted
-	var wss = new WebSocketServer({port: 8001});
 
-	wss.broadcast = function(msg) {
+	var wss = new WebSocketServer({port: 8001});
+	wss.broadcast = (msg) => {
 		let json = JSON.stringify(msg);
-		this.clients.forEach((c) => c.send(json));
+		wss.clients.forEach((c) => c.send(json));
 	}
+
+	var oplog = MongoOplog(oplogUrl, {ns: 'perflab'}).tail();
+	oplog.on('insert', sendOplog);
+	oplog.on('update', sendOplog);
+	oplog.on('delete', sendOplog);
 
 	runQueue();
 
 } catch (e) {
 	console.error('catch: ' + e);
+}
+
+function sendOplog(doc) {
+	wss.broadcast({
+		op: doc.op,
+		ns: doc.ns.match(/\.(\w+)$/)[1],
+		doc: doc.o
+	});
 }
 
 function runQueue() {
@@ -81,32 +96,20 @@ function execute(agent) {
 	let stdout = '', stderr = '';
 
 	agent.on('cmd', (t) => {
-		try {
-			let log = {channel: 'command', text: t, time: new Date()}
-			db.insertLog(log).then(() => wss.broadcast(log));
-		} catch (e) {
-			console.error(e);
-		}
+		let log = {channel: 'command', text: t, time: new Date()}
+		db.insertLog(log).then(() => wss.broadcast({log}));
 	});
 
 	agent.on('stdout', (t) => {
 		stdout += t;
-		try {
-			let log = {channel: 'stdout', text: '' + t, time: new Date()}
-			db.insertLog(log).then(() => wss.broadcast(log));
-		} catch (e) {
-			console.error(e);
-		}
+		let log = {channel: 'stdout', text: '' + t, time: new Date()}
+		db.insertLog(log);
 	});
 
 	agent.on('stderr', (t) => {
 		stderr += t;
-		try {
-			let log = {channel: 'stderr', text: '' + t, time: new Date()}
-			db.insertLog(log).then(() => wss.broadcast(log));
-		} catch (e) {
-			console.trace();
-		}
+		let log = {channel: 'stderr', text: '' + t, time: new Date()}
+		db.insertLog(log);
 	});
 
 	return agent.run().then((result) => Object.assign(result, {
