@@ -9,8 +9,8 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', '$http', 'Configs', 'Notify', 'SystemControl',
-	function($scope, $http, Configs, Notify, SystemControl) {
+	['$scope', 'Configs', 'SystemControl',
+	function($scope, Configs, SystemControl) {
 		$scope.configs = Configs;
 		$scope.control = SystemControl;
 	}
