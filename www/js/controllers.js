@@ -9,30 +9,40 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', '$http', '$q', 'Notify', 'SystemControl',
-	function($scope, $http, $q, Notify, SystemControl) {
+	['$scope', '$http', '$q', 'Notify', 'SystemControl', 'OpLog',
+	function($scope, $http, $q, Notify, SystemControl, OpLog) {
 
 		var configs = {};
 
-		var p1 = $http.get('/api/config/').then(function(res) {
-			$scope.configs = res.data;
-			$scope.configs.forEach(function(c) {
-				c.queue = {};
-				configs[c._id] = c;
-			}, {});
-		}).catch(Notify.danger);
+		function getConfigs() {
+			return $http.get('/api/config/').then(function(res) {
+				$scope.configs = res.data;
+				$scope.configs.forEach(function(c) {
+					c.queue = {};
+					configs[c._id] = c;
+				}, {});
+			}).catch(Notify.danger);
+		}
 
-		var p2 = $http.get('/api/queue/').then(function(res) {
-			$scope.queue = res.data;
-		}).catch(Notify.danger);
+		function getQueue() {
+			return $http.get('/api/queue/').then(function(res) {
+				$scope.queue = res.data;
+				$scope.queue.forEach(function(queue) {
+					if (queue._id in configs) {
+						configs[queue._id].queue = queue;
+					}
+				});
+			}).catch(Notify.danger);
+		}
 
-		$q.all([p1, p2]).then(function() {
-			$scope.queue.forEach(function(queue) {
-				if (queue._id in configs) {
-					configs[queue._id].queue = queue;
-				}
-			});
-		});
+		getConfigs().then(getQueue);
+
+		OpLog.on('update.config', getConfigs);
+		OpLog.on('insert.config', getConfigs);
+		OpLog.on('delete.config', getConfigs);
+		OpLog.on('update.queue', getQueue);
+		OpLog.on('insert.queue', getQueue);
+		OpLog.on('delete.queue', getQueue);
 
 		$scope.setEnabled = function(id, enabled)  {
 			$http.put('/api/queue/' + id + '/enabled/', {enabled: !!enabled}).then(function() {
