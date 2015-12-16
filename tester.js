@@ -41,6 +41,7 @@ function doFirstQueueEntry() {
 		if (queue) {
 			return db.getConfigById(queue._id)
 				.then(runConfig)
+				.then(() => db.markQueueEntryDone(queue._id))
 				.then(() => db.disableOneshotQueue(queue._id));
 		}
 	});

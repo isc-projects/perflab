@@ -15,6 +15,14 @@ td.id {
 	margin-bottom: 0px;
 }
 
+.config-list .running {
+	font-weight: bold;
+}
+
+.config-list .icon-button {
+	width: 5.5em;
+}
+
 pre.log {
 	margin: 0px;
 	border-radius: 0px;
