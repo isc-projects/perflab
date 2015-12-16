@@ -25,6 +25,7 @@ try {
 } catch (e) {
 	console.error('catch: ' + e);
 }
+
 function runQueue() {
 	db.getPaused().then((res) => {
 		if (res.paused) {
@@ -37,15 +38,10 @@ function runQueue() {
 
 function doFirstQueueEntry() {
 	return db.takeNextFromQueue().then((queue) => {
-		if (!queue) {
-			return Promise.resolve();
-		} else {
-			let requeue = () => db.reQueueEntry(queue._id);
-			let done = () => db.markQueueEntryDone(queue._id);
-			return db.getConfigById(queue.config_id)
+		if (queue) {
+			return db.getConfigById(queue._id)
 				.then(runConfig)
-				.then(done, done)
-				.then(requeue);
+				.then(() => db.disableOneshotQueue(queue._id));
 		}
 	});
 }

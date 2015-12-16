@@ -79,10 +79,14 @@ module.exports = {
 	},
 	'/queue': {
 		'GET /':				handler(db.getQueue),
+		'GET /:id/enabled':		handler(db.getQueueEntryEnabled),
+		'PUT /:id/enabled/':	bodyHandler(db.setQueueEntryEnabled),
+		'GET /:id/repeat':		handler(db.getQueueEntryRepeat),
+		'PUT /:id/repeat/':		bodyHandler(db.setQueueEntryRepeat)
 	},
 	'/control': {
 		'GET /':				handler(db.getControl),
-		'GET /paused/':			handler(db.getPaused),
+		'GET /paused':			handler(db.getPaused),
 		'PUT /paused/':			bodyHandler(db.setPaused)
 	},
 	'/log': {

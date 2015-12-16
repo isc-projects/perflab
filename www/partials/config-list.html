@@ -1,44 +1,54 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
+	  <!-- <div class="panel panel-default">
+		<div class="panel-heading">Queue Status
+		</div>
+		<div class="panel-body">
+		</div>
+	  </div> -->
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Configurations
-		<span class="pull-right">
-		  <button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused" title="pause at end of current run">
-			<span class="glyphicon glyphicon-pause"></span>
-		  </button>
-		  <button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
-			<span class="glyphicon glyphicon-play"></span>
-		  </button>
-		</span>
-	  </div>
-	  <div class="panel-body">
-	  <table class="table table-hover">
-		<thead>
-		  <tr>
-			<th width="60%">Name</th>
-			<th class="text-center">Running</th>
-			<th class="text-center">Queued</th>
-			<th class="text-center">Repeat</th>
-			<th/>
-		  </tr>
-		</thead>
-		<tbody>
-		  <tr ng-repeat="config in configs">
-			<td class="name"><a href="#/config/run/{{config._id}}/">{{config.name}}</a></td>
-			<td class="running text-center"><span ng-class="tick(config.queue.running)"></span></td>
-			<td class="queued text-center"><span ng-class="tick(config.queue.queued)"></span></td>
-			<td class="repeat text-center"><span ng-class="tick(config.queue.repeat)"></span></td>
-			<td>
-			  <a href="#/config/{{config._id}}/edit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Edit</a>
-			  <a href="#/config/run/{{config._id}}/" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-signal"></span>&nbsp;Graph</a>
-			  <a href="#/config/run/{{config._id}}/list" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-list"></span>&nbsp;List</a>
-			</td>
-		  </tr>
-		</tbody>
-	  </table>
-	  <a href="#/config/new" class="btn btn-xs btn-primary">New...</a>
-	  </div>
+		<div class="panel-heading">Configurations
+		  <span class="pull-right">System
+			<button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
+			  <span class="glyphicon glyphicon-play"></span>
+			</button>
+			<button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused" title="pause at end of current run">
+			  <span class="glyphicon glyphicon-pause"></span>
+			</button>
+		  </span>
+		</div>
+		<div class="panel-body">
+		  <table class="table table-hover">
+			<tbody>
+			  <tr ng-repeat="config in configs">
+				<td width="100%" class="name">{{config.name}}</td>
+				<td width="8%" nowrap class="running text-center">
+				  <button ng-click="setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
+					  <span class="glyphicon glyphicon-play"></span>
+				  </button>
+				  <button ng-click="setEnabled(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.enabled">
+					  <span class="glyphicon glyphicon-pause"></span>
+				  </button>
+				</td>
+				<td width="8%" nowrap class="repeat text-center">
+				  <button ng-click="setRepeat(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.repeat">
+					  <span class="glyphicon glyphicon-repeat"></span>
+				  </button>
+				  <button ng-click="setRepeat(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.repeat">
+					  <span class="glyphicon glyphicon-stop"></span>
+				  </button>
+				</td>
+				<td width="25%" nowrap>
+				  <a href="#/config/run/{{config._id}}/" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-signal"></span>&nbsp;Graph</a>
+				  <a href="#/config/run/{{config._id}}/list" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-list"></span>&nbsp;List</a>
+				  <a href="#/config/{{config._id}}/edit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Edit</a>
+				</td>
+			  </tr>
+			</tbody>
+		  </table>
+		  <a href="#/config/new" class="btn btn-xs btn-primary">New...</a>
+		</div>
 	  </div>
 	</div>
   </div>

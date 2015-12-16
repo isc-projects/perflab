@@ -12,10 +12,13 @@ app.controller('configListController',
 	['$scope', '$http', '$q', 'Notify', 'SystemControl',
 	function($scope, $http, $q, Notify, SystemControl) {
 
+		var configs = {};
+
 		var p1 = $http.get('/api/config/').then(function(res) {
 			$scope.configs = res.data;
-			$scope.configsById = $scope.configs.reduce(function(p, c) {
-				p[c._id] = c; return p;
+			$scope.configs.forEach(function(c) {
+				c.queue = {};
+				configs[c._id] = c;
 			}, {});
 		}).catch(Notify.danger);
 
@@ -25,13 +28,23 @@ app.controller('configListController',
 
 		$q.all([p1, p2]).then(function() {
 			$scope.queue.forEach(function(queue) {
-				if (queue.config_id in $scope.configsById) {
-					$scope.configsById[queue.config_id].queue = queue;
+				if (queue._id in configs) {
+					configs[queue._id].queue = queue;
 				}
 			});
 		});
 
-		$scope.tick = (b) => 'glyphicon ' + (b ? 'glyphicon-ok' : 'glyphicon-remove');
+		$scope.setEnabled = function(id, enabled)  {
+			$http.put('/api/queue/' + id + '/enabled/', {enabled: !!enabled}).then(function() {
+				configs[id].queue.enabled = !!enabled;
+			}).catch(Notify.danger);
+		}
+
+		$scope.setRepeat = function(id, repeat)  {
+			$http.put('/api/queue/' + id + '/repeat/', {repeat: !!repeat}).then(function() {
+				configs[id].queue.repeat = !!repeat;
+			}).catch(Notify.danger);
+		}
 
 		$scope.control = SystemControl;
 	}

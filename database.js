@@ -63,22 +63,30 @@ class Database {
 		this.getQueue = () =>
 			query((db) => db.collection('queue').find().toArray());
 
-		this.insertQueue = (config_id, repeat) =>
+		this.setQueueEntryEnabled = (id, obj) =>
 			query((db) => db.collection('queue')
-				.insert({
-					config_id: oid(config_id),
-					running: false,
-					queued: false,
-					repeat
-				}));
+					.updateOne({_id: oid(id)}, {$set: {enabled: !!obj.enabled}}, {upsert: true}));
+
+		this.getQueueEntryEnabled = (id) =>
+			query((db) => db.collection('queue')
+					.findOne({_id: oid(id) })
+					.then((r) => r ? { enabled: !!r.enabled } : {enabled: false}));
+
+		this.setQueueEntryRepeat = (id, obj) =>
+			query((db) => db.collection('queue')
+					.updateOne({_id: oid(id)}, {$set: {repeat: !!obj.repeat}}, {upsert: true}));
+
+		this.getQueueEntryRepeat = (id) =>
+			query((db) => db.collection('queue')
+					.findOne({_id: oid(id) })
+					.then((r) => r ? { repeat: !!r.repeat } : {repeat: false}));
 
 		this.takeNextFromQueue = () =>
 			query((db) => db.collection('queue')
 					.findOneAndUpdate(
-						{running: false, queued: true},
+						{running: {$ne: true}, enabled: true},
 						{$set: {
 							running: true,
-							queued: false,
 							started: new Date()
 						}},
 						{sort: {completed: 1}}
@@ -94,12 +102,11 @@ class Database {
 							}})
 			});
 
-		this.reQueueEntry = (id) =>
+		this.disableOneshotQueue = (id) =>
 			query((db) => db.collection('queue')
 					.findOneAndUpdate(
-						{running: false, queued: false, repeat: true},
-						{$set: { queued: true }},
-						{sort: {completed: 1}}
+						{_id: oid(id), repeat: false},
+						{$set: {enabled: false}}
 					)).then((res) => res.value);
 
 		this.getConfigById = (id) =>
