@@ -84,4 +84,71 @@ app.service('LogWatcher',
 		}
 	}
 ]);
+
+app.service('Configs',
+	['$http', 'Notify', 'OpLog',
+	function($http, Notify, OpLog) {
+
+		var configs = [], queue = [];
+		var confById = {};
+
+		function merge() {
+			var tmp = {};
+			configs.forEach(function(conf) {
+				tmp[conf._id] = conf;
+			});
+
+			queue.forEach(function(queue) {
+				tmp[queue._id].queue = queue;
+			});
+		}
+
+		function getConfigs() {
+			return $http.get('/api/config/').then(function(res) {
+				configs.length = 0;
+				configs.push.apply(configs, res.data);
+			}).catch(Notify.danger);
+		}
+
+		function getQueue() {
+			return $http.get('/api/queue/').then(function(res) {
+				queue.length = 0;
+				queue.push.apply(queue, res.data);
+			}).catch(Notify.danger);
+		}
+
+		function updateConfig() {
+			return getConfigs().then(merge);
+		}
+
+		function updateQueue() {
+			return getQueue().then(merge);
+		}
+
+		function setEnabled(id, enabled)  {
+			return $http.put('/api/queue/' + id + '/enabled/', {enabled: !!enabled}).catch(Notify.danger);
+		}
+
+		function setRepeat(id, repeat)  {
+			return $http.put('/api/queue/' + id + '/repeat/', {repeat: !!repeat}).catch(Notify.danger);
+		}
+
+		getConfigs().then(getQueue).then(merge);
+
+		OpLog.on('update.config', updateConfig);
+		OpLog.on('insert.config', updateConfig);
+		OpLog.on('delete.config', updateConfig);
+
+		OpLog.on('update.queue', updateQueue);
+		OpLog.on('insert.queue', updateQueue);
+		OpLog.on('delete.queue', updateQueue);
+
+		return {
+			all: configs,
+			setEnabled: setEnabled,
+			setRepeat: setRepeat
+		}
+	}
+]);
+
 })();

@@ -9,53 +9,9 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', '$http', '$q', 'Notify', 'SystemControl', 'OpLog',
-	function($scope, $http, $q, Notify, SystemControl, OpLog) {
-
-		var configs = {};
-
-		function getConfigs() {
-			return $http.get('/api/config/').then(function(res) {
-				$scope.configs = res.data;
-				$scope.configs.forEach(function(c) {
-					c.queue = {};
-					configs[c._id] = c;
-				}, {});
-			}).catch(Notify.danger);
-		}
-
-		function getQueue() {
-			return $http.get('/api/queue/').then(function(res) {
-				$scope.queue = res.data;
-				$scope.queue.forEach(function(queue) {
-					if (queue._id in configs) {
-						configs[queue._id].queue = queue;
-					}
-				});
-			}).catch(Notify.danger);
-		}
-
-		getConfigs().then(getQueue);
-
-		OpLog.on('update.config', getConfigs);
-		OpLog.on('insert.config', getConfigs);
-		OpLog.on('delete.config', getConfigs);
-		OpLog.on('update.queue', getQueue);
-		OpLog.on('insert.queue', getQueue);
-		OpLog.on('delete.queue', getQueue);
-
-		$scope.setEnabled = function(id, enabled)  {
-			$http.put('/api/queue/' + id + '/enabled/', {enabled: !!enabled}).then(function() {
-				configs[id].queue.enabled = !!enabled;
-			}).catch(Notify.danger);
-		}
-
-		$scope.setRepeat = function(id, repeat)  {
-			$http.put('/api/queue/' + id + '/repeat/', {repeat: !!repeat}).then(function() {
-				configs[id].queue.repeat = !!repeat;
-			}).catch(Notify.danger);
-		}
-
+	['$scope', '$http', 'Configs', 'Notify', 'SystemControl',
+	function($scope, $http, Configs, Notify, SystemControl) {
+		$scope.configs = Configs;
 		$scope.control = SystemControl;
 	}
 ]);

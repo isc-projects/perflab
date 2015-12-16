@@ -15,21 +15,24 @@
 		<div class="panel-body">
 		  <table class="table table-hover config-list">
 			<tbody>
-			  <tr ng-repeat="config in configs track by config._id" class="config">
-				<td width="100%" class="name" ng-class="config.queue.running ? 'running' : ''">{{config.name}}</td>
+			  <tr ng-repeat="config in configs.all track by config._id" class="config">
+				<td width="100%" class="name">
+				  <span ng-class="config.queue.running ? 'running' : ''">{{config.name}}</span>
+				  <span class="pull-right" ng-show="config.queue.running">{{config.queue.started}}</span>
+				</td>
 				<td width="8%" nowrap>
-				  <button ng-click="setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
+				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
 					  <span class="glyphicon glyphicon-play"></span>
 				  </button>
-				  <button ng-click="setEnabled(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.enabled">
+				  <button ng-click="configs.setEnabled(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.enabled">
 					  <span class="glyphicon glyphicon-pause"></span>
 				  </button>
 				</td>
 				<td width="8%" nowrap>
-				  <button ng-click="setRepeat(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.repeat">
+				  <button ng-click="configs.setRepeat(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.repeat">
 					  <span class="glyphicon glyphicon-repeat"></span>
 				  </button>
-				  <button ng-click="setRepeat(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.repeat">
+				  <button ng-click="configs.setRepeat(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.repeat">
 					  <span class="glyphicon glyphicon-stop"></span>
 				  </button>
 				</td>
