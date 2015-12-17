@@ -190,6 +190,10 @@ app.controller('configEditController',
 				$scope.config = res.data;
 				setDefaults();
 			}).catch(redirectNotify);
+
+			$http.get('/api/config/run/' + $scope.id + '/paged/?limit=1').then(function(res) {
+				$scope.existing = !!(res.data && res.data.length);
+			});
 		}
 
 		function redirectNotify(e) {

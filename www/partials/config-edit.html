@@ -52,6 +52,15 @@
 	  </div>
 	</div>
   </div>
+  <div class="row" ng-show="existing">
+	<div class="col-md-12">
+      <div class="alert alert-danger alert-dismissable" role="alert">
+There are existing results for this configuration.  Please be advised
+that editing this configuration may invalidate any comparisons between
+pre- and post-edit results.
+	  </div>
+    </div>
+  </div>
   <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
 	<div class="modal-dialog">
 	  <div class="modal-content">
