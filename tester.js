@@ -5,40 +5,14 @@
 let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
 	DNSPerfAgent = require('./dnsperf-agent.js'),
-	WebSocketServer = require('ws').Server,
-	MongoOplog = require('mongo-oplog');
-
-const mongoUrl = 'mongodb://localhost/perflab';
-const oplogUrl = 'mongodb://localhost/local';
-const perfPath = '/home/ray/bind-perflab';
-const repoUrl = 'ssh://repo.isc.org/proj/git/prod/bind9';
+	settings = require('./settings');
 
 try {
-	var db = new Database(mongoUrl);				// NB: hoisted
-
-	var wss = new WebSocketServer({port: 8001});
-	wss.broadcast = (msg) => {
-		let json = JSON.stringify(msg);
-		wss.clients.forEach((c) => c.send(json));
-	}
-
-	var oplog = MongoOplog(oplogUrl, {ns: 'perflab'}).tail();
-	oplog.on('insert', sendOplog);
-	oplog.on('update', sendOplog);
-	oplog.on('delete', sendOplog);
-
+	var db = new Database(settings.mongoUrl);		// NB: hoisted
 	runQueue();
 
 } catch (e) {
 	console.error('catch: ' + e);
-}
-
-function sendOplog(doc) {
-	wss.broadcast({
-		op: doc.op,
-		ns: doc.ns.match(/\.(\w+)$/)[1],
-		doc: doc.o
-	});
 }
 
 function runQueue() {
@@ -80,12 +54,12 @@ function runTest(agent, run_id)
 
 function runConfig(config)
 {
-	let bind = new BindAgent(config, perfPath, repoUrl);
+	let bind = new BindAgent(config, settings.perfPath, settings.repoUrl);
 
 	return runBind(bind, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 10;
 		return (function loop() {
-			let dnsperf = new DNSPerfAgent(config, perfPath);
+			let dnsperf = new DNSPerfAgent(config, settings.perfPath);
 			let res = runTest(dnsperf, run_id).catch(console.error);
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
@@ -97,7 +71,7 @@ function execute(agent) {
 
 	agent.on('cmd', (t) => {
 		let log = {channel: 'command', text: t, time: new Date()}
-		db.insertLog(log).then(() => wss.broadcast({log}));
+		db.insertLog(log);
 	});
 
 	agent.on('stdout', (t) => {

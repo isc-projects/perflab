@@ -2,11 +2,10 @@
 
 let Database = require('./database.js'),
 	parseUrl = require('parseurl'),
-	querystring = require('querystring');
+	querystring = require('querystring'),
+	settings = require('./settings');
 
-const mongoUrl = 'mongodb://localhost/perflab';
-
-let db = new Database(mongoUrl);
+let db = new Database(settings.mongoUrl);
 
 function handler(f) {
 	return function(req, res, next) {

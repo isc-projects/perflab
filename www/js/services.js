@@ -6,7 +6,8 @@ app.service('OpLog',
 	function($rootScope, $timeout, Notify) {
 		(function connect() {
 			var ops = {'i': 'insert', 'u': 'update', 'd': 'delete'};
-			var ws = new WebSocket('ws://' + window.location.hostname + ':8001/');
+			var url = 'ws://' + window.location.hostname + ':' + window.location.port;
+			var ws = new WebSocket(url);
 			ws.onclose = function() {
 				Notify.danger('WebSocket closed - retrying in 10s');
 				$timeout(connect, 10000);
@@ -47,7 +48,7 @@ app.service('SystemControl',
 				if (service.paused === true && !res.data.paused) {
 					Notify.info('Queue running');
 				} else if (service.paused === false && res.data.paused) {
-					Notify.danger('Queue paused');
+					Notify.danger('Queue paused (current job will complete)');
 				}
 				service.paused = res.data.paused;
 			});
