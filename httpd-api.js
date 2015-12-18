@@ -38,7 +38,7 @@ function pageHandler(f) {
 				links.push(link(0, limit, "first"));
 				links.push(link(Math.max(0, skip - limit), limit, "prev"));
 			}
-			if (data.length >= skip) {
+			if (data.length >= limit) {
 				links.push(link(skip + limit, limit, "next"));
 			}
 			if (links.length) {
