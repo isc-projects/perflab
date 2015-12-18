@@ -115,11 +115,6 @@ app.service('Configs',
 			return $http.get('/api/queue/').then(function(res) {
 				queue.length = 0;
 				queue.push.apply(queue, res.data);
-
-				queue.forEach(function(queue) {
-					queue.status = queue.running ? 'running' :
-								  !queue.enabled ? 'disabled' : '';
-				});
 			}).catch(Notify.danger);
 		}
 

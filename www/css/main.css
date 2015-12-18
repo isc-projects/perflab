@@ -19,6 +19,10 @@ td.id {
 	font-weight: bold;
 }
 
+.strike {
+	text-decoration: line-through;
+}
+
 .fixed-button {
 	width: 5.5em;
 }
