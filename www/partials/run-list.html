@@ -5,8 +5,8 @@
 	  <div class="panel-heading">
 		<span>Runs of configuration "{{config.name}}" (page {{page}})</span>
 		<span class="pull-right">
-		  <a href="#/config/run/{{config._id}}/" class="btn btn-xs btn-primary">
-		  <span class="glyphicon glyphicon-signal"></span>&nbsp;Graph</a>
+		  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary">
+		  <span class="fa fa-bar-chart"></span>&nbsp;Graph</a>
 		</span>
 	  </div>
 	  <div class="panel-body">
@@ -30,10 +30,10 @@
 		</tbody>
 	  </table>
 		<button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="btn btn-xs btn-primary">
-		  <span class="glyphicon glyphicon-backward"></span>&nbsp;Newer
+		  <span class="fa fa-backward"></span>&nbsp;Newer
 		</button>
 		<button ng-show="link.next" type="button" ng-click="search(link.next)" class="btn btn-xs btn-primary pull-right">
-		  Older&nbsp;<span class="glyphicon glyphicon-forward"></span>
+		  Older&nbsp;<span class="fa fa-forward"></span>
 		</button>
 	  </div>
 	  </div>

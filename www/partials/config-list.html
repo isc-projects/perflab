@@ -5,10 +5,10 @@
 		<div class="panel-heading">Configurations
 		  <span class="pull-right">
 			<button ng-click="control.unpause()" class="btn btn-xs btn-primary" ng-disabled="!control.paused">
-			  <span class="glyphicon glyphicon-play"></span>
+			  <span class="fa fa-play"></span>
 			</button>
 			<button ng-click="control.pause()" class="btn btn-xs btn-primary" ng-disabled="control.paused" title="pause at end of current run">
-			  <span class="glyphicon glyphicon-pause"></span>
+			  <span class="fa fa-pause"></span>
 			</button>
 		  </span>
 		</div>
@@ -22,29 +22,29 @@
 				</td>
 				<td width="8%" nowrap>
 				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
-					  <span class="glyphicon glyphicon-play"></span>
+					  <span class="fa fa-play"></span>
 				  </button>
 				  <button ng-click="configs.setEnabled(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.enabled">
-					  <span class="glyphicon glyphicon-pause"></span>
+					  <span class="fa fa-pause"></span>
 				  </button>
 				</td>
 				<td width="8%" nowrap>
 				  <button ng-click="configs.setRepeat(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.repeat">
-					  <span class="glyphicon glyphicon-repeat"></span>
+					  <span class="fa fa-repeat"></span>
 				  </button>
 				  <button ng-click="configs.setRepeat(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.repeat">
-					  <span class="glyphicon glyphicon-stop"></span>
+					  <span class="fa fa-stop"></span>
 				  </button>
 				</td>
 				<td width="25%" nowrap align="right">
-				  <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="glyphicon glyphicon-stats"></span>&nbsp;Graph</a>
-				  <a href="#/config/run/{{config._id}}/list" class="icon-button btn btn-xs btn-primary"><span class="glyphicon glyphicon-list"></span>&nbsp;List</a>
-				  <a href="#/config/{{config._id}}/edit" class="icon-button btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Edit</a>
+				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>&nbsp;Graph</a>
+				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-list"></span>&nbsp;List</a>
+				  <a href="#/config/{{config._id}}/edit" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>&nbsp;Edit</a>
 				</td>
 			  </tr>
 			  <tr>
 				<td colspan="4" align="right">
-		    	  <a href="#/config/new" class="icon-button btn btn-xs btn-primary">New...</a>
+				  <a href="#/config/new" class="fixed-button btn btn-xs btn-primary">New...</a>
 				</td>
 			  </tr>
 			</tbody>
