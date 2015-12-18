@@ -57,7 +57,7 @@ function runConfig(config)
 	let bind = new BindAgent(config, settings.perfPath, settings.repoUrl);
 
 	return runBind(bind, config._id).then((run_id) => {
-		let iter = config.testsPerRun || 10;
+		let iter = config.testsPerRun || 30;
 		return (function loop() {
 			let dnsperf = new DNSPerfAgent(config, settings.perfPath);
 			let res = runTest(dnsperf, run_id).catch(console.error);
