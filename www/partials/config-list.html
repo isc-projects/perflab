@@ -18,7 +18,7 @@
 			  <tr ng-repeat="config in configs.all track by config._id" class="config">
 				<td width="100%" class="name">
 				  <span ng-class="config.queue.running ? 'running' : ''">{{config.name}}</span>
-				  <span class="pull-right" ng-show="config.queue.running">{{config.queue.started}}</span>
+				  <span class="pull-right">{{config.queue.status}}</span>
 				</td>
 				<td width="8%" nowrap>
 				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
