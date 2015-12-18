@@ -1,4 +1,7 @@
 (function () {
+
+	"use strict";
+
 	angular.module('isc.modules', [])
 		.factory('linkHeaderParser', linkHeaderParser)
 		.factory('Notify', Notify);
