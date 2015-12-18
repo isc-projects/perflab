@@ -63,7 +63,7 @@ function runConfig(config)
 			let res = runTest(dnsperf, run_id).catch(console.error);
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
-	}).then(bind.stop);
+	}).then(bind.stop, bind.stop);
 }
 
 function execute(agent) {
