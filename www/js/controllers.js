@@ -9,9 +9,15 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'Configs', 'SystemControl',
-	function($scope, Configs, SystemControl) {
+	['$scope', 'Configs',
+	function($scope, Configs) {
 		$scope.configs = Configs;
+	}
+]);
+
+app.controller('queueController',
+	['$scope', 'SystemControl',
+	function($scope, SystemControl) {
 		$scope.control = SystemControl;
 	}
 ]);
