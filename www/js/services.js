@@ -1,6 +1,8 @@
 (function() {
 var app = angular.module('perflabApp');
 
+"use strict";
+
 app.service('OpLog',
 	[ '$rootScope', '$timeout', 'Notify',
 	function($rootScope, $timeout, Notify) {
@@ -18,13 +20,15 @@ app.service('OpLog',
 				var op = ops[msg.op];
 				if (op) {
 					$rootScope.$broadcast('oplog.' + op + '.' + coll, msg.doc);
+					$rootScope.$apply();		// force Angular to notice
 				}
 			}
 		})();
 
 		return {
-			'on': function(ev, handler) {
-				$rootScope.$on('oplog.' + ev, handler);
+			'on': function(ev, handler, scope) {
+				scope = scope || $rootScope;
+				scope.$on('oplog.' + ev, handler);
 			}
 		};
 	}
@@ -62,8 +66,8 @@ app.service('SystemControl',
 ]);
 
 app.service('LogWatcher',
-	['$http', 'OpLog', 'Notify',
-	function($http, OpLog, Notify) {
+	['$rootScope', '$http', 'OpLog', 'Notify',
+	function($rootScope, $http, OpLog, Notify) {
 
 		var log = [];
 		var byid = {};		// used to ensure IDs don't get duplicated
@@ -109,7 +113,9 @@ app.service('Configs',
 			});
 
 			queue.forEach(function(queue) {
-				tmp[queue._id].queue = queue;
+				if (tmp[queue._id]) {
+					tmp[queue._id].queue = queue;
+				}
 			});
 		}
 
