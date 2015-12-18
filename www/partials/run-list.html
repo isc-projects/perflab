@@ -3,7 +3,7 @@
 	<div class="col-md-12">
 	  <div class="panel panel-default">
 	  <div class="panel-heading">
-		<span>Runs of configuration "{{config.name}}" (page {{page}})</span>
+		<span>Runs of configuration "{{config.name}}"</span>
 		<span class="pull-right">
 		  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary">
 		  <span class="fa fa-bar-chart"></span>&nbsp;Graph</a>
@@ -29,12 +29,22 @@
 		  </tr>
 		</tbody>
 	  </table>
-		<button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="btn btn-xs btn-primary">
-		  <span class="fa fa-backward"></span>&nbsp;Newer
-		</button>
-		<button ng-show="link.next" type="button" ng-click="search(link.next)" class="btn btn-xs btn-primary pull-right">
-		  Older&nbsp;<span class="fa fa-forward"></span>
-		</button>
+	  <p class="text-center">Page {{page}}</p>
+	  <div>
+		<span>
+		  <button ng-show="link.first" type="button" ng-click="search(link.first)" class="fixed-button btn btn-xs btn-primary">
+		    <span class="fa fa-fast-backward"></span>&nbsp;Latest
+		  </button>
+		  <button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="fixed-button btn btn-xs btn-primary">
+		    <span class="fa fa-backward"></span>&nbsp;Newer
+		  </button>
+		</span>
+		<span class="pull-right">
+		  <button ng-show="link.next" type="button" ng-click="search(link.next)" class="fixed-button btn btn-xs btn-primary">
+		    Older&nbsp;<span class="fa fa-forward"></span>
+		  </button>
+		</span>
+	  </div>
 	  </div>
 	  </div>
 	  </div>
