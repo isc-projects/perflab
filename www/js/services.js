@@ -66,15 +66,24 @@ app.service('LogWatcher',
 	function($http, OpLog, Notify) {
 
 		var log = [];
+		var byid = {};		// used to ensure IDs don't get duplicated
 
 		$http.get('/api/log/').then(function(res) {
 			log.push.apply(log, res.data);
+			log.forEach(function(l) {
+				byid[l._id] = 1;
+			});
 		}).then(subscribe).catch(Notify.danger);
 
 		function subscribe() {
 			OpLog.on('insert.log', function(ev, data) {
-				log.push(data);
-				if (log.length > 100) {
+				if (! (data._id in byid)) {
+					byid[data._id] = 1;
+					log.push(data);
+				}
+				while (log.length > 100) {
+					var id = log[0]._id;
+					delete byid[id];
 					log.shift();
 				}
 			});

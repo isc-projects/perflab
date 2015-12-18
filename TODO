@@ -11,7 +11,7 @@ pull from source.isc.org for testing
 - [DONE] suspend buttons during edit page submit
 - [DONE] move WebSocket code into httpd / connect daemon
 - [DONE] warn on edit of config with associated runs
-- fix duplicate IDs in log view
+- [DONE] fix duplicate IDs in log view
 - [LATER] comparative graphs for different configs
 - [LATER] long term chart of different releases
 - [LATER] Login system
