@@ -4,12 +4,14 @@
 	  <div class="panel panel-default">
 		<div class="panel-heading">Configurations</div>
 		<div class="panel-body">
-		  <table class="table config-list">
+		  <table class="table table-condensed config-list">
 			<tbody>
 			  <tr ng-repeat="config in configs.all track by config._id" class="config">
+				<td class="running">
+				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-refresh fa-spin' : ''"></span>
+				</td>
 				<td width="100%" class="name">
 				  <span ng-class="config.queue.enabled ? '' : 'strike'">{{config.name}}</span>
-				  <span class="fa" ng-class="config.queue.running ? 'fa-refresh fa-spin' : ''"></span>
 				</td>
 				<td width="8%" nowrap>
 				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled">
@@ -28,13 +30,13 @@
 				  </button>
 				</td>
 				<td width="25%" nowrap align="right">
-				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>&nbsp;Graph</a>
-				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-list"></span>&nbsp;List</a>
-				  <a href="#/config/{{config._id}}/edit" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>&nbsp;Edit</a>
+				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>Graph</a>
+				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-list"></span>List</a>
+				  <a href="#/config/{{config._id}}/edit" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>Edit</a>
 				</td>
 			  </tr>
 			  <tr>
-				<td colspan="4" align="right">
+				<td colspan="5" align="right">
 				  <a href="#/config/new" class="fixed-button btn btn-xs btn-primary">New...</a>
 				</td>
 			  </tr>

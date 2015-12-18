@@ -6,12 +6,12 @@
 		<span>Runs of configuration "{{config.name}}"</span>
 		<span class="pull-right">
 		  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary">
-		  <span class="fa fa-bar-chart"></span>&nbsp;Graph</a>
+		  <span class="fa fa-bar-chart"></span>Graph</a>
 		</span>
 	  </div>
 	  <div class="panel-body">
 	  <div class="alert alert-warning" ng-show="runs && !runs.length">None recorded</div>
-	  <table class="table table-hover" ng-show="runs.length">
+	  <table class="table table-condensed" ng-show="runs.length">
 		<thead>
 		  <tr>
 			<th>Time</th>
@@ -33,15 +33,15 @@
 	  <div>
 		<span>
 		  <button ng-show="link.first" type="button" ng-click="search(link.first)" class="fixed-button btn btn-xs btn-primary">
-		    <span class="fa fa-fast-backward"></span>&nbsp;Latest
+		    <span class="fa fa-fast-backward"></span>Latest
 		  </button>
 		  <button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="fixed-button btn btn-xs btn-primary">
-		    <span class="fa fa-backward"></span>&nbsp;Newer
+		    <span class="fa fa-backward"></span>Newer
 		  </button>
 		</span>
 		<span class="pull-right">
-		  <button ng-show="link.next" type="button" ng-click="search(link.next)" class="fixed-button btn btn-xs btn-primary">
-		    Older&nbsp;<span class="fa fa-forward"></span>
+		  <button ng-show="link.next" type="button" ng-click="search(link.next)" class="fixed-button-right btn btn-xs btn-primary">
+		    Older<span class="fa fa-forward"></span>
 		  </button>
 		</span>
 	  </div>

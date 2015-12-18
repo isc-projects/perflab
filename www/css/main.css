@@ -2,10 +2,6 @@ body {
 	font-family: verdana;
 }
 
-td.id {
-	font-family: "courier";
-}
-
 .cssfade.ng-hide {
 	transition:0.2s linear all;
 	opacity: 0;
@@ -16,15 +12,25 @@ td.id {
 }
 
 .config-list .running {
-	font-weight: bold;
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .strike {
 	text-decoration: line-through;
 }
 
-.fixed-button {
+.fixed-button, .fixed-button-right {
 	min-width: 5.5em;
+}
+
+.fixed-button .fa {
+	margin-right: 0.5em;
+}
+
+.fixed-button-right .fa {
+	margin-right: 0em;
+	margin-left: 0.5em;
 }
 
 pre.log {

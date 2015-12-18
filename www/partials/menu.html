@@ -11,13 +11,15 @@
 	<ul class="nav navbar-nav">
 	  <li><a href="#/logs/">Logs</a></li>
 	</ul>
-	<div class="nav navbar-nav navbar-right" ng-controller="queueController">
-	  <button ng-click="control.unpause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused">
-		<span class="fa fa-play"></span>
-	  </button>
-	  <button ng-click="control.pause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
-		<span class="fa fa-pause"></span>
-	  </button>&nbsp;&nbsp;&nbsp;
+	<div class="nav navbar-nav navbar-right">
+	  <div ng-controller="queueController" style="padding-right: 14px">
+	    <button ng-click="control.unpause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused">
+		  <span class="fa fa-play"></span>
+	    </button>
+	    <button ng-click="control.pause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
+		  <span class="fa fa-pause"></span>
+	    </button>
+	  </div>
 	</div>
   </div>
 </div>
