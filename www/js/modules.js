@@ -9,7 +9,7 @@
 	function linkHeaderParser() {
 		return {
 			parse: function(header) {
-				if (header.length === 0) {
+				if (!header || header.length === 0) {
 					return {};
 				}
 
