@@ -63,7 +63,7 @@ class BindAgent extends Executor {
 
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
-		this.getLastCommit = () => {
+		this.gitlog = () => {
 			return this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath});
 		}
 
@@ -73,10 +73,10 @@ class BindAgent extends Executor {
 		}
 
 		this.run = () =>
-			this.install().then(() =>
-				this.getLastCommit().then((git) =>
+			this.prepare({force: true}).then(this.install).then(() =>
+				this.gitlog().then((gitlog) =>
 					this.startBind().then((res) =>
-						Object.assign(res, { commit: git.stdout }))));
+						Object.assign(res, { commit: gitlog.stdout }))));
 	}
 }
 
