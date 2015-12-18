@@ -73,7 +73,7 @@ function plotter(e) {
 	ctx.fillStyle ='rgba(44,224,44,1.0)';
 
 	var sets = e.allSeriesPoints;
-	for (p = 0 ; p < sets[0].length; p++) {
+	for (var p = 0 ; p < sets[0].length; p++) {
 		ctx.beginPath();
 		var topY = area.h * sets[1][p].y_top + area.y;
 		var bottomY = area.h * sets[1][p].y_bottom + area.y;
@@ -102,7 +102,7 @@ app.controller('runDygraphController',
 				xlabel: 'Date / Time',
 				ylabel: 'Queries per second',
 				height: 500,
-				yAxisLabelWidth: 70,
+				axes: { y: { axisLabelWidth: 70 } },
 				labelsSeparateLines: true,
 				dateWindow: [Date.now() - 2 * 86400000, Date.now()],
 				plotter: plotter,
@@ -213,6 +213,9 @@ app.controller('configEditController',
 
 		function setDefaults() {
 			var data = $scope.config = $scope.config || {};
+
+			data.flags = data.flags || {};
+
 			var args = data.args = data.args || {};
 			args.configure = args.configure || [];
 			args.make = args.make || [];
