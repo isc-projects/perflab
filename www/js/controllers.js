@@ -91,7 +91,10 @@ app.controller('runDygraphController',
 				errorBars: true, sigma: 1, showRangeSelector: false,
 				labels: ['x', 'Average', 'Range'],
 				legend: 'follow',
+				xlabel: 'Date / Time',
 				ylabel: 'Queries per second',
+				height: 500,
+				yAxisLabelWidth: 70,
 				labelsSeparateLines: true,
 				dateWindow: [Date.now() - 2 * 86400000, Date.now()],
 				plotter: plotter,
@@ -115,7 +118,7 @@ app.controller('runDygraphController',
 					}
 				},
 				pointClickCallback: function(e, point) {
-					var id = $scope.ids[point.idx];
+					var id = $scope.graph.data[point.idx].id;
 					$location.path('/run/test/' + id + '/');
 					$route.reload();
 				}
@@ -136,13 +139,9 @@ app.controller('runDygraphController',
 					[s.average, s.stddev],
 					[(s.min + s.max) / 2, (s.max - s.min) / 2],
 				];
-				r.id = run._id;
+				r.id = run._id;		// slight hack - store ID as an array property
 				return r;
 			}).sort(function(a, b) { return a[0] - b[0] });
-
-			$scope.ids = $scope.graph.data.map(function(m) {
-				return m.id;
-			});
 		}).catch(Notify.danger);
 	}
 ]);
