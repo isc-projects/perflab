@@ -77,9 +77,15 @@ function runTest(agent, run_id)
 				.then(() => db.updateStatsByRunId(run_id)));
 }
 
+//
 // invokes the given agent, and captures any output both for storing
 // one line at a time into the DB for real-time viewing, and also
 // accumulates the entire output and adds that output to the result
+//
+// it's this output that gets stored in the database, because the
+// output accumulated in Executor._run is only captured for one
+// build stage at a time
+//
 function execute(agent) {
 	let stdout = '', stderr = '';
 

@@ -2,10 +2,9 @@
 
 'use strict';
 
-let Promise = require('bluebird'),
-	fs = Promise.promisifyAll(require('fs-extra')),
-	Executor = require('executor'),
-	EventEmitter = require('events');
+let Executor = require('./executor'),
+	Promise = require('bluebird'),
+	fs = Promise.promisifyAll(require('fs-extra'));
 
 // somewhat complicated class that's capable of running the following
 // sequence, with dependency checking and user-specified settings

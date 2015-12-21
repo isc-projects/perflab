@@ -15,12 +15,22 @@ class Executor extends EventEmitter {
 		let depPath = '.';
 		let child;
 
+		// sets where to store dependency-met flag files
 		this._depPath = (path) => {
 			let old = depPath;
 			depPath = path;
 			return old;
 		};
 
+		//
+		// adds a method with the name in 'stage' to the current object,
+		// which optionally depends on the stage named 'prev' having
+		// already been completed.
+		//
+		// by building a chain of such targets and invoking the last in
+		// the chain, the chain is recursively traversed, starting with
+		// the earliest "non-met" dependency
+		//
 		this._target = (stage, prev, action) => {
 			this[stage] = (opts) => {
 				let guard = `${depPath}/.dep/${stage}`;
@@ -41,6 +51,11 @@ class Executor extends EventEmitter {
 			}
 		}
 
+		//
+		// spawn the given command with the given arguments and options,
+		// but catches the output and emits those to anybody whose
+		// listening
+		//
 		this._run = (cmd, args, opts) => {
 			if (child) {
 				throw new Error("child still running");
@@ -69,11 +84,20 @@ class Executor extends EventEmitter {
 			});
 		}
 
+		//
+		// as above, but automatically runs it via an SSH command
+		//
 		this._ssh = (host, cmd, args) => {
 			let _args = [host, cmd].concat(args);
 			return this._run('/usr/bin/ssh', _args);
 		}
 
+		//
+		// used to invoke daemons that fork, so instead of waiting
+		// for the program to exit, it waits for a certain line
+		// matching the given regex to appear in the daemon's
+		// stderr output
+		//
 		this._runWatch = (cmd, args, opts, match) => {
 			if (child) {
 				throw new Error("child still running");
@@ -107,6 +131,7 @@ class Executor extends EventEmitter {
 			});
 		}
 
+		// uses Node's process manager to kill the child process
 		this.stop = () => {
 			this.emit('cmd', `Stopping ${progname}`);
 			if (child) {

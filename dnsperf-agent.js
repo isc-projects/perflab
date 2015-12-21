@@ -2,7 +2,7 @@
 
 'use strict';
 
-let Executor = require('executor');
+let Executor = require('./executor');
 
 class DNSPerfAgent extends Executor {
 
