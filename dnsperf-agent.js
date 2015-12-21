@@ -12,6 +12,7 @@ class DNSPerfAgent extends Executor {
 		let args = config.args = config.args || {};
 		let queryset = config.queryset || 'default';
 
+		// look for the QPS value in the output and return it
 		var getCount = (results) => {
 			if (results.status === 0 && results.stdout) {
 				var match = results.stdout.match(/Queries per second:\s+(.*)$/m);
@@ -22,6 +23,8 @@ class DNSPerfAgent extends Executor {
 			return results;
 		}
 
+		// start 'dnsperf' passing it the given query set
+		// NB: remote test machine currently hard-coded, needs paramterising
 		this.run = () => {
 			let args = ['-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
 			args = args.concat(args.dnsperf || []);

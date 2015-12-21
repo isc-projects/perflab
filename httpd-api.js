@@ -7,6 +7,9 @@ let Database = require('./database.js'),
 
 let db = new Database(settings.mongoUrl);
 
+// calls the given function, converting the result into
+// JSON, or returning an HTTP error response if there's
+// no data
 function handler(f) {
 	return function(req, res, next) {
 		var ok = (data) => data ? res.json(data) : res.error();
@@ -16,6 +19,10 @@ function handler(f) {
 	}
 }
 
+// as above, but looks at the 'skip' and 'limit' parameters
+// and passes those to the callback (after any bound parameters)
+// and then adds 'Link:' headers to the result allowing the
+// client to automatically find the next page of data
 function pageHandler(f) {
 	return function(req, res, next) {
 		var url = parseUrl(req);
@@ -49,7 +56,9 @@ function pageHandler(f) {
 	}
 }
 
-// appends an implicit request body arg to the parameters
+// as 'handler' above, but takes any JSON that was passed
+// in the request body and adds it as a parameter to those
+// passed to the callback
 function bodyHandler(f) {
 	return function(req, res, next) {
 		var args = [].slice.call(arguments, 3);
