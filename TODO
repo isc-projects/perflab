@@ -12,6 +12,7 @@ pull from source.isc.org for testing
 - [DONE] move WebSocket code into httpd / connect daemon
 - [DONE] warn on edit of config with associated runs
 - [DONE] fix duplicate IDs in log view
+- [DONE] allow selection of whether to "git checkout" before each run
 - [LATER] comparative graphs for different configs
 - [LATER] long term chart of different releases
 - [LATER] Login system
