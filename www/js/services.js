@@ -3,6 +3,11 @@ var app = angular.module('perflabApp');
 
 "use strict";
 
+//
+// uses a WebSocket to receive info about updates to tables from a
+// MongoDB oplog tail, and allows listeners to subscribe to those
+// updates
+//
 app.service('OpLog',
 	[ '$rootScope', '$timeout', 'Notify',
 	function($rootScope, $timeout, Notify) {
@@ -34,6 +39,10 @@ app.service('OpLog',
 	}
 ]);
 
+//
+// service that exposes the global "system paused" state, and
+// monitors for changes to that state (via OpLog)
+//
 app.service('SystemControl',
 	['$http', 'Notify', 'OpLog',
 	function($http, Notify, OpLog) {
@@ -65,6 +74,11 @@ app.service('SystemControl',
 	}
 ]);
 
+//
+// service that retrieves the last lines of log data stored in
+// the 'log' collection over REST, then uses OpLog to watch for
+// real-time changes to the collection.
+//
 app.service('LogWatcher',
 	['$rootScope', '$http', 'OpLog', 'Notify',
 	function($rootScope, $http, OpLog, Notify) {
@@ -99,6 +113,13 @@ app.service('LogWatcher',
 	}
 ]);
 
+//
+// service that retrieves the current set of configurations and related
+// queue items, then uses OpLog to monitor for changes to those.
+//
+// also supports changing the queue 'enabled' and 'repeat' state for
+// individual configurations
+//
 app.service('Configs',
 	['$http', 'Notify', 'OpLog',
 	function($http, Notify, OpLog) {

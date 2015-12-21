@@ -6,6 +6,9 @@
 		.factory('linkHeaderParser', linkHeaderParser)
 		.factory('Notify', Notify);
 
+	//
+	// a parser for 'Link:' HTTP headers, per RFC 5988
+	//
 	function linkHeaderParser() {
 		return {
 			parse: function(header) {
@@ -32,9 +35,19 @@
 		}
 	}
 
+	//
+	// popups an on-screen notification, that can either be a string
+	// or an error message automatically extracte from an Error object
+	// or $http response.
+	//
+	// with the latter, it's particularly well-suited for catching errors
+	// from Promises, e.g.:
+	//
+	//   $http.get(...).catch(Notify.danger)
+	//
 	function Notify() {
 		$.notifyDefaults({
-		placement: { from: 'bottom', align: 'right' },
+			placement: { from: 'bottom', align: 'right' },
 			newest_on_top: true,
 			allow_dismiss: false,
 			animate: {
@@ -57,6 +70,7 @@
 		}
 	
 		return {
+			notify: notify,
 			danger: function(e)	{ notify(e, 'danger'); },
 			info: function(e)	{ notify(e, 'info'); }
 		}
