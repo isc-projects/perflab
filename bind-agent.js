@@ -72,8 +72,8 @@ class BindAgent extends Executor {
 			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m);
 		}
 
-		this.run = () =>
-			this.prepare({force: true}).then(this.install).then(() =>
+		this.run = (opts) =>
+			this.prepare({force: !!(opts && opts.checkout)}).then(this.install).then(() =>
 				this.gitlog().then((gitlog) =>
 					this.startBind().then((res) =>
 						Object.assign(res, { commit: gitlog.stdout }))));
