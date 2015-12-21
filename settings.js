@@ -1,7 +1,12 @@
+'use strict';
+
+let schema = 'perflab';
+
 module.exports = {
 	path:		'/home/ray/bind-perflab',
 	mongo: {
-		url:	'mongodb://localhost/perflab',
+		schema,
+		url:	`mongodb://localhost/${schema}`,
 		oplog:	'mongodb://localhost/local'
 	},
 	repo: {

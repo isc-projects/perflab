@@ -2,20 +2,21 @@
 
 'use strict';
 
-let http = require('http'),
+let settings = require('./settings'),
+	http = require('http'),
 	connect = require('connect'),
 	quip = require('quip'),
 	dispatch = require('dispatch'),
 	serveStatic = require('serve-static'),
 	bodyParser = require('body-parser'),
-	WebSocketServer = require('ws').Server,
-	MongoOplog = require('mongo-oplog'),
-	settings = require('./settings');
+	OpLog = require('./httpd-oplog');
 
-// create HTTP server with WebSocket 'Upgrade' feature
+// create HTTP server
 let app = connect();
 let server = http.createServer(app);
-let wss = new WebSocketServer({server});
+
+// attach the OpLog websocket to the server via HTTP Upgrade:
+let oplog = new OpLog({server});
 
 // add useful JSON etc methods from 'quip' library
 app.use(quip);
@@ -34,23 +35,3 @@ app.use(dispatch({
 }));
 
 server.listen(8000);
-
-// - WebSocket-based oplog notification -----------
-
-wss.broadcast = (msg) => {
-	let json = JSON.stringify(msg);
-	wss.clients.forEach((c) => c.send(json));
-}
-
-function sendOplog(doc) {
-    wss.broadcast({
-        op: doc.op,
-        ns: doc.ns.match(/\.(\w+)$/)[1],
-        doc: doc.o
-    });
-}
-
-let oplog = MongoOplog(settings.mongo.oplog, {ns: 'perflab'}).tail();
-oplog.on('insert', sendOplog);
-oplog.on('update', sendOplog);
-oplog.on('delete', sendOplog);
