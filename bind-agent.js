@@ -2,7 +2,8 @@
 
 'use strict';
 
-let Executor = require('./executor'),
+let settings = require('./settings'),
+	Executor = require('./executor'),
 	Promise = require('bluebird'),
 	fs = Promise.promisifyAll(require('fs-extra'));
 
@@ -20,16 +21,19 @@ let Executor = require('./executor'),
 //
 class BindAgent extends Executor {
 
-	constructor(config, perfPath, repo) {
+	constructor(config) {
 		super("BIND");
 
 		config.args = config.args || {};
 		config.options = config.options || "";
 		config.global = config.global || "";
 
-		let path = perfPath + '/tests/' + config._id;
-		let buildPath = path + '/build';
-		let runPath = path + '/run';
+		let path = settings.path;
+		let repo = settings.repo.bind9;
+
+		let testPath = path + '/tests/' + config._id;
+		let buildPath = testPath + '/build';
+		let runPath = testPath + '/run';
 		let etcPath = runPath + '/etc';
 		let zonePath = runPath + '/zones';
 
@@ -44,12 +48,12 @@ class BindAgent extends Executor {
 
 		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
-		this._depPath(path);
+		this._depPath(testPath);
 
 		// empties the work directory, then creates the necessary
 		// subdirectories and 'include' files for this configuration
 		this._target('prepare', '', () =>
-			fs.emptyDirAsync(path)
+			fs.emptyDirAsync(testPath)
 				.then(createEtc)
 				.then(createRun)
 				.then(createBuild)

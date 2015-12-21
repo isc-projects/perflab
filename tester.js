@@ -4,11 +4,10 @@
 
 let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
-	DNSPerfAgent = require('./dnsperf-agent.js'),
-	settings = require('./settings');
+	DNSPerfAgent = require('./dnsperf-agent.js');
 
 try {
-	var db = new Database(settings.mongoUrl);		// NB: hoisted - no 'let'
+	var db = new Database();			// NB: hoisted - no 'let'
 	runQueue();
 } catch (e) {
 	console.error('catch: ' + e);
@@ -45,12 +44,12 @@ function doFirstQueueEntry() {
 // -recursively starts a number of iterations of the test client
 function runConfig(config)
 {
-	let bind = new BindAgent(config, settings.perfPath, settings.repoUrl);
+	let bind = new BindAgent(config);
 
 	return runDaemon(bind, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
 		return (function loop() {
-			let dnsperf = new DNSPerfAgent(config, settings.perfPath);
+			let dnsperf = new DNSPerfAgent(config);
 			let res = runTest(dnsperf, run_id).catch(console.error);
 			return (--iter > 0) ? res.then(loop) : res;
 		})();

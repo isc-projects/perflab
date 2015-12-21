@@ -2,10 +2,9 @@
 
 let Database = require('./database.js'),
 	parseUrl = require('parseurl'),
-	querystring = require('querystring'),
-	settings = require('./settings');
+	querystring = require('querystring');
 
-let db = new Database(settings.mongoUrl);
+let db = new Database();
 
 // calls the given function, converting the result into
 // JSON, or returning an HTTP error response if there's

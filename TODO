@@ -18,6 +18,7 @@ pull from source.isc.org for testing
 - refactor DB 'query' method so it doesn't always have to reconnect
 - make test SSH host a setting
 - refactor guard code in executor.js
+- move all $http code into Angular "Services"
 - [LATER] comparative graphs for different configs
 - [LATER] long term chart of different releases
 - [LATER] Login system

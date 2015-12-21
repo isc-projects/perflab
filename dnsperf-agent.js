@@ -2,12 +2,16 @@
 
 'use strict';
 
-let Executor = require('./executor');
+let settings = require('./settings'),
+	Executor = require('./executor');
 
 class DNSPerfAgent extends Executor {
 
-	constructor(config, path) {
+	constructor(config) {
 		super("dnsperf");
+
+		let path = settings.path;
+		let host = settings.hosts.tester;
 
 		let args = config.args = config.args || {};
 		let queryset = config.queryset || 'default';
@@ -28,7 +32,7 @@ class DNSPerfAgent extends Executor {
 		this.run = () => {
 			let args = ['-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
 			args = args.concat(args.dnsperf || []);
-			return this._ssh('localhost', '/usr/bin/dnsperf', args).then(getCount);
+			return this._ssh(host, '/usr/bin/dnsperf', args).then(getCount);
 		}
 	}
 }

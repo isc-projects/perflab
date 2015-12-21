@@ -50,7 +50,7 @@ function sendOplog(doc) {
     });
 }
 
-let oplog = MongoOplog(settings.oplogUrl, {ns: 'perflab'}).tail();
+let oplog = MongoOplog(settings.mongo.oplog, {ns: 'perflab'}).tail();
 oplog.on('insert', sendOplog);
 oplog.on('update', sendOplog);
 oplog.on('delete', sendOplog);

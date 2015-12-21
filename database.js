@@ -2,7 +2,8 @@
 
 'use strict';
 
-let MongoClient = require('mongodb'),
+let settings = require('./settings'),
+	MongoClient = require('mongodb'),
 	ObjectID = MongoClient.ObjectID;
 
 // map-reduce functions for calculating statistics on test runs
@@ -52,7 +53,9 @@ function test_stats_finalize(key, value) {
 // wrapper class for all database access methods
 //
 class Database {
-	constructor (url) {
+	constructor () {
+
+		let url = settings.mongo.url;
 
 		let oid = (id) => (id instanceof ObjectID) ? id : ObjectID.createFromHexString(id);
 
