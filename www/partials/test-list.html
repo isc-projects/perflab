@@ -22,8 +22,9 @@
 			</tbody>
 		  </table>
 		</div>
-		<div class="panel-body" ng-show="run.stdout"><pre>{{run.stdout}}</pre></div>
-		<div class="panel-body" ng-show="run.stderr"><pre>{{run.stderr}}</pre></div>
+		<div class="panel-body" ng-show="run.commit"><pre>{{run.commit}}</pre></div>
+		<div class="panel-body" ng-show="run.stdout"><pre class="scroll">{{run.stdout}}</pre></div>
+		<div class="panel-body" ng-show="run.stderr"><pre class="scroll">{{run.stderr}}</pre></div>
 	  </div>
 	</div>
   </div>

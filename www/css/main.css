@@ -20,6 +20,11 @@ body {
 	text-decoration: line-through;
 }
 
+.scroll {
+	max-height: 600px;
+	overflow-y: auto;
+}
+
 .fixed-button, .fixed-button-right {
 	min-width: 5.5em;
 }
