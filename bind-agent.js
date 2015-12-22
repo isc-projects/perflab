@@ -28,6 +28,8 @@ class BindAgent extends Executor {
 		config.options = config.options || "";
 		config.global = config.global || "";
 
+		let rebuild = !!(config.flags && config.flags.checkout);
+
 		let path = settings.path;
 		let repo = settings.repo.bind9;
 
@@ -99,7 +101,7 @@ class BindAgent extends Executor {
 		// commit message and runs BIND, adding the commit message to the
 		// BIND result output
 		this.run = (opts) =>
-			this.prepare({force: !!(opts && opts.checkout)}).then(this.install).then(() =>
+			this.prepare({force: rebuild}).then(this.install).then(() =>
 				this.gitlog().then((gitlog) =>
 					this.startBind().then((res) =>
 						Object.assign(res, { commit: gitlog.stdout }))));
