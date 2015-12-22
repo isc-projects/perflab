@@ -158,7 +158,16 @@ app.service('Configs',
 			return getConfigs().then(merge);
 		}
 
+		try {
+			var audio = new Audio('../sounds/Robot_blip-Marianne_Gagnon-120342607.mp3');
+		} catch (e) {
+			// ignored
+		}
+
 		function updateQueue() {
+			if (audio) {
+				audio.play();
+			}
 			return getQueue().then(merge);
 		}
 
