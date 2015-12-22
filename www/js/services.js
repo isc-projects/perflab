@@ -158,8 +158,10 @@ app.service('Configs',
 			return getConfigs().then(merge);
 		}
 
-		function updateQueue() {
-			Beeper.play();
+		function updateQueue(event, doc) {
+			if (doc && doc.$set && doc.$set.completed) {
+				Beeper.play();
+			}
 			return getQueue().then(merge);
 		}
 
