@@ -121,8 +121,8 @@ app.service('LogWatcher',
 // individual configurations
 //
 app.service('Configs',
-	['$http', 'Notify', 'OpLog',
-	function($http, Notify, OpLog) {
+	['$http', 'Notify', 'Beeper', 'OpLog',
+	function($http, Notify, Beeper, OpLog) {
 
 		var configs = [], queue = [];
 		var confById = {};
@@ -158,16 +158,8 @@ app.service('Configs',
 			return getConfigs().then(merge);
 		}
 
-		try {
-			var audio = new Audio('../sounds/Robot_blip-Marianne_Gagnon-120342607.mp3');
-		} catch (e) {
-			// ignored
-		}
-
 		function updateQueue() {
-			if (audio) {
-				audio.play();
-			}
+			Beeper.play();
 			return getQueue().then(merge);
 		}
 

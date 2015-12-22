@@ -259,4 +259,10 @@ app.controller('configEditController',
 	}
 ]);
 
+app.controller('beepController', ['$scope', 'Beeper',
+	function($scope, Beeper) {
+		$scope.beeper = Beeper;
+	}
+]);
+
 })();

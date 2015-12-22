@@ -1,5 +1,3 @@
-pull from source.isc.org for testing
-
 - [DONE] put projection on run list output (and other lists?)
 - [DONE] pagination on run lists
 - [DONE] extract last git commit log and store in 'run' table
@@ -14,8 +12,9 @@ pull from source.isc.org for testing
 - [DONE] fix duplicate IDs in log view
 - [DONE] allow selection of whether to "git checkout" before each run
 - [DONE] agents get settings from settings.js, not params
+- ensure MongoDB indexes are created on startup
 - mark all tasks as "not running" on startup
-- refactor DB 'query' method so it doesn't always have to reconnect
+- [maybe] refactor DB 'query' method so it doesn't always have to reconnect
 - [DONE] make test SSH host a setting
 - refactor guard code in executor.js
 - move all $http code into Angular "Services"
