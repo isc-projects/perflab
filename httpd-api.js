@@ -20,12 +20,11 @@ function handler(f) {
 
 // as above, but looks at the 'skip' and 'limit' parameters
 // and passes those to the callback (after any bound parameters)
-// and then adds 'Link:' headers to the result allowing the
-// client to automatically find the next page of data
 function pageHandler(f) {
 	return function(req, res, next) {
 		var url = parseUrl(req);
 		var query = querystring.parse(url.query);
+		var ok = (data) => data ? res.json(data) : res.error();
 		var err = (e) => res.error(e.message);
 		var args = [].slice.call(arguments, 3);
 
@@ -34,24 +33,7 @@ function pageHandler(f) {
 		if (limit < 0) { limit = 0; }
 		args.push(skip, limit);
 
-		function link(skip, limit, rel) {
-			return `<?skip=${skip}&limit=${limit}>; rel="${rel}"`;
-		}
-
-		return f.apply(this, args).then((data) => {
-			var links = [];
-			if (skip > 0) {
-				links.push(link(0, limit, "first"));
-				links.push(link(Math.max(0, skip - limit), limit, "prev"));
-			}
-			if (data.length >= limit) {
-				links.push(link(skip + limit, limit, "next"));
-			}
-			if (links.length) {
-				res.headers({Link: links.join(', ')});
-			}
-			return res.json(data)
-		}, err);
+		return f.apply(this, args).then(ok, err);
 	}
 }
 

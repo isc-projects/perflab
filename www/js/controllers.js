@@ -25,31 +25,40 @@ app.controller('queueController',
 ]);
 
 app.controller('runListController',
-	['$scope', '$http', '$route', '$location',
-	 '$routeParams', 'linkHeaderParser', 'Notify',
-	 'ConfigResource',
-	function($scope, $http, $route, $location, $routeParams, lhp, Notify, ConfigResource) {
+	['$scope', '$route', '$routeParams', '$location',
+	 'ConfigResource', 'RunResource',
+	function($scope, $route, $routeParams, $location,
+			 ConfigResource, RunResource) {
 
 		var id = $routeParams.config_id;
-
-		var search = $location.search();
-		$scope.skip = search.skip || 0;
-		$scope.limit = search.limit || 15;
-		$scope.page = Math.floor($scope.skip / $scope.limit) + 1;
-
 		$scope.config = ConfigResource.get({id: id});
 
-		var url = ['/api/config/run/', id, '/?',
-				   'skip=', $scope.skip, '&', 'limit=', $scope.limit
-				  ].join('');
+		var search = $location.search();
+		var skip = +search.skip || 0;
+		var limit = +search.limit || 0;
+		if (limit <= 0) {
+			limit = 15;
+		}
+		$scope.page = Math.floor(skip / limit) + 1;
 
-		$http.get(url).then(function(res) {
-			$scope.runs = res.data;
-			$scope.link = lhp.parse(res.headers('link'));
-		}).catch(Notify.danger);
+		$scope.runs = RunResource.query({config_id: id, skip: skip, limit: limit});
+		$scope.runs.$promise.then(function(data) {
+			var link = {};
+			if (skip > 0) {
+				link.first = makelink(0, limit);
+				link.prev = makelink(Math.max(0, skip - limit), limit);
+			}
+			if (data.length >= limit) {
+				link.next = makelink(skip + limit, limit);
+			}
+			$scope.link = link;
+		});
+
+		function makelink(skip, limit) {
+			return "skip=" + skip + "&limit=" + limit;
+		}
 
 		$scope.search = function(arg) {
-			arg = arg.substr(1);
 			$location.search(arg);
 			$route.reload();
 		};

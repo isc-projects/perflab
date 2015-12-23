@@ -3,38 +3,8 @@
 	"use strict";
 
 	angular.module('isc.modules', [])
-		.factory('linkHeaderParser', linkHeaderParser)
 		.factory('Notify', Notify)
 		.factory('Beeper', ['$rootScope', Beeper]);
-
-	//
-	// a parser for 'Link:' HTTP headers, per RFC 5988
-	//
-	function linkHeaderParser() {
-		return {
-			parse: function(header) {
-				if (!header || header.length === 0) {
-					return {};
-				}
-
-				// Split parts by comma
-				var parts = header.split(',');
-
-				// Parse each part into a named link
-				var links = {};
-				for (var i = 0, n = parts.length; i < n; ++i) {
-					var section = parts[i].split(';');
-					if (section.length !== 2) {
-						throw new Error("section could not be split on ';'");
-					}
-					var url = section[0].replace(/<(.*)>/, '$1').trim();
-					var name = section[1].replace(/rel="(.*)"/, '$1').trim();
-					links[name] = url;
-				}
-				return links;
-			}
-		}
-	}
 
 	//
 	// popups an on-screen notification, that can either be a string
