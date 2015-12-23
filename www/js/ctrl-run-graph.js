@@ -87,18 +87,21 @@ function plotter(e) {
 }
 
 function formatter(v, o, s, d, r, c) {
+	var dvf = Dygraph.dateValueFormatter;
+	var nvf = Dygraph.numberValueFormatter;
+
 	if (s === 'x') {
-		return Dygraph.dateValueFormatter.apply(this, arguments);
+		return dvf.apply(this, arguments);
 	} else if (s === 'Average') {
 		var range = d.getValue(r, c);
-		return Dygraph.numberValueFormatter.call(this, range[0], o, s, d, r, c)
+		return nvf.call(this, range[0], o, s, d, r, c)
 			   + '&nbsp;±&nbsp;' +
-			   Dygraph.numberValueFormatter.call(this, range[1], o, s, d, r, c);
+			   nvf.call(this, range[1], o, s, d, r, c);
 	} else {
 		var range = d.getValue(r, c);
-		return Dygraph.numberValueFormatter.call(this, range[0] - range[1], o, s, d, r, c)
+		return nvf.call(this, range[0] - range[1], o, s, d, r, c)
 			   + '&nbsp;&dash;&nbsp;' +
-			   Dygraph.numberValueFormatter.call(this, range[0] + range[1], o, s, d, r, c);
+			   nvf.call(this, range[0] + range[1], o, s, d, r, c);
 	}
 }
 
