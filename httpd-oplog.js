@@ -22,11 +22,15 @@ class OpLog {
 		}
 	
 		let send = (doc) => {
-    		broadcast({
-        		op: doc.op,
+			let msg = {
+				op: doc.op,
         		ns: doc.ns.match(/\.(\w+)$/)[1],
         		doc: doc.o
-    		});
+			};
+			if (doc.op === 'u' && doc.o2 && doc.o2._id) {
+				msg.doc._id = doc.o2._id;
+			}
+			broadcast(msg);
 		}
 
 		oplog.on('insert', send);
