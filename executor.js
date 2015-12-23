@@ -33,20 +33,21 @@ class Executor extends EventEmitter {
 		//
 		this._target = (stage, prev, action) => {
 			this[stage] = (opts) => {
-				let guard = `${depPath}/.dep/${stage}`;
-				if ((opts && opts.force) || !fs.existsSync(guard)) {
-					let before = prev ? this[prev].bind(this) : Promise.resolve;
-					let task = () => {
-						this.emit('targetStart', stage);
-						return action();
-					};
-					let after = (arg) => {
-						this.emit('targetFinish', stage);
-						return stage === 'run' ? Promise.resolve(arg) : fs.outputFileAsync(guard, '');
-					};
-					return before().then(task).then(after);
-				} else {
+
+				let force = !!(opts && opts.force);
+
+				let dep = `${depPath}/.dep/${stage}`;
+				let checkDependencyMet = () => fs.existsSync(dep);
+				let setDependencyMet = () => fs.outputFileAsync(dep, '');
+
+				if (checkDependencyMet() && !force) {
 					return Promise.resolve();
+				} else {
+					// "before" invokes any previous stage recursively
+					let before = prev ? this[prev].bind(this) : Promise.resolve;
+					let task = action.bind(this);
+					let after = setDependencyMet;
+					return before().then(task).then(after);
 				}
 			}
 		}
@@ -137,6 +138,10 @@ class Executor extends EventEmitter {
 			if (child) {
 				child.kill();
 			}
+		}
+
+		this.run = () => {
+			throw new Error('Executor "run" method not overloaded');
 		}
 	}
 }
