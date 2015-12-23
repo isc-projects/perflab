@@ -39,7 +39,7 @@ app.controller('runListController',
 
 		$scope.config = ConfigResource.get({id: id});
 
-		var url = ['/api/config/run/', id, '/paged/?',
+		var url = ['/api/config/run/', id, '/?',
 				   'skip=', $scope.skip, '&', 'limit=', $scope.limit
 				  ].join('');
 
@@ -91,7 +91,7 @@ app.controller('configEditController',
 			}).catch(redirectNotify);
 
 			// just used to check if this config has any results
-			$http.get('/api/config/run/' + $scope.id + '/paged/?limit=1').then(function(res) {
+			$http.get('/api/config/run/' + $scope.id + '/?limit=1').then(function(res) {
 				$scope.existing = !!(res.data && res.data.length);
 			});
 		}

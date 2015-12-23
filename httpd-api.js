@@ -30,7 +30,7 @@ function pageHandler(f) {
 		var args = [].slice.call(arguments, 3);
 
 		var skip = +query.skip || 0;
-		var limit = +query.limit || 15;
+		var limit = +query.limit || 0;
 		if (limit < 0) { limit = 0; }
 		args.push(skip, limit);
 
@@ -75,8 +75,7 @@ module.exports = {
 		'DELETE /:id':			handler(db.deleteConfigById),
 		'PUT /:id':				bodyHandler(db.updateConfig),
 		'POST /':				bodyHandler(db.insertConfig),
-		'GET /run/:id/':		handler(db.getRunsByConfigId),
-		'GET /run/:id/paged/':	pageHandler(db.getRunsByConfigId)
+		'GET /run/:id/':		pageHandler(db.getRunsByConfigId)
 	},
 	'/run': {
 		'GET /:id':				handler(db.getRunById),
