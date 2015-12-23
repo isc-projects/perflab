@@ -26,13 +26,11 @@ app.controller('queueController',
 
 app.controller('runListController',
 	['$scope', '$route', '$routeParams', '$location',
-	 'ConfigResource', 'RunResource',
+	 'ConfigResource', 'RunResource', 'Notify',
 	function($scope, $route, $routeParams, $location,
-			 ConfigResource, RunResource) {
+			 ConfigResource, RunResource, Notify) {
 
 		var id = $routeParams.config_id;
-		$scope.config = ConfigResource.get({id: id});
-
 		var search = $location.search();
 		var skip = +search.skip || 0;
 		var limit = +search.limit || 0;
@@ -40,6 +38,9 @@ app.controller('runListController',
 			limit = 15;
 		}
 		$scope.page = Math.floor(skip / limit) + 1;
+
+		$scope.config = ConfigResource.get({id: id});
+		$scope.config.$promise.catch(Notify.danger);
 
 		$scope.runs = RunResource.query({config_id: id, skip: skip, limit: limit});
 		$scope.runs.$promise.then(function(data) {
@@ -52,7 +53,7 @@ app.controller('runListController',
 				link.next = makelink(skip + limit, limit);
 			}
 			$scope.link = link;
-		});
+		}).catch(Notify.danger);
 
 		function makelink(skip, limit) {
 			return "skip=" + skip + "&limit=" + limit;
@@ -72,9 +73,11 @@ app.controller('testListController',
 		var id = $routeParams.run_id;
 		$scope.run = RunResource.get({id: id});
 		$scope.run.$promise.then(function() {
-			$scope.config = ConfigResource.get({id: $scope.run.config_id});
-		});
+			return $scope.config = ConfigResource.get({id: $scope.run.config_id});
+		}).catch(Notify.danger);
+
 		$scope.tests = TestResource.query({run_id: id});
+		$scope.tests.$promise.catch(Notify.danger);
 	}
 ]);
 
@@ -82,14 +85,17 @@ app.controller('testDetailController',
 	['$scope', '$routeParams', 'TestResource',
 	function($scope, $routeParams, TestResource) {
 		$scope.test = TestResource.get({id: $routeParams.test_id});
+		$scope.tests.$promise.catch(Notify.danger);
 	}
 ]);
 
 app.controller('configEditController',
-	['$scope', '$http', '$route', '$location', '$routeParams', 'Notify',
-	function($scope, $http, $route, $location, $routeParams, Notify) {
+	['$scope', '$http', '$route', '$location', '$routeParams',
+	 'Notify', 'RunResource', 'ConfigResource',
+	function($scope, $http, $route, $location, $routeParams,
+			 Notify, RunResource, ConfigResource) {
 
-		$scope.id = $routeParams.id;
+		var id = $scope.id = $routeParams.id;
 
 		if ($scope.id === undefined) {
 			setDefaults();
@@ -100,9 +106,10 @@ app.controller('configEditController',
 			}).catch(redirectNotify);
 
 			// just used to check if this config has any results
-			$http.get('/api/config/run/' + $scope.id + '/?limit=1').then(function(res) {
-				$scope.existing = !!(res.data && res.data.length);
-			});
+			var results = RunResource.query({config_id: id, limit: 1})
+			results.$promise.then(function(data) {
+				$scope.existing = !!(data && data.length);
+			}).catch(Notify.danger);
 		}
 
 		function redirectNotify(e) {
