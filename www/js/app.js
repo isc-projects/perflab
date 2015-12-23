@@ -1,5 +1,5 @@
 var app = angular.module('perflabApp',
-	['ngRoute', 'ngAnimate', 'ngSanitize', 'dygraphs-directive', 'isc.modules']);
+	['ngRoute', 'ngAnimate', 'ngSanitize', 'dygraphs-directive', 'isc.modules', 'isc.resources']);
 
 app.config(['$routeProvider',
 	function($routeProvider) {
@@ -39,4 +39,11 @@ app.config(['$routeProvider',
 			.otherwise({
 				redirectTo: '/config/'
 			});
-}]);
+	}
+]);
+
+app.config(['$resourceProvider',
+	function($resourceProvider) {
+		$resourceProvider.defaults.stripTrailingSlashes = false;
+	}
+]);
