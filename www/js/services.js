@@ -121,8 +121,8 @@ app.service('LogWatcher',
 // individual configurations
 //
 app.service('Configs',
-	['$http', 'Notify', 'Beeper', 'OpLog',
-	function($http, Notify, Beeper, OpLog) {
+	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigResource', 'QueueResource',
+	function($http, Notify, Beeper, OpLog, ConfigResource, QueueResource) {
 
 		var configs = [], queue = [];
 		var confById = {};
@@ -141,16 +141,15 @@ app.service('Configs',
 		}
 
 		function getConfigs() {
-			return $http.get('/api/config/').then(function(res) {
+			return ConfigResource.query().$promise.then(function(data) {
 				configs.length = 0;
-				configs.push.apply(configs, res.data);
+				configs.push.apply(configs, data);
 			}).catch(Notify.danger);
 		}
 
 		function getQueue() {
-			return $http.get('/api/queue/').then(function(res) {
-				queue.length = 0;
-				queue.push.apply(queue, res.data);
+			return QueueResource.query().$promise.then(function(data) {
+				queue.push.apply(queue, data);
 			}).catch(Notify.danger);
 		}
 
