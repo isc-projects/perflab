@@ -6,8 +6,9 @@ var app = angular.module('perflabApp');
 
 app.controller('runGraphController',
 	['$scope', '$route', '$routeParams', '$location',
-	 'ConfigResource', 'RunResource',
-	function ($scope, $route, $routeParams, $location, ConfigResource, RunResource) {
+	 'Notify', 'ConfigResource', 'RunResource',
+	function ($scope, $route, $routeParams, $location,
+			  Notify, ConfigResource, RunResource) {
 		var id = $routeParams.config_id;
 		$scope.graph = {
 			data: [],
@@ -50,7 +51,7 @@ app.controller('runGraphController',
 				r.id = run._id;		// slight hack - store ID as an array property
 				return r;
 			}).sort(function(a, b) { return a[0] - b[0] });
-		});
+		}).catch(Notify.danger);
 	}
 ]);
 
