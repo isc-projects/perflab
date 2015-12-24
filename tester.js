@@ -6,9 +6,9 @@ let	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
 	DNSPerfAgent = require('./dnsperf-agent.js');
 
+let db = new Database();
 try {
-	var db = new Database();			// NB: hoisted - no 'let'
-	runQueue();
+	db.createIndexes().then(runQueue);
 } catch (e) {
 	console.error('catch: ' + e);
 }

@@ -69,6 +69,13 @@ class Database {
 				return res;
 			});
 
+		// build required indexes
+		this.createIndexes = () =>
+			query((db) => Promise.all([
+				db.collection('run').createIndex({config_id: 1, created: -1}),
+				db.collection('test').createIndex({run_id: 1, created: 1})
+			]));
+
 		// get every queue entry
 		this.getQueue = () =>
 			query((db) => db.collection('queue').find().toArray());
