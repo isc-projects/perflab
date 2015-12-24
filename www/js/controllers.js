@@ -67,8 +67,8 @@ app.controller('runListController',
 ]);
 
 app.controller('testListController',
-	['$scope', '$routeParams', 'TestResource', 'RunResource', 'ConfigResource',
-	function($scope, $routeParams, TestResource, RunResource, ConfigResource) {
+	['$scope', '$routeParams', 'TestResource', 'RunResource', 'ConfigResource', 'Notify',
+	function($scope, $routeParams, TestResource, RunResource, ConfigResource, Notify) {
 
 		var id = $routeParams.run_id;
 		$scope.run = RunResource.get({id: id});
@@ -82,10 +82,10 @@ app.controller('testListController',
 ]);
 
 app.controller('testDetailController',
-	['$scope', '$routeParams', 'TestResource',
-	function($scope, $routeParams, TestResource) {
+	['$scope', '$routeParams', 'TestResource', 'Notify',
+	function($scope, $routeParams, TestResource, Notify) {
 		$scope.test = TestResource.get({id: $routeParams.test_id});
-		$scope.tests.$promise.catch(Notify.danger);
+		$scope.test.$promise.catch(Notify.danger);
 	}
 ]);
 
