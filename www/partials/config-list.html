@@ -8,7 +8,7 @@
 			<tbody>
 			  <tr ng-repeat="config in configs.all track by config._id" class="config">
 				<td class="running">
-				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-refresh fa-spin' : ''"></span>
+				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-spinner fa-spin' : ''"></span>
 				</td>
 				<td width="100%" class="name">
 				  <span ng-class="config.queue.enabled ? '' : 'strike'">{{config.name}}</span>
@@ -31,7 +31,7 @@
 				</td>
 				<td width="25%" nowrap align="right">
 				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>Graph</a>
-				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-list"></span>List</a>
+				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bars"></span>List</a>
 				  <a href="#/config/{{config._id}}/edit" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>Edit</a>
 				</td>
 			  </tr>

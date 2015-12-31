@@ -16,7 +16,7 @@
 - [DONE] refactor guard code in executor.js
 - [DONE] ensure MongoDB indexes are created on startup
 - make listings and graph watch for real-time updates too
-- move all $http code into Angular "Services"
+- move all $http code into Angular "Services" or "Resources"
 - mark all tasks as "not running" on startup
 - [LATER] refactor DB 'query' method so it doesn't always have to reconnect
 - [LATER] comparative graphs for different configs
