@@ -55,24 +55,25 @@ class Executor extends EventEmitter {
 		//
 		// spawn the given command with the given arguments and options,
 		// but catches the output and emits those to anybody whose
-		// listening
+		// listening (unless opts.quiet)
 		//
 		this._run = (cmd, args, opts) => {
 			if (child) {
 				throw new Error("child still running");
 			}
 			console.log(cmd + ' ' + args.join(' '));
+			opts = opts || {};
 			return new Promise((resolve, reject) => {
 				let stdout = '', stderr = '';
 				child = spawn(cmd, args, opts);
-				this.emit('cmd', cmd + ' ' + args.join(' '));
+				!opts.quiet && this.emit('cmd', cmd + ' ' + args.join(' '));
 				child.stdout.on('data', (data) => {
 					stdout += data;
-					this.emit('stdout', data);
+					!opts.quiet && this.emit('stdout', data);
 				});
 				child.stderr.on('data', (data) => {
 					stderr += data
-					this.emit('stderr', data);
+					!opts.quiet && this.emit('stderr', data);
 				});
 				child.on('exit', (status) => {
 					child = undefined;

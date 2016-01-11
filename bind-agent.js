@@ -86,12 +86,17 @@ class BindAgent extends Executor {
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
 		// does 'git log' to extract last commit message
-		this.gitlog = () => {
-			return this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath});
-		}
+		let gitlog = () => this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath, quiet: true});
+
+		// gets BIND compilation information
+		let bindVersion = () => this._run('./sbin/named', ['-V'], {cwd: runPath, quiet: true});
+
+		// combines 'git log' and 'bind -V' output
+		let getinfo = () => gitlog().then((log) => bindVersion()
+									.then((version) => log.stdout + "\n" + version.stdout))
 
 		// starts BIND
-		this.startBind = () => {
+		let startBind = () => {
 			let args = ['-g', '-p', 8053].concat(config.args.bind || []);
 			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m);
 		}
@@ -102,9 +107,8 @@ class BindAgent extends Executor {
 		// BIND result output
 		this.run = (opts) =>
 			this.prepare({force: rebuild}).then(this.install).then(() =>
-				this.gitlog().then((gitlog) =>
-					this.startBind().then((res) =>
-						Object.assign(res, { commit: gitlog.stdout }))));
+				getinfo().then((info) => startBind().then(
+					(res) => Object.assign(res, { commit: info }))));
 	}
 }
 
