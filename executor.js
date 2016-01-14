@@ -64,17 +64,23 @@ class Executor extends EventEmitter {
 			console.log(cmd + ' ' + args.join(' '));
 			opts = opts || {};
 			return new Promise((resolve, reject) => {
-				let stdout = '', stderr = '';
+
 				child = spawn(cmd, args, opts);
+
 				!opts.quiet && this.emit('cmd', cmd + ' ' + args.join(' '));
+
+				let stdout = '', stderr = '';
+
 				child.stdout.on('data', (data) => {
 					stdout += data;
 					!opts.quiet && this.emit('stdout', data);
 				});
+
 				child.stderr.on('data', (data) => {
 					stderr += data
 					!opts.quiet && this.emit('stderr', data);
 				});
+
 				child.on('exit', (status) => {
 					child = undefined;
 					if (status) {
@@ -106,14 +112,36 @@ class Executor extends EventEmitter {
 			}
 			console.log(cmd + ' ' + args.join(' '));
 			return new Promise((resolve, reject) => {
+
 				let matched = false;
-				let stdout = '', stderr = '';
 				child = spawn(cmd, args, opts);
+
 				this.emit('cmd', cmd + ' ' + args.join(' '));
+
+				// read memory usage periodically (Linux specific)
+				if (child.pid) {
+					let file = '/proc/' + child.pid + '/statm';
+					let timer = setInterval(() => {
+						fs.readFile(file, 'ASCII',
+							(err, data) => {
+								if (!err) {
+									data = data.split(/ /).map(Number);
+									this.emit('mem', data);
+								}
+							}
+						);
+					}, 5000);
+					child.on('error', () => clearInterval(timer));
+					child.on('exit', () => clearInterval(timer));
+				}
+
+				let stdout = '', stderr = '';
+
 				child.stdout.on('data', (data) => {
 					stdout += data;
 					this.emit('stdout', data);
 				});
+
 				child.stderr.on('data', (data) => {
 					stderr += data;
 					this.emit('stderr', data);
@@ -122,6 +150,7 @@ class Executor extends EventEmitter {
 						resolve({stdout, stderr, status: 0});
 					}
 				});
+
 				child.on('exit', (status) => {
 					child = undefined;
 					if (matched) {

@@ -73,7 +73,8 @@ class Database {
 		this.createIndexes = () =>
 			query((db) => Promise.all([
 				db.collection('run').createIndex({config_id: 1, created: -1}),
-				db.collection('test').createIndex({run_id: 1, created: 1})
+				db.collection('test').createIndex({run_id: 1, created: 1}),
+				db.collection('memory').createIndex({run_id: 1, created: 1})
 			]));
 
 		// get every queue entry
@@ -213,6 +214,11 @@ class Database {
 					{_id: mr.results[0]._id},
 					{$set: { stats: mr.results[0].value }}
 				)));
+
+		// stores raw memory usage statistics associated with a run
+		this.insertMemoryStatsByRunId = (run_id, mem) =>
+			query((db) => db.collection('memory')
+				.insertOne({run_id, ts: new Date(), data: mem}));
 
 		// store a new daemon run in the database, automatically
 		// setting the 'created' and 'updated' fields to 'now'

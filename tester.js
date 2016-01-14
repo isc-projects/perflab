@@ -48,6 +48,7 @@ function runConfig(config)
 
 	return runDaemon(bind, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
+		bind.on('mem', (mem) => db.insertMemoryStatsByRunId(run_id, mem));
 		return (function loop() {
 			let dnsperf = new DNSPerfAgent(config);
 			let res = runTest(dnsperf, run_id).catch(console.error);
