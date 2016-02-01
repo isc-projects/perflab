@@ -3,17 +3,16 @@
 let schema = 'perflab';
 
 module.exports = {
-	path:		'/home/ray/bind-perflab',
+	path:		'/home/perflab/data',
 	mongo: {
 		schema,
-		url:	`mongodb://localhost/${schema}`,
-		oplog:	'mongodb://localhost/local'
+		url:	`mongodb://perf-ctl.lab.isc.org/${schema}`,
+		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
 	repo: {
-		bind9: 	'https://source.isc.org/git/bind9.git'
-		// bind9:	'ssh://repo.isc.org/proj/git/prod/bind9'
+		bind9:	'ssh://repo.isc.org/proj/git/prod/bind9'
 	},
 	hosts: {
-		tester:	'localhost'
+		tester:	'perf-dns-c.lab.isc.org'
 	}
 };
