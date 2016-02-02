@@ -11,7 +11,9 @@ class DNSPerfAgent extends Executor {
 		super("dnsperf");
 
 		let path = settings.path;
-		let host = settings.hosts.tester;
+
+		let server = settings.hosts.dns.server;
+		let tester = settings.hosts.dns.tester;
 
 		let args = config.args = config.args || {};
 		let queryset = config.queryset || 'default';
@@ -30,9 +32,9 @@ class DNSPerfAgent extends Executor {
 		// start 'dnsperf' passing it the given query set
 		// NB: remote test machine currently hard-coded, needs paramterising
 		this.run = () => {
-			let args = ['-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
+			let args = ['-s', server, '-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
 			args = args.concat(args.dnsperf || []);
-			return this._ssh(host, '/usr/bin/dnsperf', args).then(getCount);
+			return this._ssh(tester, '/usr/bin/dnsperf', args).then(getCount);
 		}
 	}
 }
