@@ -2,11 +2,12 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-		<div class="panel-heading">
+		<div class="panel-heading" ng-show="config.$resolved">
 		  Tests of configuration "{{config.name}}" started at {{run.created}}
 		</div>
 		<div class="panel-body">
-		  <div class="alert alert-warning" ng-show="tests && !tests.length">None recorded</div>
+		  <div class="alert alert-info" ng-show="!tests.$resolved">Loading...</div>
+		  <div class="alert alert-warning" ng-show="tests.$resolved && !tests.length">None recorded</div>
 		  <table class="table table-condensed" ng-show="tests.length">
 			<thead>
 			  <tr>

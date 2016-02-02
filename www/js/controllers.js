@@ -71,13 +71,14 @@ app.controller('testListController',
 	function($scope, $routeParams, TestResource, RunResource, ConfigResource, Notify) {
 
 		var id = $routeParams.run_id;
+
+		$scope.tests = TestResource.query({run_id: id});
+		$scope.tests.$promise.catch(Notify.danger);
+
 		$scope.run = RunResource.get({id: id});
 		$scope.run.$promise.then(function() {
 			return $scope.config = ConfigResource.get({id: $scope.run.config_id});
 		}).catch(Notify.danger);
-
-		$scope.tests = TestResource.query({run_id: id});
-		$scope.tests.$promise.catch(Notify.danger);
 	}
 ]);
 
