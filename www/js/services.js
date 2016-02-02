@@ -126,6 +126,7 @@ app.service('Configs',
 
 		var configs = [], queue = [];
 		var confById = {};
+		var loading = true;
 
 		function merge() {
 			var tmp = {};
@@ -138,6 +139,8 @@ app.service('Configs',
 					tmp[queue._id].queue = queue;
 				}
 			});
+
+			loading = false;
 		}
 
 		function getConfigs() {
@@ -184,6 +187,9 @@ app.service('Configs',
 
 		return {
 			all: configs,
+			loading: function() {
+				return loading;
+			},
 			setEnabled: setEnabled,
 			setRepeat: setRepeat
 		}

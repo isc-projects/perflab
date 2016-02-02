@@ -4,6 +4,8 @@
 	  <div class="panel panel-default">
 		<div class="panel-heading">Configurations</div>
 		<div class="panel-body">
+		  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>
+		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-condensed config-list">
 			<tbody>
 			  <tr ng-repeat="config in configs.all track by config._id" class="config">
