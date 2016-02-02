@@ -10,7 +10,8 @@
 		</span>
 	  </div>
 	  <div class="panel-body">
-	  <div class="alert alert-warning" ng-show="runs && !runs.length">None recorded</div>
+	  <div class="alert alert-info" ng-show="!runs.$resolved">Loading...</div>
+	  <div class="alert alert-warning" ng-show="runs.$resolved && !runs.length">None recorded</div>
 	  <table class="table table-condensed" ng-show="runs.length">
 		<thead>
 		  <tr>
