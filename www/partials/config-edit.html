@@ -40,9 +40,22 @@
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
-<!--			  <option value="delegation">Large delegation zone</option>
-			  <option value="isp">Lots of small zones</option> -->
+<!--			  <option value="delegation">Large delegation zone</option> -->
+			  <option value="mega">1M small zones</option>
+			  <option value="kilo">1k small zones</option>
 			</select>
+		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configQueryset">dnsperf Query Set</label>
+			<select required class="form-control" id="configQueryset" ng-model="config.queryset">
+			  <option value="default">Nominum default</option>
+			  <option value="mega-small">1M small zones, 5% NXD</option>
+			  <option value="kilo-small">1k small zones, 5% NXD</option>
+			</select>
+		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configArgsDnsperf">extra dnsperf command line options</label>
+			<input class="form-control" id="configArgsDnsperf" ng-model="config.args.dnsperf" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
