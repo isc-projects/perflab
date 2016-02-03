@@ -15,7 +15,7 @@ class DNSPerfAgent extends Executor {
 		let server = settings.hosts.dns.server;
 		let tester = settings.hosts.dns.tester;
 
-		let args = config.args = config.args || {};
+		config.args = config.args || {};
 		let queryset = config.queryset || 'default';
 
 		// look for the QPS value in the output and return it
@@ -29,11 +29,10 @@ class DNSPerfAgent extends Executor {
 			return results;
 		}
 
-		// start 'dnsperf' passing it the given query set
-		// NB: remote test machine currently hard-coded, needs paramterising
+		// start 'dnsperf' passing it the given query set and additional args
 		this.run = () => {
 			let args = ['-s', server, '-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
-			args = args.concat(args.dnsperf || []);
+			args = args.concat(config.args.dnsperf || []);
 			return this._ssh(tester, '/usr/bin/dnsperf', args).then(getCount);
 		}
 	}
