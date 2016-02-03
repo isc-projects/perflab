@@ -52,7 +52,7 @@ function bodyHandler(f) {
 
 module.exports = {
 	'/config': {
-		'GET /':				handler(db.getAllConfigs),
+		'GET /':				handler(db.getConfigs),
 		'GET /:id':				handler(db.getConfigById),
 		'DELETE /:id':			handler(db.deleteConfigById),
 		'PUT /:id':				bodyHandler(db.updateConfig),
@@ -62,7 +62,7 @@ module.exports = {
 	'/run': {
 		'GET /:id':				handler(db.getRunById),
 		'GET /:id/recalc':		handler(db.updateStatsByRunId),
-		'GET /test/:id/':		handler(db.getAllTestsByRunId)
+		'GET /test/:id/':		handler(db.getTestsByRunId)
 	},
 	'/test': {
 		'GET /:id':				handler(db.getTestById)
