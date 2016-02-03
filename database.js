@@ -175,7 +175,7 @@ class Database {
 			});
 
 		// retrieve all configurations
-		this.getAllConfigs = () =>
+		this.getConfigs = () =>
 			query((db) => db.collection('config').find().toArray());
 
 		// store a new daemon run in the database, automatically
@@ -257,10 +257,13 @@ class Database {
 			});
 
 		// get all tests for the given run, in time order
-		this.getAllTestsByRunId = (run_id) =>
+		this.getTestsByRunId = (run_id) =>
 			query((db) => {
 				run_id = oid(run_id);
-				return db.collection('test').find({run_id}).sort({created: 1}).toArray();
+				return db.collection('test')
+					.find({run_id}, {stdout: 0, stderr: 0})
+					.sort({created: 1})
+					.toArray();
 			});
 
 		// get a specific test result
