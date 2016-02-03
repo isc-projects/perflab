@@ -46,7 +46,7 @@ class BindAgent extends Executor {
 		let createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
 		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
 		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
-		let createZoneConf = () => fs.copyAsync(`config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
+		let createZoneConf = () => fs.copyAsync(`${path}/config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
 
 		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
