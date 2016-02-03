@@ -18,9 +18,15 @@ class OpLog {
 
 		let broadcast = (msg) => {
 			let json = JSON.stringify(msg);
-			wss.clients.forEach((c) => c.send(json));
+			wss.clients.forEach((c) => {
+				try {
+					c.send(json)
+				} catch (e) {
+					console.error(e);
+				}
+			});
 		}
-	
+
 		let send = (doc) => {
 			let msg = {
 				op: doc.op,
