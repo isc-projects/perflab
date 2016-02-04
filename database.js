@@ -55,18 +55,16 @@ function test_stats_finalize(key, value) {
 class Database {
 	constructor () {
 
-		let url = settings.mongo.url;
+		let dbp = MongoClient.connect(settings.mongo.url);
 
 		let oid = (id) => (id instanceof ObjectID) ? id : ObjectID.createFromHexString(id);
 
-		// connects to DB, passes DB handle to given callback,
-		// then ensures the DB is closed again afterwards
+		// simply wrapper for DB - was more complicated than this
+		// and no longer strictly required but it's easier to leave
+		// it as it is
 		let query = (f) => 
-			MongoClient.connect(url).then((db) => {
-				let close = () => db.close();
-				let res = f.call(this, db);
-				res.then(close, close);
-				return res;
+			dbp.then((db) => {
+				return f.call(this, db);
 			});
 
 		// build required indexes
