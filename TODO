@@ -17,6 +17,8 @@
 - [DONE] ensure MongoDB indexes are created on startup
 - [DONE] refactor DB 'query' method so it doesn't always have to reconnect
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
+- regenerate configs for each run
+- trap internal NodeJS errors into the log better
 - make listings and graph watch for real-time updates too
 - mark all tasks as "not running" on startup
 - [LATER] comparative graphs for different configs
