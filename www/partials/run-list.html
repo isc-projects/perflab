@@ -24,9 +24,9 @@
 		<tbody>
 		  <tr ng-repeat="run in runs">
 			<td class="time"><a href="#/run/test/{{run._id}}/">{{run.created}}</td>
-			<td class="tests text-right">{{run.stats.count}}</td>
-			<td class="average text-right">{{run.stats.average.toFixed(1)}}</td>
-			<td class="stddev text-right">{{run.stats.stddev.toFixed(1)}}</td>
+			<td class="tests text-right">{{run.stats ? run.stats.count : "-"}}</td>
+			<td class="average text-right">{{run.stats ? run.stats.average.toFixed(1) : "-"}}</td>
+			<td class="stddev text-right">{{run.stats ? run.stats.stddev.toFixed(1) : "-"}}</td>
 		  </tr>
 		</tbody>
 	  </table>
