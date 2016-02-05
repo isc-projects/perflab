@@ -18,7 +18,10 @@ module.exports = {
 			tester:	'perf-dns-c.lab.isc.org'
 		}
 	},
+	command: {
+		dnsperf: '/bin/numactl'
+	},
 	args: {
-		dnsperf: ['-c24', '-q82', '-T6' ]
+		dnsperf: ['-C12-23', '/usr/local/nom/bin/dnsperf', '-c24', '-q82', '-T6' ]
 	}
 };

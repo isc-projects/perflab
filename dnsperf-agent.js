@@ -8,10 +8,10 @@ let settings = require('./settings'),
 class DNSPerfAgent extends Executor {
 
 	constructor(config) {
-		super("dnsperf");
+		super('dnsperf');
 
 		let path = settings.path;
-
+		let cmd = settings.command.dnsperf || '/usr/bin/dnsperf';
 		let server = settings.hosts.dns.server;
 		let tester = settings.hosts.dns.tester;
 
@@ -31,10 +31,10 @@ class DNSPerfAgent extends Executor {
 
 		// start 'dnsperf' passing it the given query set and additional args
 		this.run = () => {
-			let args = ['-s', server, '-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
-			args = args.concat(settings.args.dnsperf || []);
+			let args = args.concat(settings.args.dnsperf || []);
+			args = args.concat['-s', server, '-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
 			args = args.concat(config.args.dnsperf || []);
-			return this._ssh(tester, '/usr/bin/dnsperf', args).then(getCount);
+			return this._ssh(tester, cmd, args).then(getCount);
 		}
 	}
 }
