@@ -17,5 +17,8 @@ module.exports = {
 			server: '172.16.1.242',
 			tester:	'perf-dns-c.lab.isc.org'
 		}
+	},
+	args: {
+		dnsperf: ['-c24', '-q82', '-T6' ]
 	}
 };

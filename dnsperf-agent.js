@@ -32,6 +32,7 @@ class DNSPerfAgent extends Executor {
 		// start 'dnsperf' passing it the given query set and additional args
 		this.run = () => {
 			let args = ['-s', server, '-p', 8053, '-l', 30, '-d', `${path}/queryset/${queryset}`];
+			args = args.concat(settings.args.dnsperf || []);
 			args = args.concat(config.args.dnsperf || []);
 			return this._ssh(tester, '/usr/bin/dnsperf', args).then(getCount);
 		}

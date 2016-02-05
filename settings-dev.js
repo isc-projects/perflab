@@ -17,5 +17,8 @@ module.exports = {
 			server: 'localhost',
 			tester:	'localhost'
 		}
+	},
+	args: {
+		dnsperf: []
 	}
 };
