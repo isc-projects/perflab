@@ -97,7 +97,7 @@ class BindAgent extends Executor {
 
 		// starts BIND
 		let startBind = () => {
-			let args = ['-g', '-p', 8053].concat(config.args.bind || []);
+			let args = ['-f', '-p', 8053].concat(config.args.bind || []);
 			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m);
 		}
 
