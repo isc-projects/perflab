@@ -16,7 +16,7 @@ let app = connect();
 let server = http.createServer(app);
 
 // attach the OpLog websocket to the server via HTTP Upgrade:
-let oplog = new OpLog({server});
+let oplog = new OpLog({server, path: '/oplog'});
 
 // add useful JSON etc methods from 'quip' library
 app.use(quip);

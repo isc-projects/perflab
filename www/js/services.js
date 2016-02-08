@@ -13,7 +13,7 @@ app.service('OpLog',
 	function($rootScope, $timeout, Notify) {
 		(function connect() {
 			var ops = {'i': 'insert', 'u': 'update', 'd': 'delete'};
-			var url = 'ws://' + window.location.hostname + ':' + window.location.port;
+			var url = 'ws://' + window.location.hostname + ':' + window.location.port + '/oplog';
 			var ws = new WebSocket(url);
 			ws.onclose = function() {
 				Notify.danger('WebSocket closed - retrying in 10s');
