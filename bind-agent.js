@@ -42,27 +42,23 @@ class BindAgent extends Executor {
 		let createEtc = () => fs.mkdirsAsync(etcPath);
 		let createRun = () => fs.mkdirsAsync(runPath);
 		let createBuild = () => fs.mkdirsAsync(buildPath);
+		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
 		let createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
 		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
 		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
 		let createZoneConf = () => fs.copyAsync(`${path}/config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
 
-		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
-
+		// where to store the .dep files
 		this._depPath(testPath);
 
 		// empties the work directory, then creates the necessary
-		// subdirectories and 'include' files for this configuration
+		// subdirectories for this configuration
 		this._target('prepare', '', () =>
 			fs.emptyDirAsync(testPath)
 				.then(createEtc)
 				.then(createRun)
 				.then(createBuild)
-				.then(createConfig)
-				.then(createOptions)
-				.then(createGlobal)
-				.then(createZoneConf)
 				.then(linkZones));
 
 		// does 'git clone'
@@ -85,6 +81,13 @@ class BindAgent extends Executor {
 		// does 'make install'
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
+		// builds the configuration files for this run
+		let genconfig = () =>
+				createConfig()
+				.then(createOptions)
+				.then(createGlobal)
+				.then(createZoneConf);
+
 		// does 'git log' to extract last commit message
 		let gitlog = () => this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath, quiet: true});
 
@@ -106,9 +109,12 @@ class BindAgent extends Executor {
 		// commit message and runs BIND, adding the commit message to the
 		// BIND result output
 		this.run = (opts) =>
-			this.prepare({force: rebuild}).then(this.install).then(() =>
-				getinfo().then((info) => startBind().then(
-					(res) => Object.assign(res, { commit: info }))));
+			this.prepare({force: rebuild})
+				.then(this.install)
+				.then(genconfig)
+				.then(getinfo)
+				.then((info) => startBind().then(
+					(res) => Object.assign(res, { commit: info })));
 	}
 }
 
