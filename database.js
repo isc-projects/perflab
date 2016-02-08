@@ -174,7 +174,9 @@ class Database {
 
 		// retrieve all configurations
 		this.getConfigs = () =>
-			query((db) => db.collection('config').find().toArray());
+			query((db) => db.collection('config')
+				.find().sort({name: 1})
+				.toArray());
 
 		// store a new daemon run in the database, automatically
 		// setting the 'created' and 'updated' fields to 'now'
