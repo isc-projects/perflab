@@ -124,7 +124,7 @@ app.controller('configEditController',
 		function setDefaults() {
 			var data = $scope.config = $scope.config || {};
 
-			data.flags = data.flags || {};
+			data.flags = data.flags || {checkout: false};
 
 			var args = data.args = data.args || {};
 			args.configure = args.configure || [];
