@@ -131,9 +131,10 @@ class Database {
 		this.disableOneshotQueue = (id) =>
 			query((db) => db.collection('queue')
 					.findOneAndUpdate(
-						{_id: oid(id), repeat: false},
+						{_id: oid(id), repeat: {$ne: true}},
 						{$set: {enabled: false}}
 					)).then((res) => res.value);
+
 
 		// retrieve the specified configuration
 		this.getConfigById = (id) =>
