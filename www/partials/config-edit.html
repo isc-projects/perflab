@@ -40,9 +40,12 @@
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
-<!--			  <option value="delegation">Large delegation zone</option> -->
-			  <option value="mega">1M small zones</option>
-			  <option value="kilo">1k small zones</option>
+			  <option value="mega-delegation">1 zone, 1M delegations</option>
+			  <option value="kilo-delegation">1 zone, 1k delegations</option>
+			  <option value="mega-records">1 zone, 1M A/AAAA records</option>
+			  <option value="kilo-records">1 zone, 1k A/AAAA records</option>
+			  <option value="mega-small">1M small zones</option>
+			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
