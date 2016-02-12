@@ -14,7 +14,7 @@ module.exports = {
 	},
 	hosts: {
 		dns: {
-			server: '172.16.1.242',
+			server: '172.16.2.242',
 			tester:	'perf-dns-c.lab.isc.org'
 		}
 	},
