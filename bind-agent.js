@@ -22,11 +22,12 @@ let settings = require('./settings'),
 class BindAgent extends Executor {
 
 	constructor(config) {
-		super("BIND");
+		super('BIND');
 
 		config.args = config.args || {};
-		config.options = config.options || "";
-		config.global = config.global || "";
+		config.options = config.options || '';
+		config.global = config.global || '';
+		config.mode = config.mode || 'auth';
 
 		let rebuild = !!(config.flags && config.flags.checkout);
 
@@ -44,7 +45,7 @@ class BindAgent extends Executor {
 		let createBuild = () => fs.mkdirsAsync(buildPath);
 		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
-		let createConfig = () => fs.copyAsync('config/named.conf', `${etcPath}/named.conf`);
+		let createConfig = () => fs.copyAsync(`config/named.conf-${config.mode}`, `${etcPath}/named.conf`);
 		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
 		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
 		let createZoneConf = () => fs.copyAsync(`${path}/config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
@@ -82,7 +83,7 @@ class BindAgent extends Executor {
 		this._target('install', 'build', () => this._run('/usr/bin/make', ['install'], {cwd: buildPath}));
 
 		// builds the configuration files for this run
-		let genconfig = () =>
+		let genConfig = () =>
 				createConfig()
 				.then(createOptions)
 				.then(createGlobal)
@@ -95,8 +96,8 @@ class BindAgent extends Executor {
 		let bindVersion = () => this._run('./sbin/named', ['-V'], {cwd: runPath, quiet: true});
 
 		// combines 'git log' and 'bind -V' output
-		let getinfo = () => gitlog().then((log) => bindVersion()
-									.then((version) => log.stdout + "\n" + version.stdout))
+		let getInfo = () => gitlog().then((log) => bindVersion()
+									.then((version) => log.stdout + '\n' + version.stdout))
 
 		// starts BIND
 		let startBind = () => {
@@ -111,8 +112,8 @@ class BindAgent extends Executor {
 		this.run = (opts) =>
 			this.prepare({force: rebuild})
 				.then(this.install)
-				.then(genconfig)
-				.then(getinfo)
+				.then(genConfig)
+				.then(getInfo)
 				.then((info) => startBind().then(
 					(res) => Object.assign(res, { commit: info })));
 	}

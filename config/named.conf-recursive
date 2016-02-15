@@ -1,0 +1,39 @@
+acl clients { localnets; localhost; };
+
+options {
+	allow-query { clients; };
+	recursion yes;
+	notify no;
+	include "./etc/named-options.conf";
+};
+
+logging {
+	channel notice_stderr {
+		stderr;
+		severity notice;
+		print-time yes;
+	};
+
+	category default { default_stderr; };
+	category general { notice_stderr; };
+	category unmatched { null; };
+	category security { null; };
+};
+
+key "rndc-key" {
+	algorithm hmac-md5;
+	secret "xIyAtb7acwJKXpbWWI3oXA==";
+};
+
+controls {
+	inet * port 8953 allow { clients; } keys { "rndc-key"; };
+};
+
+include "./etc/named-global.conf";
+
+zone "." {
+	type "hint";
+	file "zones/named-root.ca";
+};
+
+include "./etc/named-zones.conf";

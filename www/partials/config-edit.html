@@ -17,6 +17,13 @@
 		  <div class="checkbox">
 		  </div>
 		  <div class="form-group form-group-sm">
+			<label for="configMode">Server mode</label>
+			<select required class="form-control" id="configMode" ng-model="config.mode">
+			  <option value="auth">Authoritative</option>
+			  <option value="recursive">Recursive</option>
+			</select>
+		  </div>
+		  <div class="form-group form-group-sm">
 			<label for="configArgsConfigure">Configure command line options</label><br/>
 			<input class="form-control" id="configArgsConfigure" ng-model="config.args.configure" ng-list=" " ng-trim="false" />
 		  </div>

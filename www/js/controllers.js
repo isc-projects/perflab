@@ -122,19 +122,20 @@ app.controller('configEditController',
 		}
 
 		function setDefaults() {
-			var data = $scope.config = $scope.config || {};
+			var config = $scope.config = $scope.config || {};
 
-			data.flags = data.flags || {checkout: false};
+			config.flags = config.flags || {checkout: false};
+			config.mode = config.mode || 'auth';
 
-			var args = data.args = data.args || {};
+			var args = config.args = config.args || {};
 			args.configure = args.configure || [];
 			args.make = args.make || [];
 			args.bind = args.bind || [];
 
-			data.zoneset = data.zoneset || 'root';
-			data.queryset = data.queryset || 'default';
-			data.options = data.options || '';
-			data.global = data.global || '';
+			config.zoneset = config.zoneset || 'root';
+			config.queryset = config.queryset || 'default';
+			config.options = config.options || '';
+			config.global = config.global || '';
 		}
 
 		function doneSaving() {
