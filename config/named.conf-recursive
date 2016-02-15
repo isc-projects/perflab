@@ -32,8 +32,6 @@ controls {
 include "./etc/named-global.conf";
 
 zone "." {
-	type "hint";
+	type hint;
 	file "zones/named-root.ca";
 };
-
-include "./etc/named-zones.conf";
