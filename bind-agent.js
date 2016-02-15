@@ -24,6 +24,8 @@ class BindAgent extends Executor {
 	constructor(config) {
 		super("BIND");
 
+		let cmd = settings.command.bind || './sbin/named';
+
 		config.args = config.args || {};
 		config.options = config.options || "";
 		config.global = config.global || "";
@@ -100,8 +102,10 @@ class BindAgent extends Executor {
 
 		// starts BIND
 		let startBind = () => {
-			let args = ['-f', '-p', 8053].concat(config.args.bind || []);
-			return this._runWatch('./sbin/named', args, {cwd: runPath}, / running$/m);
+			let args = [].concat(settings.args.bind || []);
+			args = args.concat(['-f', '-p', 8053]);
+			args = args.concat(config.args.bind || []);
+			return this._runWatch(cmd, args, {cwd: runPath}, / running$/m);
 		}
 
 		// main executor function - optionally does a 'prepare' forcing
