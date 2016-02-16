@@ -171,6 +171,14 @@ app.service('Configs',
 			return $http.put('/api/config/' + id + '/queue/repeat/', {repeat: !!repeat}).catch(Notify.danger);
 		}
 
+		function togglePriority(id) {
+			if (confById[id] && confById[id].queue) {
+				var pri = confById[id].queue.priority || 0;
+				pri = pri ? 0 : 1;
+				return $http.put('/api/config/' + id + '/queue/priority/', {priority: pri}).catch(Notify.danger);
+			}
+		}
+
 		getConfigs();
 
 		OpLog.on('update.config', updateConfig);
@@ -183,7 +191,8 @@ app.service('Configs',
 				return loading;
 			},
 			setEnabled: setEnabled,
-			setRepeat: setRepeat
+			setRepeat: setRepeat,
+			togglePriority: togglePriority
 		}
 	}
 ]);

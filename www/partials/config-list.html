@@ -15,6 +15,11 @@
 				<td width="100%" class="name">
 				  <span ng-class="config.queue.enabled ? '' : 'strike'">{{config.name}}</span>
 				</td>
+				<td width="5%" nowrap>
+				  <button ng-click="configs.togglePriority(config._id)" class="btn btn-xs btn-primary" title="set priority">
+					  <span style="width: 1.4en" class="fa" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span>
+				  </button>
+				</td>
 				<td width="8%" nowrap>
 				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled" title="enable">
 					  <span class="fa fa-play"></span>
@@ -38,7 +43,7 @@
 				</td>
 			  </tr>
 			  <tr>
-				<td colspan="5" align="right">
+				<td colspan="6" align="right">
 				  <a href="#/config/new" class="fixed-button btn btn-xs btn-primary">New...</a>
 				</td>
 			  </tr>

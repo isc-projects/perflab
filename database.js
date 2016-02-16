@@ -97,6 +97,11 @@ class Database {
 					.findOne({_id: oid(id) })
 					.then((r) => r ? { repeat: !!r.queue.repeat } : {repeat: false}));
 
+		// 'obj' must contain {"priority": <number>}
+		this.setQueueEntryPriority = (id, obj) =>
+			query((db) => db.collection('config')
+					.updateOne({_id: oid(id)}, {$set: {'queue.priority': obj.priority}}));
+
 		// atomically finds the oldest non-running entry in
 		// the queue, marks it as running and returns it
 		this.takeNextFromQueue = () =>

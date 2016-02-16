@@ -61,6 +61,7 @@ module.exports = {
 		'PUT /:id/queue/enabled/':		bodyHandler(db.setQueueEntryEnabled),
 		'GET /:id/queue/repeat':		handler(db.getQueueEntryRepeat),
 		'PUT /:id/queue/repeat/':		bodyHandler(db.setQueueEntryRepeat),
+		'PUT /:id/queue/priority/':		bodyHandler(db.setQueueEntryPriority),
 		'GET /run/:id/':				pageHandler(db.getRunsByConfigId)
 	},
 	'/run': {
