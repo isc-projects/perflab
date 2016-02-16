@@ -32,10 +32,4 @@ module.factory('ConfigResource', ['$resource',
 	}
 ]);
 
-module.factory('QueueResource', ['$resource',
-	function($resource) {
-		return $resource('/api/queue/:id', {}, {});
-	}
-]);
-
 })();

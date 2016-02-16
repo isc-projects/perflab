@@ -123,48 +123,31 @@ app.service('LogWatcher',
 // individual configurations
 //
 app.service('Configs',
-	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigResource', 'QueueResource',
-	function($http, Notify, Beeper, OpLog, ConfigResource, QueueResource) {
+	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigResource',
+	function($http, Notify, Beeper, OpLog, ConfigResource) {
 
 		var configs = [], queue = [];
 		var confById = {};
 		var loading = true;
 
-		function merge() {
-			var tmp = {};
+		function reindex() {
+			confById = {};
 			configs.forEach(function(conf) {
-				tmp[conf._id] = conf;
+				confById[conf._id] = conf;
 			});
-
-			queue.forEach(function(queue) {
-				if (tmp[queue._id]) {
-					tmp[queue._id].queue = queue;
-				}
-			});
-
-			confById = tmp;
-			loading = false;
 		}
 
 		function getConfigs() {
 			return ConfigResource.query().$promise.then(function(data) {
 				configs.length = 0;
 				configs.push.apply(configs, data);
+				reindex();
+				loading = false;
 			}).catch(Notify.danger);
 		}
 
-		function getQueue() {
-			return QueueResource.query().$promise.then(function(data) {
-				queue.push.apply(queue, data);
-			}).catch(Notify.danger);
-		}
-
-		function updateConfig() {
-			return getConfigs().then(merge);
-		}
-
-		function updateQueue(event, doc) {
-			if (doc && doc.$set && doc.$set.completed) {
+		function updateConfig(event, doc) {
+			if (doc && doc.$set && doc.$set['queue.completed']) {
 				Beeper.play();
 				if (confById[doc._id]) {
 					var name = confById[doc._id].name
@@ -177,26 +160,22 @@ app.service('Configs',
 					});
 				}
 			}
-			getQueue().then(merge);
+			getConfigs();
 		}
 
 		function setEnabled(id, enabled)  {
-			return $http.put('/api/queue/' + id + '/enabled/', {enabled: !!enabled}).catch(Notify.danger);
+			return $http.put('/api/config/' + id + '/queue/enabled/', {enabled: !!enabled}).catch(Notify.danger);
 		}
 
 		function setRepeat(id, repeat)  {
-			return $http.put('/api/queue/' + id + '/repeat/', {repeat: !!repeat}).catch(Notify.danger);
+			return $http.put('/api/config/' + id + '/queue/repeat/', {repeat: !!repeat}).catch(Notify.danger);
 		}
 
-		getConfigs().then(getQueue).then(merge);
+		getConfigs();
 
 		OpLog.on('update.config', updateConfig);
 		OpLog.on('insert.config', updateConfig);
 		OpLog.on('delete.config', updateConfig);
-
-		OpLog.on('update.queue', updateQueue);
-		OpLog.on('insert.queue', updateQueue);
-		OpLog.on('delete.queue', updateQueue);
 
 		return {
 			all: configs,

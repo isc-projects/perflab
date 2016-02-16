@@ -75,64 +75,61 @@ class Database {
 				db.collection('memory').createIndex({run_id: 1, created: 1})
 			]));
 
-		// get every queue entry
-		this.getQueue = () =>
-			query((db) => db.collection('queue').find().toArray());
-
 		// 'obj' must contain {"enabled": <boolean>}
 		this.setQueueEntryEnabled = (id, obj) =>
-			query((db) => db.collection('queue')
-					.updateOne({_id: oid(id)}, {$set: {enabled: !!obj.enabled}}, {upsert: true}));
+			query((db) => db.collection('config')
+					.updateOne({_id: oid(id)}, {$set: {'queue.enabled': !!obj.enabled}}));
 
 		// returns {"enabled": <boolean>}
 		this.getQueueEntryEnabled = (id) =>
-			query((db) => db.collection('queue')
+			query((db) => db.collection('config')
 					.findOne({_id: oid(id) })
-					.then((r) => r ? { enabled: !!r.enabled } : {enabled: false}));
+					.then((r) => r ? { enabled: !!r.queue.enabled } : {enabled: false}));
 
 		// 'obj' must contain {"repeat": <boolean>}
 		this.setQueueEntryRepeat = (id, obj) =>
-			query((db) => db.collection('queue')
-					.updateOne({_id: oid(id)}, {$set: {repeat: !!obj.repeat}}, {upsert: true}));
+			query((db) => db.collection('config')
+					.updateOne({_id: oid(id)}, {$set: {'queue.repeat': !!obj.repeat}}));
 
 		// returns {"repeat": <boolean>}
 		this.getQueueEntryRepeat = (id) =>
-			query((db) => db.collection('queue')
+			query((db) => db.collection('config')
 					.findOne({_id: oid(id) })
-					.then((r) => r ? { repeat: !!r.repeat } : {repeat: false}));
+					.then((r) => r ? { repeat: !!r.queue.repeat } : {repeat: false}));
 
-		// atomically finds the oldest non-running entry in the queue,
-		// marks it as running and returns it
+		// atomically finds the oldest non-running entry in
+		// the queue, marks it as running and returns it
 		this.takeNextFromQueue = () =>
-			query((db) => db.collection('queue')
+			query((db) => db.collection('config')
 					.findOneAndUpdate(
-						{running: {$ne: true}, enabled: true},
+						{'queue.running': {$ne: true}, 'queue.enabled': true},
 						{$set: {
-							running: true,
-							started: new Date()
+							'queue.running': true,
+							'queue.started': new Date()
 						}},
-						{sort: {completed: 1}}
+						{sort: {'queue.priority': -1, 'queue.completed': 1}}
 					)).then((res) => res.value);
 
 		// sets the queue entry to "non-running" and updates the
-		// "last completed" field
+		// "last completed" field, and resets its priority
 		this.markQueueEntryDone = (id) =>
 			query((db) => {
-				return db.collection('queue')
+				return db.collection('config')
 					.update({_id: oid(id)},
 							{$set: {
-								running: false,
-								completed: new Date()
+								'queue.running': false,
+								'queue.priority': 0,
+								'queue.completed': new Date()
 							}})
 			});
 
 		// atomically disables the given entry if it's not
 		// set to auto-repeat
 		this.disableOneshotQueue = (id) =>
-			query((db) => db.collection('queue')
+			query((db) => db.collection('config')
 					.findOneAndUpdate(
-						{_id: oid(id), repeat: {$ne: true}},
-						{$set: {enabled: false}}
+						{_id: oid(id), 'queue.repeat': {$ne: true}},
+						{$set: {'queue.enabled': false}}
 					)).then((res) => res.value);
 
 
@@ -141,24 +138,20 @@ class Database {
 			query((db) => db.collection('config')
 					.findOne({_id: oid(id)}));
 
-		// delete the specified configuration and any associated
-		// queue record.  NB: does not delete any orphaned test
-		// results
+		// delete the specified configuration
 		this.deleteConfigById = (id) =>
-			query((db) => Promise.all([
-				db.collection('config').remove({_id: oid(id)}),
-				db.collection('queue').remove({config_id: oid(id)})
-			]));
+				query((db) => db.collection('config').remove({_id: oid(id)}));
 
 		// updates the configuration with the given block, taking
 		// care to update the 'updated' field and not to modify the
-		// 'created' field.  NB: other fields not in 'config' are left
-		// unmodified
+		// 'created' field or the queue settings.  NB: other fields
+		// not in 'config' are left unmodified
 		this.updateConfig = (id, config) =>
 			query((db) => {
 				config._id = oid(config._id);
 				config.updated = new Date();
 				delete config.created;
+				delete config.queue;
 				return db.collection('config')
 					.update({_id: config._id}, {$set: config});
 			});
@@ -169,6 +162,9 @@ class Database {
 			query((db) => {
 				config.created = new Date();
 				config.updated = new Date();
+				config.queue = {
+					enabled: false, repeat: false, priority: 0
+				};
 				return db.collection('config')
 					.insert(config).then(() => config);
 			});

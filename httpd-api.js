@@ -52,34 +52,33 @@ function bodyHandler(f) {
 
 module.exports = {
 	'/config': {
-		'GET /':				handler(db.getConfigs),
-		'GET /:id':				handler(db.getConfigById),
-		'DELETE /:id':			handler(db.deleteConfigById),
-		'PUT /:id':				bodyHandler(db.updateConfig),
-		'POST /':				bodyHandler(db.insertConfig),
-		'GET /run/:id/':		pageHandler(db.getRunsByConfigId)
+		'GET /':						handler(db.getConfigs),
+		'GET /:id':						handler(db.getConfigById),
+		'DELETE /:id':					handler(db.deleteConfigById),
+		'PUT /:id':						bodyHandler(db.updateConfig),
+		'POST /':						bodyHandler(db.insertConfig),
+		'GET /:id/queue/enabled':		handler(db.getQueueEntryEnabled),
+		'PUT /:id/queue/enabled/':		bodyHandler(db.setQueueEntryEnabled),
+		'GET /:id/queue/repeat':		handler(db.getQueueEntryRepeat),
+		'PUT /:id/queue/repeat/':		bodyHandler(db.setQueueEntryRepeat),
+		'GET /run/:id/':				pageHandler(db.getRunsByConfigId)
 	},
 	'/run': {
-		'GET /:id':				handler(db.getRunById),
-		'GET /:id/recalc':		handler(db.updateStatsByRunId),
-		'GET /test/:id/':		handler(db.getTestsByRunId)
+		'GET /:id':						handler(db.getRunById),
+		'GET /:id/recalc':				handler(db.updateStatsByRunId),
+		'GET /test/:id/':				handler(db.getTestsByRunId)
 	},
 	'/test': {
-		'GET /:id':				handler(db.getTestById)
+		'GET /:id':						handler(db.getTestById)
 	},
 	'/queue': {
-		'GET /':				handler(db.getQueue),
-		'GET /:id/enabled':		handler(db.getQueueEntryEnabled),
-		'PUT /:id/enabled/':	bodyHandler(db.setQueueEntryEnabled),
-		'GET /:id/repeat':		handler(db.getQueueEntryRepeat),
-		'PUT /:id/repeat/':		bodyHandler(db.setQueueEntryRepeat)
 	},
 	'/control': {
-		'GET /':				handler(db.getControl),
-		'GET /paused':			handler(db.getPaused),
-		'PUT /paused/':			bodyHandler(db.setPaused)
+		'GET /':						handler(db.getControl),
+		'GET /paused':					handler(db.getPaused),
+		'PUT /paused/':					bodyHandler(db.setPaused)
 	},
 	'/log': {
-		'GET /':				handler(db.getLog)
+		'GET /':						handler(db.getLog)
 	}
 }
