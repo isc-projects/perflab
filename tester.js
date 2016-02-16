@@ -2,9 +2,12 @@
 
 'use strict';
 
-let	Database = require('./database.js'),
+let	Promise = require('bluebird'),
+	Database = require('./database.js'),
 	BindAgent = require('./bind-agent.js'),
 	DNSPerfAgent = require('./dnsperf-agent.js');
+
+Promise.longStackTraces();
 
 let db = new Database();
 try {
@@ -19,11 +22,11 @@ try {
 function runQueue() {
 	db.getPaused().then((res) => {
 		if (res.paused) {
-			return new Promise((resolve, reject) => setTimeout(resolve, 1000));
+			setTimeout(runQueue, 1000);
 		} else {
-			return doFirstQueueEntry();
+			doFirstQueueEntry().then(() => setTimeout(runQueue, 1000))
 		}
-	}).catch(console.error).then(runQueue);
+	})
 }
 
 // looks for a queue entry, and if found gets the matching config
@@ -62,9 +65,11 @@ function runConfig(config)
 function runDaemon(agent, config_id)
 {
 	return db.insertRun({config_id})
-			.then((run) => execute(agent)
-				.then((result) => db.updateRunById(run._id, result))
-				.then(() => run._id));
+				.then((run) => {
+					return execute(agent)
+						.then((result) => db.updateRunById(run._id, result))
+						.then(() => run._id);
+				});
 }
 
 // starts the testing client with the given configuration
@@ -72,9 +77,11 @@ function runDaemon(agent, config_id)
 function runTest(agent, run_id)
 {
 	return db.insertTest({run_id})
-			.then((test) => execute(agent)
-				.then((result) => db.updateTestById(test._id, result))
-				.then(() => db.updateStatsByRunId(run_id)));
+			.then((test) => {
+				return execute(agent)
+					.then((result) => db.updateTestById(test._id, result))
+					.then(() => db.updateStatsByRunId(run_id))
+			});
 }
 
 //

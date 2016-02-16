@@ -19,9 +19,11 @@ module.exports = {
 		}
 	},
 	command: {
+		bind: '/bin/numactl',
 		dnsperf: '/bin/numactl'
 	},
 	args: {
+		bind: ['-C0-11', './sbin/named', '-n12'],
 		dnsperf: ['-C12-23', '/usr/local/nom/bin/dnsperf', '-c24', '-q82', '-T6' ]
 	}
 };

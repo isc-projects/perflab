@@ -47,7 +47,8 @@ class BindAgent extends Executor {
 		let createBuild = () => fs.mkdirsAsync(buildPath);
 		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
-		let createConfig = () => fs.copyAsync(`config/named.conf-${config.mode}`, `${etcPath}/named.conf`);
+		let createTestPath = () => fs.emptyDirAsync(testPath);
+		let createConfig = () => fs.copyAsync(`${path}/config/named.conf-${config.mode}`, `${etcPath}/named.conf`);
 		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
 		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
 		let createZoneConf = () => fs.copyAsync(`${path}/config/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
@@ -58,7 +59,7 @@ class BindAgent extends Executor {
 		// empties the work directory, then creates the necessary
 		// subdirectories for this configuration
 		this._target('prepare', '', () =>
-			fs.emptyDirAsync(testPath)
+			createTestPath()
 				.then(createEtc)
 				.then(createRun)
 				.then(createBuild)
