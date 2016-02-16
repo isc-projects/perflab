@@ -142,6 +142,7 @@ app.service('Configs',
 				}
 			});
 
+			confById = tmp;
 			loading = false;
 		}
 
@@ -165,8 +166,18 @@ app.service('Configs',
 		function updateQueue(event, doc) {
 			if (doc && doc.$set && doc.$set.completed) {
 				Beeper.play();
+				if (confById[doc._id]) {
+					var name = confById[doc._id].name
+					Notify.info({
+						message: `Run of ${name} completed`,
+						url: `#/config/run/${doc._id}/list`,
+						target: '_self'
+					}, {
+						allow_dismiss: true, delay: 30000
+					});
+				}
 			}
-			return getQueue().then(merge);
+			getQueue().then(merge);
 		}
 
 		function setEnabled(id, enabled)  {

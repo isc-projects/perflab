@@ -27,7 +27,8 @@
 			},
 		});
 
-		function notify(message, level) {
+		function notify(message, opts) {
+
 			if (message instanceof Error) {
 				message = message.message;
 			} else if (typeof message === 'object' && message.data) {
@@ -37,13 +38,20 @@
 					message = 'could not connect to server';
 				}
 			}
-			$.notify({message}, {type: level});
+
+			$.notify(message, opts);
 		}
-	
+
 		return {
 			notify: notify,
-			danger: function(e)	{ notify(e, 'danger'); },
-			info: function(e)	{ notify(e, 'info'); }
+			danger: function(e, opts) {
+				var o = $.extend({}, opts, {type: 'danger'});
+				notify(e, o);
+			},
+			info: function(e, opts)	{
+				var o = $.extend({}, opts, {type: 'info'});
+				notify(e, o);
+			}
 		}
 	}
 
