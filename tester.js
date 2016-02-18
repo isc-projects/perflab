@@ -51,10 +51,14 @@ function runConfig(config)
 
 	return runDaemon(bind, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
+		let first = true;
 		bind.on('mem', (mem) => db.insertMemoryStatsByRunId(run_id, mem));
 		return (function loop() {
 			let dnsperf = new DNSPerfAgent(config);
-			let res = runTest(dnsperf, run_id).catch(console.error);
+
+			let quiet = (first && config.mode === 'recursive');
+			let res = runTest(dnsperf, run_id, quiet);
+			first = false;
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
 	}).then(bind.stop, bind.stop);
@@ -73,15 +77,19 @@ function runDaemon(agent, config_id)
 }
 
 // starts the testing client with the given configuration
-// and stores the output in the database
-function runTest(agent, run_id)
+// and (usually) stores the output in the database
+function runTest(agent, run_id, quiet)
 {
-	return db.insertTest({run_id})
-			.then((test) => {
-				return execute(agent)
-					.then((result) => db.updateTestById(test._id, result))
-					.then(() => db.updateStatsByRunId(run_id))
-			});
+	if (quiet) {
+		return execute(agent);
+	} else {
+		return db.insertTest({run_id})
+				.then((test) => {
+					return execute(agent)
+						.then((result) => db.updateTestById(test._id, result))
+						.then(() => db.updateStatsByRunId(run_id))
+				});
+	}
 }
 
 //
