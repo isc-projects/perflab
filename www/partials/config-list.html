@@ -8,12 +8,12 @@
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-condensed config-list">
 			<tbody>
-			  <tr ng-repeat="config in configs.all track by config._id" class="config">
+			  <tr ng-repeat="config in configs.all track by config._id" class="config" ng-class="{hipri: config.queue.priority}">
 				<td class="running">
 				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-spinner fa-spin' : ''"></span>
 				</td>
 				<td width="100%" class="name">
-				  <span ng-class="config.queue.enabled ? '' : 'strike'">{{config.name}}</span>
+				  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
 				</td>
 				<td width="5%" nowrap>
 				  <button ng-click="configs.togglePriority(config._id)" class="btn btn-xs btn-primary" title="set priority">

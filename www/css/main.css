@@ -20,6 +20,10 @@ body {
 	text-decoration: line-through;
 }
 
+.hipri {
+	background-color: #f8f8f8;
+}
+
 .scroll {
 	max-height: 600px;
 	overflow-y: auto;
