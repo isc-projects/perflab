@@ -3,6 +3,7 @@
 'use strict';
 
 let settings = require('./settings'),
+	Promise = require('bluebird'),
 	MongoClient = require('mongodb'),
 	ObjectID = MongoClient.ObjectID;
 
@@ -55,7 +56,9 @@ function test_stats_finalize(key, value) {
 class Database {
 	constructor () {
 
-		let dbp = MongoClient.connect(settings.mongo.url);
+		Promise.longStackTraces();
+
+		let dbp = MongoClient.connect(settings.mongo.url, {promiseLibrary: Promise});
 
 		let oid = (id) => (id instanceof ObjectID) ? id : ObjectID.createFromHexString(id);
 
@@ -66,6 +69,8 @@ class Database {
 			dbp.then((db) => {
 				return f.call(this, db);
 			});
+
+		this.close = () => null; // query((db) => db.close());
 
 		// build required indexes
 		this.createIndexes = () =>
@@ -187,7 +192,7 @@ class Database {
 				run.created = new Date();
 				run.updated = new Date();
 				return db.collection('run')
-					.insertOne(run).then(() => run);
+					.insert(run).then(() => run);
 			});
 
 		// retrieve the specified run entry
@@ -220,7 +225,7 @@ class Database {
 		// stores raw memory usage statistics associated with a run
 		this.insertMemoryStatsByRunId = (run_id, mem) =>
 			query((db) => db.collection('memory')
-				.insertOne({run_id, ts: new Date(), data: mem}));
+				.insert({run_id, ts: new Date(), data: mem}));
 
 		// store a new daemon run in the database, automatically
 		// setting the 'created' and 'updated' fields to 'now'
@@ -229,7 +234,7 @@ class Database {
 				test.created = new Date();
 				test.updated = new Date();
 				return db.collection('test')
-					.insertOne(test).then(() => test);
+					.insert(test).then(() => test);
 			});
 
 		// updates the test with the given block, taking
