@@ -111,7 +111,7 @@ class NSDAgent extends Executor {
 			let args = [].concat(settings.args.nsd || []);
 			args = args.concat(['-d', '-p', 8053, '-u', process.env.USER]);
 			args = args.concat(config.args.nsd || []);
-			return this._runWatch(cmd, args, {cwd: runPath}, / nsd started$/m);
+			return this._runWatch(cmd, args, {cwd: runPath}, / nsd started /m);
 		}
 
 		// main executor function - optionally does a 'prepare' forcing
