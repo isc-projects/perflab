@@ -34,7 +34,7 @@ class BindAgent extends Executor {
 		let rebuild = !!(config.flags && config.flags.checkout);
 
 		let path = settings.path;
-		let repo = settings.repo.bind9;
+		let repo = settings.repo.bind;
 
 		let testPath = path + '/tests/' + config._id;
 		let buildPath = testPath + '/build';
