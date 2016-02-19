@@ -19,9 +19,9 @@ class DNSPerfAgent extends Executor {
 		let queryset = config.queryset || 'default';
 
 		// look for the QPS value in the output and return it
-		var getCount = (results) => {
+		let getCount = (results) => {
 			if (results.status === 0 && results.stdout) {
-				var match = results.stdout.match(/Queries per second:\s+(.*)$/m);
+				let match = results.stdout.match(/Queries per second:\s+(.*)$/m);
 				if (match) {
 					results.count = +match[1];
 				}

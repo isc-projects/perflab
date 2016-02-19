@@ -19,12 +19,12 @@ let settings = require('./settings'),
 // NB: this code, like much of the rest of this syste, uses
 //     "Promises" to encapsulate asynchronous results
 //
-class BindAgent extends Executor {
+class NSDAgent extends Executor {
 
 	constructor(config) {
-		super('BIND');
+		super('NSD');
 
-		let cmd = settings.command.bind || './sbin/named';
+		let cmd = settings.command.nsd || './sbin/nsd';
 
 		config.args = config.args || {};
 		config.options = config.options || '';
@@ -34,7 +34,7 @@ class BindAgent extends Executor {
 		let rebuild = !!(config.flags && config.flags.checkout);
 
 		let path = settings.path;
-		let repo = settings.repo.bind9;
+		let repo = settings.repo.nsd;
 
 		let testPath = path + '/tests/' + config._id;
 		let buildPath = testPath + '/build';
@@ -48,10 +48,10 @@ class BindAgent extends Executor {
 		let linkZones = () => fs.symlinkAsync('../../../zones', zonePath);
 
 		let createTestPath = () => fs.emptyDirAsync(testPath);
-		let createConfig = () => fs.copyAsync(`${path}/config/bind/named.conf-${config.mode}`, `${etcPath}/named.conf`);
-		let createOptions = () => fs.writeFileAsync(`${etcPath}/named-options.conf`, config.options);
-		let createGlobal = () => fs.writeFileAsync(`${etcPath}/named-global.conf`, config.global);
-		let createZoneConf = () => fs.copyAsync(`${path}/config/bind/zones-${config.zoneset}.conf`, `${etcPath}/named-zones.conf`);
+		let createConfig = () => fs.copyAsync(`${path}/config/nsd/nsd.conf`, `${etcPath}/nsd/nsd.conf`);
+		let createOptions = () => fs.writeFileAsync(`${etcPath}/nsd/options.conf`, config.options);
+		let createGlobal = () => fs.writeFileAsync(`${etcPath}/nsd/global.conf`, config.global);
+		let createZoneConf = () => fs.copyAsync(`${path}/config/nsd/zones-${config.zoneset}.conf`, `${etcPath}/nsd/zones.conf`);
 
 		// where to store the .dep files
 		this._depPath(testPath);
@@ -65,14 +65,18 @@ class BindAgent extends Executor {
 				.then(createBuild)
 				.then(linkZones));
 
-		// does 'git clone'
-		this._target('checkout', 'prepare', () => this._run('/usr/bin/git', [
-			'clone', '--depth', 1, '-b', config.branch, repo, '.'
+		// does 'svn checkout'
+		this._target('checkout', 'prepare', () => this._run('/usr/bin/svn', [
+			'co', `${repo}${config.branch}`, '.'
 		], {cwd: buildPath}));
 
+		// does 'autoreconf'
+		this._target('autoreconf', 'checkout', () =>
+			this._run('/usr/bin/autoreconf', ['-i'], {cwd: buildPath}));
+
 		// does './configure [args...]'
-		this._target('configure', 'checkout', () => {
-			let args = ['--prefix', runPath].concat(config.args.configure || []);
+		this._target('configure', 'autoreconf', () => {
+			let args = ['--prefix', runPath, '--enable-root-server'].concat(config.args.configure || []);
 			return this._run('./configure', args, {cwd: buildPath});
 		});
 
@@ -92,36 +96,36 @@ class BindAgent extends Executor {
 				.then(createGlobal)
 				.then(createZoneConf);
 
-		// does 'git log' to extract last commit message
-		let gitlog = () => this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath, quiet: true});
+		// does 'svn log' to extract last commit message
+		let getRevision = () => this._run('/usr/bin/svn', ['log', '-l', 1], {cwd: buildPath, quiet: true});
 
-		// gets BIND compilation information
-		let bindVersion = () => this._run('./sbin/named', ['-V'], {cwd: runPath, quiet: true});
+		// gets compilation information
+		let getVersion = () => this._run('./sbin/nsd', ['-v'], {cwd: runPath, quiet: true});
 
-		// combines 'git log' and 'bind -V' output
-		let getInfo = () => gitlog().then((log) => bindVersion()
+		// combines revision and info
+		let getInfo = () => getRevision().then((log) => getVersion()
 									.then((version) => log.stdout + '\n' + version.stdout))
 
-		// starts BIND
-		let startBind = () => {
-			let args = [].concat(settings.args.bind || []);
-			args = args.concat(['-f', '-p', 8053]);
-			args = args.concat(config.args.bind || []);
-			return this._runWatch(cmd, args, {cwd: runPath}, / running$/m);
+		// starts the server under test
+		let startServer = () => {
+			let args = [].concat(settings.args.nsd || []);
+			args = args.concat(['-d', '-p', 8053, '-u', process.env.USER]);
+			args = args.concat(config.args.nsd || []);
+			return this._runWatch(cmd, args, {cwd: runPath}, / nsd started$/m);
 		}
 
 		// main executor function - optionally does a 'prepare' forcing
 		// the entire build sequence to start afresh, then gets the latest
-		// commit message and runs BIND, adding the commit message to the
-		// BIND result output
+		// commit message and runs thes server, adding the commit message to the
+		// resulting output
 		this.run = (opts) =>
 			this.prepare({force: rebuild})
 				.then(this.install)
 				.then(genConfig)
 				.then(getInfo)
-				.then((info) => startBind().then(
+				.then((info) => startServer().then(
 					(res) => Object.assign(res, { commit: info })));
 	}
 }
 
-module.exports = BindAgent;
+module.exports = NSDAgent;

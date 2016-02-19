@@ -1,6 +1,6 @@
 "use strict";
 
-let Database = require('./database.js'),
+let Database = require('./database'),
 	parseUrl = require('parseurl'),
 	querystring = require('querystring');
 
@@ -11,9 +11,9 @@ let db = new Database();
 // no data
 function handler(f) {
 	return function(req, res, next) {
-		var ok = (data) => data ? res.json(data) : res.error();
-		var err = (e) => res.error(e.message);
-		var args = [].slice.call(arguments, 3);
+		let ok = (data) => data ? res.json(data) : res.error();
+		let err = (e) => res.error(e.message);
+		let args = [].slice.call(arguments, 3);
 		return f.apply(this, args).then(ok, err);
 	}
 }
@@ -22,14 +22,14 @@ function handler(f) {
 // and passes those to the callback (after any bound parameters)
 function pageHandler(f) {
 	return function(req, res, next) {
-		var url = parseUrl(req);
-		var query = querystring.parse(url.query);
-		var ok = (data) => data ? res.json(data) : res.error();
-		var err = (e) => res.error(e.message);
-		var args = [].slice.call(arguments, 3);
+		let url = parseUrl(req);
+		let query = querystring.parse(url.query);
+		let ok = (data) => data ? res.json(data) : res.error();
+		let err = (e) => res.error(e.message);
+		let args = [].slice.call(arguments, 3);
 
-		var skip = +query.skip || 0;
-		var limit = +query.limit || 0;
+		let skip = +query.skip || 0;
+		let limit = +query.limit || 0;
 		if (limit < 0) { limit = 0; }
 		args.push(skip, limit);
 
@@ -42,10 +42,10 @@ function pageHandler(f) {
 // passed to the callback
 function bodyHandler(f) {
 	return function(req, res, next) {
-		var args = [].slice.call(arguments, 3);
+		let args = [].slice.call(arguments, 3);
 		args.push(req.body);
-		var ok = (data) => data ? res.json(data) : res.error();
-		var err = (e) => res.error(e.message);
+		let ok = (data) => data ? res.json(data) : res.error();
+		let err = (e) => res.error(e.message);
 		return f.apply(this, args).then(ok, err);
 	}
 }

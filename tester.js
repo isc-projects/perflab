@@ -2,10 +2,9 @@
 
 'use strict';
 
-let	Promise = require('bluebird'),
-	Database = require('./database.js'),
-	BindAgent = require('./bind-agent.js'),
-	DNSPerfAgent = require('./dnsperf-agent.js');
+const system = require('./system'),
+	Database = require('./database'),
+	Promise = require('bluebird');
 
 Promise.longStackTraces();
 
@@ -47,26 +46,27 @@ function doFirstQueueEntry() {
 // -recursively starts a number of iterations of the test client
 function runConfig(config)
 {
-	let bind = new BindAgent(config);
+	let type = config.type || 'bind9';
+	let serverAgent = new system.agents[type].server(config);
 
-	return runDaemon(bind, config._id).then((run_id) => {
+	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
 		let first = true;
-		bind.on('mem', (mem) => db.insertMemoryStatsByRunId(run_id, mem));
+		serverAgent.on('mem', (mem) => db.insertMemoryStatsByRunId(run_id, mem));
 		return (function loop() {
-			let dnsperf = new DNSPerfAgent(config);
+			let clientAgent = new system.agents[type].client(config);
 
 			let quiet = (first && config.mode === 'recursive');
-			let res = runTest(dnsperf, run_id, quiet);
+			let res = runClient(clientAgent, run_id, quiet);
 			first = false;
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
-	}).then(bind.stop, bind.stop);
+	}).catch((err) => console.trace).then(serverAgent.stop)
 }
 
 // starts the daemon under test with the given configuration
 // and stores the execution results in the database
-function runDaemon(agent, config_id)
+function runServer(agent, config_id)
 {
 	return db.insertRun({config_id})
 				.then((run) => {
@@ -78,7 +78,7 @@ function runDaemon(agent, config_id)
 
 // starts the testing client with the given configuration
 // and (usually) stores the output in the database
-function runTest(agent, run_id, quiet)
+function runClient(agent, run_id, quiet)
 {
 	if (quiet) {
 		return execute(agent);

@@ -31,7 +31,7 @@ app.use(bodyParser.json({strict: false}));
 
 // REST API URLs are all in /api/
 app.use(dispatch({
-	'/api': require('./httpd-api.js')
+	'/api': require('./httpd-api')
 }));
 
 server.listen(8000);
