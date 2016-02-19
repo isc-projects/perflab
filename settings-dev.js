@@ -10,7 +10,7 @@ module.exports = {
 		oplog:	'mongodb://localhost/local'
 	},
 	repo: {
-		bind9: 	'https://source.isc.org/git/bind9.git',
+		bind: 	'https://source.isc.org/git/bind9.git',
 		nsd:	'http://www.nlnetlabs.nl/svn/nsd/tags/'
 	},
 	hosts: {

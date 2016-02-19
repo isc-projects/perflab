@@ -2,7 +2,7 @@
 
 module.exports = {
 	agents:	{
-		bind9: {
+		bind: {
 			server: require('./bind-agent'),
 			client: require('./dnsperf-agent')
 		},
