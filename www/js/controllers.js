@@ -100,6 +100,7 @@ app.controller('configEditController',
 
 		if ($scope.id === undefined) {
 			setDefaults();
+			$scope.config.type = $routeParams.type;
 		} else {
 			$http.get('/api/config/' + $scope.id).then(function(res) {
 				$scope.config = res.data;
@@ -125,8 +126,8 @@ app.controller('configEditController',
 			var config = $scope.config = $scope.config || {};
 
 			config.flags = config.flags || {checkout: false};
-			config.type = config.type || 'bind';
 			config.mode = config.mode || 'auth';
+			config.type = config.type || 'bind';
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];
