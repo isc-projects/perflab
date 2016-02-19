@@ -155,8 +155,9 @@ app.controller('configEditController',
 				}).catch(Notify.danger).then(doneSaving);
 			} else {
 				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+					// TODO: fix this
+					$scope.$$childHead.configEdit.$setPristine();
 					Notify.info('Saved');
-					$scope.configEdit.$setPristine();
 				}).catch(Notify.danger).then(doneSaving);
 			}
 		}
