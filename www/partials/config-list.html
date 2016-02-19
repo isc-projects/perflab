@@ -39,13 +39,20 @@
 				<td width="25%" nowrap align="right">
 				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>Graph</a>
 				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bars"></span>List</a>
-				  <a href="#/config/{{config._id}}/edit" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>Edit</a>
+				  <a href="#/config/edit/{{config.type || 'bind'}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>Edit</a>
 				</td>
 			  </tr>
 			  <tr>
-				<td colspan="6" align="right">
-				  <a href="#/config/new" class="fixed-button btn btn-xs btn-primary">New...</a>
-				</td>
+				<td colspan="6" align="right"><div class="btn-group">
+				  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
+						  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="fa fa-caret-down"></span>New
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li><a href="#/config/new/bind">BIND</a>
+				    <li><a href="#/config/new/nsd">NSD</a>
+				  </ul>
+				</div></td>
 			  </tr>
 			</tbody>
 		  </table>

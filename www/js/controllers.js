@@ -125,6 +125,7 @@ app.controller('configEditController',
 			var config = $scope.config = $scope.config || {};
 
 			config.flags = config.flags || {checkout: false};
+			config.type = config.type || 'bind';
 			config.mode = config.mode || 'auth';
 
 			var args = config.args = config.args || {};
@@ -147,7 +148,7 @@ app.controller('configEditController',
 			if ($scope.id === undefined) {
 				$http.post('/api/config/', $scope.config).then(function(res) {
 					$scope.id = res.data._id;
-					$location.path('/config/' + $scope.id + '/edit').replace();
+					$location.path('/config/' + $scope.config.type + '/' + $scope.id + '/edit').replace();
 					Notify.info('Saved');
 					$route.reload();
 				}).catch(Notify.danger).then(doneSaving);

@@ -14,11 +14,11 @@ app.config(['$routeProvider',
 				templateUrl: 'partials/config-list.html',
 				controller: 'configListController'
 			})
-			.when('/config/new', {
+			.when('/config/new/:type', {
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})
-			.when('/config/:id/edit', {
+			.when('/config/edit/:type/:id', {
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})
