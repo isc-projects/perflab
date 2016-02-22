@@ -20,7 +20,7 @@ let fmtHead = `$TTL 3600
 ns1		IN A 127.0.0.1
 		IN AAAA ::1
 `;
-let fmtRR = '%s\tIN A 127.0.0.1\n\t\tIN A ::1\n';
+let fmtRR = '%s\tIN A 127.0.0.1\n\t\tIN AAAA ::1\n';
 let fmtNS = '%s\tIN NS ns1\n';
 
 console.log('Copying standard config files');
