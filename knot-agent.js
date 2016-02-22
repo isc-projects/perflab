@@ -62,8 +62,7 @@ class KnotAgent extends Executor {
 			createTestPath()
 				.then(createEtc)
 				.then(createRun)
-				.then(createBuild)
-				.then(linkZones));
+				.then(createBuild));
 
 		// does 'git clone'
 		this._target('checkout', 'prepare', () => this._run('/usr/bin/git', [
@@ -94,7 +93,8 @@ class KnotAgent extends Executor {
 				createConfig()
 				.then(createOptions)
 				.then(createGlobal)
-				.then(createZoneConf);
+				.then(createZoneConf)
+				.then(linkZones);
 
 		// does 'git log' to extract last commit message
 		let getRevision = () => this._run('/usr/bin/git', ['log', '-n', 1], {cwd: buildPath, quiet: true});
