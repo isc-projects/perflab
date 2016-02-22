@@ -22,7 +22,7 @@ let settings = require('./settings'),
 class KnotAgent extends Executor {
 
 	constructor(config) {
-		super('NSD');
+		super('Knot2');
 
 		let cmd = settings.command.knot || './sbin/knotd';
 
@@ -42,10 +42,11 @@ class KnotAgent extends Executor {
 		let etcPath = runPath + '/etc';
 		let zonePath = runPath + '/zones';
 
+		let noop = () => undefined;
 		let createEtc = () => fs.mkdirsAsync(etcPath);
 		let createRun = () => fs.mkdirsAsync(runPath);
 		let createBuild = () => fs.mkdirsAsync(buildPath);
-		let linkZones = () => fs.symlinkAsync('../../../../../../zones', `${runPath}/var/lib/knot`);
+		let linkZones = () => fs.symlinkAsync('../../../../../../zones', `${runPath}/var/lib/knot`).then(noop, noop);
 
 		let createTestPath = () => fs.emptyDirAsync(testPath);
 		let createConfig = () => fs.copyAsync(`${path}/config/knot/knot.conf`, `${etcPath}/knot/knot.conf`);
