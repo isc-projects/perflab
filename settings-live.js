@@ -10,7 +10,9 @@ module.exports = {
 		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
 	repo: {
-		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9'
+		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9',
+		nsd:    'http://www.nlnetlabs.nl/svn/nsd/tags/',
+		knot:   'git://git.nic.cz/knot-dns.git'
 	},
 	hosts: {
 		dns: {
@@ -19,8 +21,10 @@ module.exports = {
 		}
 	},
 	command: {
+		dnsperf: '/bin/numactl',
 		bind: '/bin/numactl',
-		dnsperf: '/bin/numactl'
+		knot: './sbin/knotd',
+		nsd: './sbin/nsd'
 	},
 	args: {
 		bind: ['-C0-11', './sbin/named', '-n12'],

@@ -35,7 +35,7 @@
 			<label for="configArgsBind">{{editor.name}} command line options</label>
 			<input class="form-control" id="configArgsBind" ng-model="config.args.bind" ng-list=" " ng-trim="false" />
 		  </div>
-		  <div class="form-group form-group-sm">
+		  <div class="form-group form-group-sm" ng-show="editor.options">
 			<label for="configOptions">{{editor.options}}</label><br/>
 			<textarea class="form-control" id="configOptions" ng-model="config.options" />
 		  </div>

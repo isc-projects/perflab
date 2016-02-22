@@ -11,7 +11,8 @@ module.exports = {
 	},
 	repo: {
 		bind: 	'https://source.isc.org/git/bind9.git',
-		nsd:	'http://www.nlnetlabs.nl/svn/nsd/tags/'
+		nsd:	'http://www.nlnetlabs.nl/svn/nsd/tags/',
+		knot:	'git://git.nic.cz/knot-dns.git'
 	},
 	hosts: {
 		dns: {

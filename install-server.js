@@ -12,6 +12,7 @@ let zonePath = `${settings.path}/zones`;
 
 let fmtConfBind = 'zone %s.example { type master; file "zones/small"; };\n';
 let fmtConfNSD = 'zone:\n\tname: %s.example\n\tzonefile: zones/small\n\n';
+let fmtConfKnot = 'zone:\n  - domain: %s.example\n    file: "zones/small"\n\n';
 
 let fmtHead = `$TTL 3600
 @		IN SOA ns1 dns 2016010101 86400 3600 86400 86400
@@ -29,8 +30,10 @@ console.log(res.stdout.toString());
 console.log('Generating zone config and data files');
 fmtWrite(1e3, '', fmtConfBind, `${configPath}/bind/zones-kilo-small.conf`);
 fmtWrite(1e3, '', fmtConfNSD,  `${configPath}/nsd/zones-kilo-small.conf`);
+fmtWrite(1e3, '', fmtConfKnot,  `${configPath}/knot/zones-kilo-small.conf`);
 fmtWrite(1e6, '', fmtConfBind, `${configPath}/bind/zones-mega-small.conf`);
 fmtWrite(1e6, '', fmtConfNSD,  `${configPath}/nsd/zones-mega-small.conf`);
+fmtWrite(1e6, '', fmtConfKnot,  `${configPath}/knot/zones-mega-small.conf`);
 
 fmtWrite(1e3, fmtHead, fmtRR, `${zonePath}/kilo-records`);
 fmtWrite(1e3, fmtHead, fmtNS, `${zonePath}/kilo-delegations`);

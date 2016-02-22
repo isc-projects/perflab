@@ -140,6 +140,10 @@ class Executor extends EventEmitter {
 				child.stdout.on('data', (data) => {
 					stdout += data;
 					this.emit('stdout', data);
+					if (!matched && stdout.match(match)) {
+						matched = true;
+						resolve({stdout, stderr, status: 0});
+					}
 				});
 
 				child.stderr.on('data', (data) => {

@@ -20,6 +20,11 @@ app.controller('configTypeController',
 				multimode: false,
 				options: 'nsd.conf server: statements',
 				global: 'nsd.conf global configuration blocks'
+			},
+			knot: {
+				name: 'Knot2',
+				multimode: false,
+				global: 'knot.conf global configuration blocks'
 			}
 		}[$routeParams.type];
 
