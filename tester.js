@@ -71,8 +71,13 @@ function runServer(agent, config_id)
 	return db.insertRun({config_id})
 				.then((run) => {
 					return execute(agent)
-						.then((result) => db.updateRunById(run._id, result))
-						.then(() => run._id);
+						.then(
+							(result) => db.updateRunById(run._id, result),
+							(result) => {
+								db.updateRunById(run._id, result);
+								throw new Error("execution failed");
+							}
+						).then(() => run._id);
 				});
 }
 
