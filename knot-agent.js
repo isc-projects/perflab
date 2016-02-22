@@ -40,13 +40,13 @@ class KnotAgent extends Executor {
 		let buildPath = testPath + '/build';
 		let runPath = testPath + '/run';
 		let etcPath = runPath + '/etc';
-		let zonePath = runPath + '/zones';
+		let zonePath = runPath + '/var/lib/knot/zones';
 
 		let noop = () => undefined;
 		let createEtc = () => fs.mkdirsAsync(etcPath);
 		let createRun = () => fs.mkdirsAsync(runPath);
 		let createBuild = () => fs.mkdirsAsync(buildPath);
-		let linkZones = () => fs.symlinkAsync('../../../../../../zones', `${runPath}/var/lib/knot`).then(noop, noop);
+		let linkZones = () => fs.symlinkAsync('../../../../../../zones', zonePath).then(noop, noop);
 
 		let createTestPath = () => fs.emptyDirAsync(testPath);
 		let createConfig = () => fs.copyAsync(`${path}/config/knot/knot.conf`, `${etcPath}/knot/knot.conf`);
