@@ -52,7 +52,6 @@ function runConfig(config)
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
 		let first = true;
-		serverAgent.on('mem', (mem) => db.insertMemoryStatsByRunId(run_id, mem));
 		return (function loop() {
 			let clientAgent = new system.agents[type].client(config);
 
@@ -70,7 +69,7 @@ function runServer(agent, config_id)
 {
 	return db.insertRun({config_id})
 				.then((run) => {
-					return execute(agent)
+					return execute(agent, run._id)
 						.then(
 							(result) => db.updateRunById(run._id, result),
 							(result) => {
@@ -106,8 +105,14 @@ function runClient(agent, run_id, quiet)
 // output accumulated in Executor._run is only captured for one
 // build stage at a time
 //
-function execute(agent) {
+function execute(agent, run_id) {
 	let stdout = '', stderr = '';
+
+	if (run_id !== undefined) {
+		agent.on('mem', (mem) => {
+			db.insertMemoryStatsByRunId(run_id, mem);
+		});
+	}
 
 	agent.on('cmd', (t) => {
 		let log = {channel: 'command', text: t, time: new Date()}

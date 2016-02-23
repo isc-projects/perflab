@@ -130,7 +130,7 @@ class Executor extends EventEmitter {
 								}
 							}
 						);
-					}, 5000);
+					}, 1000);
 					child.on('error', () => clearInterval(timer));
 					child.on('exit', () => clearInterval(timer));
 				}
