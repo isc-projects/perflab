@@ -18,8 +18,8 @@ app.controller('memoryGraphController',
 				showRangeSelector: false,
 				labels: ['x', 'Resident', 'Data'],
 				xlabel: 'Date / Time',
-				ylabel: 'Memory (Pages)',
-				axes: { y: { axisLabelWidth: 70 } },
+				ylabel: 'Memory (MB)',
+				axes: { y: { axisLabelWidth: 80 } },
 				height: 500,
 				legend: 'follow'
 			}
@@ -34,7 +34,8 @@ app.controller('memoryGraphController',
 			$scope.graph.data = data.map(function(rec) {
 				return [
 					new Date(rec.ts),
-					rec.data[0], rec.data[5]
+					rec.data[0] * 4096 / 1048576,
+					rec.data[5] * 4096 / 1048576
 				];
 			}).sort(function(a, b) { return a[0] - b[0] });
 		}).catch(Notify.danger);
