@@ -1,0 +1,44 @@
+(function() {
+
+"use strict";
+
+var app = angular.module('perflabApp');
+
+app.controller('memoryGraphController',
+	['$scope', '$route', '$routeParams', '$location',
+	 'Notify', 'ConfigResource', 'RunResource', 'MemoryResource',
+	function ($scope, $route, $routeParams, $location,
+			  Notify, ConfigResource, RunResource, MemoryResource) {
+
+		var id = $routeParams.run_id;
+
+		$scope.graph = {
+			data: [],
+			options: {
+				showRangeSelector: false,
+				labels: ['x', 'Resident', 'Data'],
+				xlabel: 'Date / Time',
+				ylabel: 'Memory (Pages)',
+				axes: { y: { axisLabelWidth: 70 } },
+				height: 500,
+				legend: 'follow'
+			}
+		};
+
+		$scope.run = RunResource.get({id: id});
+		$scope.run.$promise.then(function(data) {
+			$scope.config = ConfigResource.get({id: data.config_id});
+		});
+
+		MemoryResource.query({run_id: id}).$promise.then(function(data) {
+			$scope.graph.data = data.map(function(rec) {
+				return [
+					new Date(rec.ts),
+					rec.data[0], rec.data[5]
+				];
+			}).sort(function(a, b) { return a[0] - b[0] });
+		}).catch(Notify.danger);
+	}
+]);
+
+})();

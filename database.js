@@ -227,6 +227,13 @@ class Database {
 			query((db) => db.collection('memory')
 				.insert({run_id, ts: new Date(), data: mem}));
 
+		// gets all memory usage statistics associated with a run
+		this.getMemoryStatsByRunId = (run_id, mem) =>
+			query((db) => db.collection('memory')
+				.find({run_id: oid(run_id)}, {ts:1, data: 1, _id: 0})
+				.sort({ts: 1})
+				.toArray());
+
 		// store a new daemon run in the database, automatically
 		// setting the 'created' and 'updated' fields to 'now'
 		this.insertTest = (test) =>

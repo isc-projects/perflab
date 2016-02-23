@@ -30,6 +30,10 @@ app.config(['$routeProvider',
 				templateUrl: 'partials/run-list.html',
 				controller: 'runListController'
 			})
+			.when('/run/memory/:run_id/', {
+				templateUrl: 'partials/mem-graph.html',
+				controller: 'memoryGraphController'
+			})
 			.when('/run/test/:run_id/', {
 				templateUrl: 'partials/test-list.html',
 				controller: 'testListController'

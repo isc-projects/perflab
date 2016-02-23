@@ -4,6 +4,10 @@
 	  <div class="panel panel-default">
 		<div class="panel-heading" ng-show="config.$resolved">
 		  Tests of configuration "{{config.name}}" started at {{run.created}}
+		  <span class="pull-right">
+			<a href="#/run/memory/{{run._id}}/" class="fixed-button btn btn-xs btn-primary">
+			  <span class="fa fa-line-chart"></span>Memory</a>
+		  </span>
 		</div>
 		<div class="panel-body">
 		  <div class="alert alert-info" ng-show="!tests.$resolved">Loading...</div>

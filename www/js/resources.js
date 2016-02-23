@@ -15,6 +15,12 @@ module.factory('TestResource', ['$resource',
 	}
 ]);
 
+module.factory('MemoryResource', ['$resource',
+	function($resource) {
+		return $resource('/api/run/memory/:run_id/', {}, {});
+	}
+]);
+
 module.factory('RunResource', ['$resource',
 	function($resource) {
 		return $resource('/api/run/:id', {}, {

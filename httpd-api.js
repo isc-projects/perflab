@@ -67,7 +67,8 @@ module.exports = {
 	'/run': {
 		'GET /:id':						handler(db.getRunById),
 		'GET /:id/recalc':				handler(db.updateStatsByRunId),
-		'GET /test/:id/':				handler(db.getTestsByRunId)
+		'GET /test/:id/':				handler(db.getTestsByRunId),
+		'GET /memory/:id/':				handler(db.getMemoryStatsByRunId)
 	},
 	'/test': {
 		'GET /:id':						handler(db.getTestById)
