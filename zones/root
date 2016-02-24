@@ -1,7 +1,3 @@
-
-; <<>> DiG 9.10.3-P3-RedHat-9.10.3-10.P3.fc23 <<>> @k.root-servers.net. . axfr
-; (2 servers found)
-;; global options: +cmd
 .			86400	IN	SOA	a.root-servers.net. nstld.verisign-grs.com. 2016020500 1800 900 604800 86400
 .			172800	IN	DNSKEY	257 3 8 AwEAAagAIKlVZrpC6Ia7gEzahOR+9W29euxhJhVVLOyQbSEW0O8gcCjF FVQUTf6v58fLjwBd0YI0EzrAcQqBGCzh/RStIoO8g0NfnfL2MTJRkxoX bfDaUeVPQuYEhg37NZWAJQ9VnMVDxP/VHL496M/QZxkjf5/Efucp2gaD X6RS6CXpoY68LsvPVjR0ZSwzz1apAzvN9dlzEheX7ICJBBtuA6G3LQpz W5hOA2hzCTMjJPJ8LbqF6dsV6DoBQzgul0sGIcGOYl7OyQdXfZ57relS Qageu+ipAdTTJ25AsRTAoub8ONGcLmqrAmRLKBP1dfwhYB4N7knNnulq QxA+Uk1ihz0=
 .			172800	IN	DNSKEY	256 3 8 AwEAAbr/RV0stAWYbmKOldjShp4AOQGOyY3ATI1NUpP4X1qBs6lsXpc+ 1ABgv6zkg02IktjZrHnmD0HsElu3wqXMrT5KL1W7Spmg0Pou9WZ8Qttd TKXwrVXrASsaGI2z/pLBSnK8EdzqUrTVxY4TEGZtxV519isM06CCMihx Tn5cfFBF
@@ -16751,9 +16747,3 @@ zw.			86400	IN	RRSIG	NSEC 8 1 86400 20160215050000 20160205040000 54549 . X4tY0X
 ns1.telone.co.zw.	172800	IN	A	194.133.122.47
 ns2.telone.co.zw.	172800	IN	A	194.133.122.42
 ns3.telone.co.zw.	172800	IN	A	194.133.122.34
-.			86400	IN	SOA	a.root-servers.net. nstld.verisign-grs.com. 2016020500 1800 900 604800 86400
-;; Query time: 874 msec
-;; SERVER: 2001:7fd::1#53(2001:7fd::1)
-;; WHEN: Fri Feb 05 10:07:07 EST 2016
-;; XFR size: 16750 records (messages 44, bytes 712023)
-

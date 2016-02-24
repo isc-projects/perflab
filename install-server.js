@@ -23,6 +23,10 @@ ns1		IN A 127.0.0.1
 let fmtRR = '%s\tIN A 127.0.0.1\n\t\tIN AAAA ::1\n';
 let fmtNS = '%s\tIN NS ns1\n';
 
+console.log('Copying standard zone files');
+let res = child.spawnSync('/usr/bin/rsync', ['-av', 'zones', settings.path ]);
+console.log(res.stdout.toString());
+
 console.log('Copying standard config files');
 let res = child.spawnSync('/usr/bin/rsync', ['-av', 'config', settings.path ]);
 console.log(res.stdout.toString());
