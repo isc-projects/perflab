@@ -62,15 +62,10 @@ class Database {
 
 		let oid = (id) => (id instanceof ObjectID) ? id : ObjectID.createFromHexString(id);
 
-		// simply wrapper for DB - was more complicated than this
-		// and no longer strictly required but it's easier to leave
-		// it as it is
-		let query = (f) => 
-			dbp.then((db) => {
-				return f.call(this, db);
-			});
+		// simply wrapper for DB, extracting the db handle from the dbp promise
+		let query = this.query = (f) => dbp.then((db) => f.call(this, db));
 
-		this.close = () => null; // query((db) => db.close());
+		this.close = () => dbp.then(db => db.close());
 
 		// build required indexes
 		this.createIndexes = () =>
@@ -223,9 +218,11 @@ class Database {
 				)));
 
 		// stores raw memory usage statistics associated with a run
-		this.insertMemoryStatsByRunId = (run_id, mem) =>
-			query((db) => db.collection('memory')
-				.insert({run_id, ts: new Date(), data: mem}));
+		this.insertMemoryStats = (memory) =>
+			query((db) => {
+				memory.ts = new Date();
+				return db.collection('memory').insert(memory);
+			});
 
 		// gets all memory usage statistics associated with a run
 		this.getMemoryStatsByRunId = (run_id, mem) =>

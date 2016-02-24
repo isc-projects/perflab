@@ -56,7 +56,7 @@ function runConfig(config)
 			let clientAgent = new system.agents[type].client(config);
 
 			let quiet = (first && config.mode === 'recursive');
-			let res = runClient(clientAgent, run_id, quiet);
+			let res = runClient(clientAgent, config._id, run_id, quiet);
 			first = false;
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
@@ -69,7 +69,7 @@ function runServer(agent, config_id)
 {
 	return db.insertRun({config_id})
 				.then((run) => {
-					return execute(agent, run._id)
+					return execute(agent, config_id, run._id)
 						.then(
 							(result) => db.updateRunById(run._id, result),
 							(result) => {
@@ -82,14 +82,14 @@ function runServer(agent, config_id)
 
 // starts the testing client with the given configuration
 // and (usually) stores the output in the database
-function runClient(agent, run_id, quiet)
+function runClient(agent, config_id, run_id, quiet)
 {
 	if (quiet) {
-		return execute(agent);
+		return execute(agent, config_id, run_id);
 	} else {
-		return db.insertTest({run_id})
+		return db.insertTest({config_id, run_id})
 				.then((test) => {
-					return execute(agent)
+					return execute(agent, config_id, run_id)
 						.then((result) => db.updateTestById(test._id, result))
 						.then(() => db.updateStatsByRunId(run_id))
 				});
@@ -105,12 +105,12 @@ function runClient(agent, run_id, quiet)
 // output accumulated in Executor._run is only captured for one
 // build stage at a time
 //
-function execute(agent, run_id) {
+function execute(agent, config_id, run_id) {
 	let stdout = '', stderr = '';
 
 	if (run_id !== undefined) {
 		agent.on('mem', (mem) => {
-			db.insertMemoryStatsByRunId(run_id, mem);
+			db.insertMemoryStats({config_id, run_id, data: mem});
 		});
 	}
 
