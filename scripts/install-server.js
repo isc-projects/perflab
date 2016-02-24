@@ -2,7 +2,7 @@
 
 'use strict';
 
-const settings = require('./settings'),
+const settings = require('../settings'),
 	child = require('child_process'),
 	fs = require('fs'),
 	util = require('util');

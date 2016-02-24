@@ -2,13 +2,15 @@
 
 'use strict';
 
-const system = require('./system'),
-	Database = require('./database'),
+let Agents = require('./lib/agents'),
+	Database = require('./lib/database'),
 	Promise = require('bluebird');
+
+let settings = require('./settings');
 
 Promise.longStackTraces();
 
-let db = new Database();
+let db = new Database(settings);
 try {
 	db.createIndexes().then(runQueue);
 } catch (e) {
@@ -47,13 +49,13 @@ function doFirstQueueEntry() {
 function runConfig(config)
 {
 	let type = config.type || 'bind';
-	let serverAgent = new system.agents[type].server(config);
+	let serverAgent = new Agents[type].server(settings, config);
 
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
 		let first = true;
 		return (function loop() {
-			let clientAgent = new system.agents[type].client(config);
+			let clientAgent = new Agents[type].client(settings, config);
 
 			let quiet = (first && config.mode === 'recursive');
 			let res = runClient(clientAgent, config._id, run_id, quiet);
