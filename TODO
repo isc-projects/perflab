@@ -23,6 +23,5 @@
 - [MAYBE] mark all tasks as "not running" on startup
 - [LATER] comparative graphs for different configs
 - [LATER] long term chart of different releases
-- [LATER] Login system
-  - use Apache reverse proxy with krb5 for WebUI
-  - protection for WebSockets?
+- [DONE] Login system via Apache reverse proxy with krb5
+- "clone" configurations
