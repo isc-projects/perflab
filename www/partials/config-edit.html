@@ -1,4 +1,16 @@
 <div class="container">
+
+  <div class="row" ng-show="existing">
+	<div class="col-md-12">
+      <div class="alert alert-danger alert-dismissable" role="alert">
+<b>NB:</b> There are existing results for this configuration.  Please be advised
+that editing this configuration may invalidate any comparisons between
+pre- and post-edit results.
+	  </div>
+    </div>
+  </div>
+  <br ng-show="existing" />
+
   <div class="row">
 	<div class="col-md-12" ng-controller="configTypeController">
 	  <div class="panel panel-default">
@@ -77,15 +89,6 @@
 	  </div>
 	  </div>
 	</div>
-  </div>
-  <div class="row" ng-show="existing">
-	<div class="col-md-12">
-      <div class="alert alert-danger alert-dismissable" role="alert">
-There are existing results for this configuration.  Please be advised
-that editing this configuration may invalidate any comparisons between
-pre- and post-edit results.
-	  </div>
-    </div>
   </div>
   <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
 	<div class="modal-dialog">
