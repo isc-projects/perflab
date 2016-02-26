@@ -22,7 +22,7 @@
 		  </tr>
 		</thead>
 		<tbody>
-		  <tr ng-repeat="run in runs">
+		  <tr ng-repeat="run in runs track by run._id">
 			<td class="time"><a href="#/run/test/{{run._id}}/">{{run.created}}</td>
 			<td class="tests text-right">{{run.stats ? run.stats.count : "-"}}</td>
 			<td class="average text-right">{{run.stats ? run.stats.average.toFixed(1) : "-"}}</td>
@@ -33,15 +33,15 @@
 	  <p class="text-center">Page {{page}}</p>
 	  <div>
 		<span>
-		  <button ng-show="link.first" type="button" ng-click="search(link.first)" class="fixed-button btn btn-xs btn-primary">
+		  <button ng-show="link.first" type="button" ng-click="skipto(link.first)" class="fixed-button btn btn-xs btn-primary">
 		    <span class="fa fa-fast-backward"></span>Latest
 		  </button>
-		  <button ng-show="link.prev" type="button" ng-click="search(link.prev)" class="fixed-button btn btn-xs btn-primary">
+		  <button ng-show="link.prev" type="button" ng-click="skipto(link.prev)" class="fixed-button btn btn-xs btn-primary">
 		    <span class="fa fa-backward"></span>Newer
 		  </button>
 		</span>
 		<span class="pull-right">
-		  <button ng-show="link.next" type="button" ng-click="search(link.next)" class="fixed-button-right btn btn-xs btn-primary">
+		  <button ng-show="link.next" type="button" ng-click="skipto(link.next)" class="fixed-button-right btn btn-xs btn-primary">
 		    Older<span class="fa fa-forward"></span>
 		  </button>
 		</span>

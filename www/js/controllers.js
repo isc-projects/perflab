@@ -26,9 +26,9 @@ app.controller('systemController',
 
 app.controller('runListController',
 	['$scope', '$route', '$routeParams', '$location',
-	 'ConfigResource', 'RunResource', 'Notify',
+	 'ConfigResource', 'RunResource', 'OpLog', 'Notify',
 	function($scope, $route, $routeParams, $location,
-			 ConfigResource, RunResource, Notify) {
+			 ConfigResource, RunResource, OpLog, Notify) {
 
 		var id = $routeParams.config_id;
 		var search = $location.search();
@@ -39,10 +39,16 @@ app.controller('runListController',
 		}
 		$scope.page = Math.floor(skip / limit) + 1;
 
+		$scope.skipto = function(arg) {
+			$location.search(arg);
+			$route.reload();
+		};
+
 		$scope.config = ConfigResource.get({id: id});
 		$scope.config.$promise.catch(Notify.danger);
 
 		$scope.runs = RunResource.query({config_id: id, skip: skip, limit: limit});
+
 		$scope.runs.$promise.then(function(data) {
 			var link = {};
 			if (skip > 0) {
@@ -59,16 +65,22 @@ app.controller('runListController',
 			return "skip=" + skip + "&limit=" + limit;
 		}
 
-		$scope.search = function(arg) {
-			$location.search(arg);
-			$route.reload();
-		};
+		OpLog.on('update.run', function(ev, doc) {
+			if (doc && doc._id) {
+				$scope.runs.forEach(function(run, i, a) {
+					if (run._id === doc._id) {
+						a[i] = RunResource.get({id: run._id});
+					}
+				});
+			}
+		});
+
 	}
 ]);
 
 app.controller('testListController',
-	['$scope', '$routeParams', 'TestResource', 'RunResource', 'ConfigResource', 'Notify',
-	function($scope, $routeParams, TestResource, RunResource, ConfigResource, Notify) {
+	['$scope', '$routeParams', 'OpLog', 'TestResource', 'RunResource', 'ConfigResource', 'Notify',
+	function($scope, $routeParams, OpLog, TestResource, RunResource, ConfigResource, Notify) {
 
 		var id = $routeParams.run_id;
 
@@ -79,6 +91,12 @@ app.controller('testListController',
 		$scope.run.$promise.then(function() {
 			return $scope.config = ConfigResource.get({id: $scope.run.config_id});
 		}).catch(Notify.danger);
+
+		OpLog.on('update.run', function(ev, doc) {
+			if (doc && (doc._id === id)) {
+				$scope.tests = TestResource.query({run_id: id});
+			}
+		});
 	}
 ]);
 
