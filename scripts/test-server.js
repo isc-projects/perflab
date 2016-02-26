@@ -18,6 +18,8 @@ let id = process.argv[2];
 let db = new Database(settings);
 
 db.getConfigById(id).then((config) => {
+	config.flags = config.flags || {};
+	config.flags.checkout = true;
 	let type = config.type || 'bind';
 	let agent = new Agents[type].server(settings, config);
 	return agent.run(config).then(agent.stop);
