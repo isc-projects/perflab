@@ -17,7 +17,7 @@ app.controller('configListController',
 	}
 ]);
 
-app.controller('queueController',
+app.controller('systemController',
 	['$scope', 'SystemControl',
 	function($scope, SystemControl) {
 		$scope.control = SystemControl;

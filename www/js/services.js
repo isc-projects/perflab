@@ -42,12 +42,13 @@ app.service('OpLog',
 ]);
 
 //
-// service that exposes the global "system paused" state, and
+// service that exposes the global system state, and
 // monitors for changes to that state (via OpLog)
 //
 app.service('SystemControl',
 	['$http', 'Notify', 'OpLog',
 	function($http, Notify, OpLog) {
+
 		var service = {
 			pause: function() {
 				$http.put('/api/control/paused/', {paused: true});
@@ -55,10 +56,11 @@ app.service('SystemControl',
 			unpause: function() {
 				$http.put('/api/control/paused/', {paused: false});
 			},
-			paused: undefined
+			paused: undefined,
+			running: {}
 		};
 
-		function update() {
+		function updateControl() {
 			return $http.get('/api/control/').then(function(res) {
 				if (service.paused === true && !res.data.paused) {
 					Notify.info('Queue running');
@@ -69,8 +71,39 @@ app.service('SystemControl',
 			});
 		}
 
-		OpLog.on('update.control', update);
-		update();
+		OpLog.on('update.control', updateControl);
+
+		OpLog.on('insert.run', (ev, doc) => {
+			if (doc) {
+				service.running.config_id = doc.config_id;
+				service.running.run_id = doc._id;
+			}
+		});
+
+		OpLog.on('update.run', (ev, doc) => {
+			if (doc) {
+				if (doc.completed) {
+					delete service.running.run_id;
+				} else {
+					service.running.config_id = doc.config_id;
+					service.running.run_id = doc._id;
+				}
+			}
+		});
+
+		OpLog.on('insert.test', (ev, doc) => {
+			if (doc) {
+				service.running.test_id = doc._id;
+			}
+		});
+
+		OpLog.on('update.test', (ev, doc) => {
+			if (doc && doc.completed) {
+				delete service.running.test_id;
+			}
+		});
+
+		updateControl();
 
 		return service;
 	}

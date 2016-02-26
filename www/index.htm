@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html ng-app="perflabApp">
+<html ng-app="perflabApp" ng-controller="systemController">
 <head>
-<title ng-controller="queueController" ng-bind-template="ISC PerfLab{{control.paused ? ' (paused)' : ''}}">ISC PerfLab</title>
+<title ng-bind-template="ISC PerfLab{{control.paused ? ' (paused)' : ''}}">ISC PerfLab</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.css" />
@@ -30,7 +30,7 @@
 <script src="js/ctrl-type.js"></script>
 <script src="js/ctrl-run-graph.js"></script>
 <script src="js/ctrl-mem-graph.js"></script>
-<body>
+<body ng-controller="systemController">
 <div ng-include src="'partials/menu.html'"></div>
 <div ng-view></div>
 </body>

@@ -134,6 +134,7 @@ function execute(agent, config_id, run_id) {
 	});
 
 	return agent.run().then((result) => Object.assign(result, {
-			stdout, stderr
+			stdout, stderr,
+			completed: new Date()
 	}));
 }
