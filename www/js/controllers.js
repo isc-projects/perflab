@@ -44,22 +44,23 @@ app.controller('runListController',
 			$route.reload();
 		};
 
-		$scope.config = ConfigResource.get({id: id});
-		$scope.config.$promise.catch(Notify.danger);
+		ConfigResource.get({id: id}, function(config) {
+			$scope.config = config;
+		}, Notify.danger);
 
-		$scope.runs = RunResource.query({config_id: id, skip: skip, limit: limit});
+		RunResource.query({config_id: id, skip: skip, limit: limit}, function(runs) {
+			$scope.runs = runs;
 
-		$scope.runs.$promise.then(function(data) {
 			var link = {};
 			if (skip > 0) {
 				link.first = makelink(0, limit);
 				link.prev = makelink(Math.max(0, skip - limit), limit);
 			}
-			if (data.length >= limit) {
+			if (runs.length >= limit) {
 				link.next = makelink(skip + limit, limit);
 			}
 			$scope.link = link;
-		}).catch(Notify.danger);
+		}, Notify.danger);
 
 		function makelink(skip, limit) {
 			return "skip=" + skip + "&limit=" + limit;
@@ -69,7 +70,9 @@ app.controller('runListController',
 			if (doc && doc._id) {
 				$scope.runs.forEach(function(run, i, a) {
 					if (run._id === doc._id) {
-						a[i] = RunResource.get({id: run._id});
+						RunResource.get({id: run._id}, function(data) {
+							a[i] = data;
+						});
 					}
 				});
 			}
@@ -84,17 +87,22 @@ app.controller('testListController',
 
 		var id = $routeParams.run_id;
 
-		$scope.tests = TestResource.query({run_id: id});
-		$scope.tests.$promise.catch(Notify.danger);
+		TestResource.query({run_id: id}, function(tests) {
+			$scope.tests = tests;
+		}, Notify.danger);
 
-		$scope.run = RunResource.get({id: id});
-		$scope.run.$promise.then(function() {
-			return $scope.config = ConfigResource.get({id: $scope.run.config_id});
-		}).catch(Notify.danger);
+		RunResource.get({id: id}, function(run) {
+			$scope.run = run;
+			ConfigResource.get({id: run.config_id}, function(config) {
+				$scope.config = config;
+			});
+		}, Notify.danger);
 
 		OpLog.on('update.run', function(ev, doc) {
 			if (doc && (doc._id === id)) {
-				$scope.tests = TestResource.query({run_id: id});
+				TestResource.query({run_id: id}, function(tests) {
+					$scope.tests = tests;
+				});
 			}
 		});
 	}
@@ -103,8 +111,9 @@ app.controller('testListController',
 app.controller('testDetailController',
 	['$scope', '$routeParams', 'TestResource', 'Notify',
 	function($scope, $routeParams, TestResource, Notify) {
-		$scope.test = TestResource.get({id: $routeParams.test_id});
-		$scope.test.$promise.catch(Notify.danger);
+		TestResource.get({id: $routeParams.test_id}, function(test) {
+			$scope.test = test;
+		}, Notify.danger);
 	}
 ]);
 
@@ -126,10 +135,9 @@ app.controller('configEditController',
 			}).catch(redirectNotify);
 
 			// just used to check if this config has any results
-			var results = RunResource.query({config_id: id, limit: 1})
-			results.$promise.then(function(data) {
+			RunResource.query({config_id: id, limit: 1}, function(data) {
 				$scope.existing = !!(data && data.length);
-			}).catch(Notify.danger);
+			}, Notify.danger);
 		}
 
 		function redirectNotify(e) {

@@ -11,7 +11,9 @@
 		</div>
 		<div class="panel-body">
 		  <div class="alert alert-info" ng-show="!tests.$resolved">Loading...</div>
-		  <div class="alert alert-warning" ng-show="tests.$resolved && !tests.length">None recorded</div>
+		  <div class="alert alert-warning" ng-show="tests.$resolved && !tests.length">
+			None recorded <span ng-show="control.running.run_id === run._id">(build in progress?)<span>
+		  </div>
 		  <table class="table table-condensed" ng-show="tests.length">
 			<thead>
 			  <tr>
