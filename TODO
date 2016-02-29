@@ -2,7 +2,7 @@
 - [DONE] pagination on run lists
 - [DONE] extract last git commit log and store in 'run' table
 - [DONE] properly formatted graph tooltips
-- [DONe] click graph point to see that run
+- [DONE] click graph point to see that run
 - [DONE] global queue pause buttons
 - [DONE] one-off queue running
 - [DONE] auto-refresh queue status on job end
@@ -16,12 +16,17 @@
 - [DONE] refactor guard code in executor.js
 - [DONE] ensure MongoDB indexes are created on startup
 - [DONE] refactor DB 'query' method so it doesn't always have to reconnect
-- [PARTIAL] move all $http code into Angular "Services" or "Resources"
 - [DONE] regenerate configs for each run
+- [DONE] Login system via Apache reverse proxy with krb5
+
+- [PARTIAL] move all $http code into Angular "Services" or "Resources"
+- [PARTIAL] make listings and graph watch for real-time updates too
+
 - trap internal NodeJS errors into the log better
-- make listings and graph watch for real-time updates too
+- fix git revision log extraction (Promise.join issue?)
+- "clone" configurations
+
 - [MAYBE] mark all tasks as "not running" on startup
+
 - [LATER] comparative graphs for different configs
 - [LATER] long term chart of different releases
-- [DONE] Login system via Apache reverse proxy with krb5
-- "clone" configurations
