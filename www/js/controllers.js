@@ -154,6 +154,7 @@ app.controller('configEditController',
 			config.flags = config.flags || {checkout: false};
 			config.mode = config.mode || 'auth';
 			config.type = config.type || 'bind';
+			config.wrapper = config.wrapper || [];
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];

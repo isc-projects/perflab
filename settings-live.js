@@ -21,13 +21,17 @@ module.exports = {
 		}
 	},
 	command: {
-		dnsperf: '/bin/numactl',
-		bind: '/bin/numactl',
+		dnsperf: '/usr/local/nom/bin/dnsperf',
+		bind: './sbin/named',
 		knot: './sbin/knotd',
 		nsd: './sbin/nsd'
 	},
 	args: {
-		bind: ['-C0-11', './sbin/named', '-n12'],
-		dnsperf: ['-C12-23', '/usr/local/nom/bin/dnsperf', '-c24', '-q82', '-T6' ]
+		dnsperf: ['-c24', '-q82', '-T6' ],
+		bind: ['-n12']
+	},
+	wrapper: {
+		dnsperf: ['/bin/numactl', '-C12-23'],
+		bind: ['/bin/numactl', '-C0-11']
 	}
 };

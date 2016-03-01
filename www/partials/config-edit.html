@@ -79,6 +79,10 @@ pre- and post-edit results.
 			<label for="configArgsDnsperf">extra dnsperf command line options</label>
 			<input class="form-control" id="configArgsDnsperf" ng-model="config.args.dnsperf" ng-list=" " ng-trim="false" />
 		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configWrapper">exec wrapper and options</label>
+			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
+		  </div>
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
 			  <span class="fa fa-fw fa-save"></span>Save</button>
