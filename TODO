@@ -21,9 +21,9 @@
 
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
 - [PARTIAL] make listings and graph watch for real-time updates too
+- [PARTIAL] fix git revision log extraction (Promise.join issue?)
 
 - trap internal NodeJS errors into the log better
-- fix git revision log extraction (Promise.join issue?)
 - "clone" configurations
 
 - [MAYBE] mark all tasks as "not running" on startup
