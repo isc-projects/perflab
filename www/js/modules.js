@@ -62,11 +62,15 @@
 		if (window.Audio) {
 			audio = new Audio('/sounds/Robot_blip-Marianne_Gagnon-120342607.mp3');
 			audio.addEventListener('volumechange', function() {
-				muteState = audio.muted;
+				localStorage.muted = muteState = audio.muted;
 				$rootScope.$apply();
 			});
 			try {
-				audio.muted = JSON.parse(localStorage.muted);
+				if ('muted' in localStorage) {
+					audio.muted = JSON.parse(localStorage.muted);
+				} else {
+					audio.muted = true;
+				}
 			} catch (e) {
 				audio.muted = false;
 			}
