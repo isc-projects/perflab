@@ -24,7 +24,7 @@
 - [PARTIAL] make listings and graph watch for real-time updates too
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
 
-
+- hide inactive configurations in the UI
 - trap internal NodeJS errors into the log better
 - "clone" configurations
 
