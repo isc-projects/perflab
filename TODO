@@ -19,9 +19,11 @@
 - [DONE] regenerate configs for each run
 - [DONE] Login system via Apache reverse proxy with krb5
 - [DONE] fix git revision log extraction
+- [DONE] ignore first dnsperf run for stats purposes (but do record it)
 
 - [PARTIAL] make listings and graph watch for real-time updates too
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
+
 
 - trap internal NodeJS errors into the log better
 - "clone" configurations

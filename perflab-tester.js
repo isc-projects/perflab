@@ -53,13 +53,9 @@ function runConfig(config)
 
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || 30;
-		let first = true;
 		return (function loop() {
 			let clientAgent = new Agents[type].client(settings, config);
-
-			let quiet = (first && config.mode === 'recursive');
-			let res = runClient(clientAgent, config._id, run_id, quiet);
-			first = false;
+			let res = runClient(clientAgent, config._id, run_id, false);
 			return (--iter > 0) ? res.then(loop) : res;
 		})();
 	}).catch((err) => console.trace).then(serverAgent.stop)
@@ -93,7 +89,7 @@ function runClient(agent, config_id, run_id, quiet)
 				.then((test) => {
 					return execute(agent, config_id, run_id)
 						.then((result) => db.updateTestById(test._id, result))
-						.then(() => db.updateStatsByRunId(run_id))
+						.then(() => db.updateStatsByRunId(run_id));
 				});
 	}
 }
