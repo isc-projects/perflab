@@ -52,7 +52,7 @@ function runConfig(config)
 	let serverAgent = new Agents[type].server(settings, config);
 
 	return runServer(serverAgent, config._id).then((run_id) => {
-		let iter = config.testsPerRun || 30;
+		let iter = config.testsPerRun || settings.testsPerRun || 30;
 		return (function loop() {
 			let clientAgent = new Agents[type].client(settings, config);
 			let res = runClient(clientAgent, config._id, run_id, false);
