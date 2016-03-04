@@ -14,6 +14,10 @@ app.controller('configListController',
 	['$scope', 'Configs',
 	function($scope, Configs) {
 		$scope.configs = Configs;
+		$scope.filter = JSON.parse(localStorage.filter || "false");
+		$scope.filterChanged = function() {
+			localStorage.filter = $scope.filter;
+		}
 	}
 ]);
 
