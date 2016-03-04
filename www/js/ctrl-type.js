@@ -11,23 +11,35 @@ app.controller('configTypeController',
 		$scope.editor =  {
 			bind: {
 				name: 'BIND',
-				multimode: true,
+				type: {
+					auth: true,
+					recursive: true
+				},
 				options: 'named.conf options {} statements',
 				global: 'named.conf global configuration blocks'
 			},
 			nsd: {
 				name: 'NSD',
-				multimode: false,
+				type: {
+					auth: true,
+				},
 				options: 'nsd.conf server: statements',
 				global: 'nsd.conf global configuration blocks'
 			},
 			knot: {
 				name: 'Knot2',
-				multimode: false,
+				type: {
+					auth: true,
+				},
 				global: 'knot.conf global configuration blocks'
+			},
+			echo: {
+				name: 'Echo',
+				type: { }
 			}
 		}[$routeParams.type];
 
+		$scope.editor.multimode = Object.keys($scope.editor.type).length > 1;
 	}
 ]);
 

@@ -152,8 +152,6 @@ app.controller('configEditController',
 			var config = $scope.config = $scope.config || {};
 
 			config.flags = config.flags || {checkout: false};
-			config.mode = config.mode || 'auth';
-			config.type = config.type || 'bind';
 			config.wrapper = config.wrapper || [];
 
 			var args = config.args = config.args || {};

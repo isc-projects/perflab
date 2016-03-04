@@ -28,11 +28,12 @@ pre- and post-edit results.
 		  </div>
 		  <div class="checkbox">
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="{{editor.multimode}}">
+		  <div class="form-group form-group-sm" ng-if="editor.multimode">
 			<label for="configMode">Server mode</label>
-			<select required class="form-control" id="configMode" ng-model="config.mode">
-			  <option value="auth">Authoritative</option>
-			  <option value="recursive">Recursive</option>
+			<select ng-required="config.mode !== ''" class="form-control" id="configMode" ng-model="config.mode">
+			  <option value="">- select mode -</option>
+			  <option ng-show="editor.type.auth" value="auth">Authoritative</option>
+			  <option ng-show="editor.type.recursive" value="recursive">Recursive</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
@@ -51,11 +52,11 @@ pre- and post-edit results.
 			<label for="configOptions">{{editor.options}}</label><br/>
 			<textarea class="form-control" id="configOptions" ng-model="config.options" />
 		  </div>
-		  <div class="form-group form-group-sm">
+		  <div class="form-group form-group-sm" ng-show="editor.global">
 			<label for="configGlobal">{{editor.global}}</label><br/>
 			<textarea class="form-control" id="configGlobal" ng-model="config.global" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-hide="config.mode === 'recursive'">
+		  <div class="form-group form-group-sm" ng-show="config.mode === 'auth'">
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
