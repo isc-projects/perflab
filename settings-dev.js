@@ -22,10 +22,7 @@ module.exports = {
 		}
 	},
 	command: {},
-	wrapper: {
-		bind: ['/usr/bin/taskset', '-c', '2'],
-		knot: ['/usr/bin/taskset', '-c', '1-2']
-	},
+	wrapper: {},
 	args: {},
 	testsPerRun: 10
 };
