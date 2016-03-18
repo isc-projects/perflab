@@ -33,6 +33,10 @@ body {
 	min-width: 5.5em;
 }
 
+.icon-button {
+	min-width: 2.0em;
+}
+
 .fixed-button .fa {
 	margin-right: 0.5em;
 }

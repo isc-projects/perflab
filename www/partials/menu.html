@@ -13,15 +13,15 @@
 	</ul>
 	<div class="nav navbar-nav navbar-right">
 	  <span ng-controller="beepController" style="padding-right: 14px">
-	    <button ng-click="beeper.toggleMute()" class="btn btn-xs btn-primary navbar-btn">
+	    <button ng-click="beeper.toggleMute()" class="icon-button btn btn-xs btn-primary navbar-btn">
 	      <span class="fa fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
 	    </button>
 	  </span>
 	  <span style="padding-right: 14px">
-	    <button ng-click="control.unpause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused">
+	    <button ng-click="control.unpause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused">
 		  <span class="fa fa-play"></span>
 	    </button>
-	    <button ng-click="control.pause()" class="btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
+	    <button ng-click="control.pause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
 		  <span class="fa fa-pause"></span>
 	    </button>
 	  </span>

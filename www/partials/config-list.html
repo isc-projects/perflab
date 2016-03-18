@@ -18,35 +18,30 @@
 				<td width="100%" class="name">
 				  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
 				</td>
-				<td width="5%" nowrap>
-				  <button ng-click="configs.togglePriority(config._id)" class="btn btn-xs btn-primary" title="set priority">
-					  <span style="width: 1.4en" class="fa" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span>
-				  </button>
-				</td>
-				<td width="8%" nowrap>
-				  <button ng-click="configs.setEnabled(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.enabled" title="enable">
-					  <span class="fa fa-play"></span>
-				  </button>
-				  <button ng-click="configs.setEnabled(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.enabled" title="disable">
-					  <span class="fa fa-pause"></span>
-				  </button>
-				</td>
-				<td width="8%" nowrap>
-				  <button ng-click="configs.setRepeat(config._id, true)" class="btn btn-xs btn-primary" ng-disabled="config.queue.repeat" title="enable repeat">
-					  <span class="fa fa-repeat"></span>
-				  </button>
-				  <button ng-click="configs.setRepeat(config._id, false)" class="btn btn-xs btn-primary" ng-disabled="!config.queue.repeat" title="disable repeat">
-					  <span class="fa fa-pause"></span>
-				  </button>
-				</td>
+<td><div class="btn-group">
+  <button type="button" class="btn btn-xs btn-primary dropdown-toggle"
+    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="fa fa-caret-down"></span>
+    <span class="fa" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-repeat' : 'fa-play') : 'fa-pause'">
+  </button>
+  <ul class="dropdown-menu">
+    <li ng-class="{disabled: !config.queue.enabled}"><a href="#" ng-click="configs.setEnabled(config._id, false)"><span class="fa fa-pause"></span> Disable</a></li>
+    <li ng-class="{disabled: config.queue.enabled && !config.queue.repeat}"><a href="#" ng-click="configs.setEnabled(config._id, true)"><span class="fa fa-play"></span> Run once</a></li>
+    <li ng-class="{disabled: config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, true)"><span class="fa fa-repeat"></span> Repeat</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#" ng-click="configs.togglePriority(config._id)">
+	  <span class="fa" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
+    </li>
+  </ul>
+</div></td>
 				<td width="25%" nowrap align="right">
-				  <a href="#/config/run/{{config._id}}/" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bar-chart"></span>Graph</a>
-				  <a href="#/config/run/{{config._id}}/list" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-bars"></span>List</a>
-				  <a href="#/config/edit/{{config.type || 'bind'}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary"><span class="fa fa-cog"></span>Edit</a>
+				  <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
+				  <a href="#/config/run/{{config._id}}/list" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
+				  <a href="#/config/edit/{{config.type || 'bind'}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary" title="Edit"><span class="fa fa-cog"></span>Edit</a>
 				</td>
 			  </tr>
 			  <tr>
-				<td colspan="6" align="right"><div class="btn-group">
+				<td colspan="4" align="right"><div class="btn-group">
 				  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
 						  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span class="fa fa-caret-down"></span>New
