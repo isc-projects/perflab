@@ -173,14 +173,8 @@ app.service('Configs',
 
 		function getConfigs() {
 			return ConfigResource.query().$promise.then(function(data) {
-				data.forEach(function(conf) {
-					var _id = conf._id;
-					if (_id in confById) {
-						configs[confById[_id].index] = conf;
-					} else {
-						configs.push(conf);
-					}
-				});
+				configs.length = 0;
+				[].push.apply(configs, data);
 				reindex();
 				loading = false;
 			}).catch(Notify.danger);
