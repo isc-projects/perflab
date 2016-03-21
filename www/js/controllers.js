@@ -23,7 +23,7 @@ app.controller('configListController',
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
-				$scope.predicate = ['-queue.priority', 'queue.completed'];
+				$scope.predicate = ['-queue.enabled', '-queue.priority', 'queue.completed'];
 			} else {
 				$scope.predicate = 'name';
 			}
