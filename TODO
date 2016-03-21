@@ -22,6 +22,7 @@
 - [DONE] ignore first dnsperf run for stats purposes (but do record it)
 - [DONE] hide inactive configurations in the UI
 - [DONE] config list sort options
+- [DONE] fix recursive query set selection
 
 - [PARTIAL] make listings and graph watch for real-time updates too
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
@@ -30,7 +31,6 @@
 - "clone" configurations
 - protect important configurations so they can't be deleted
 - progress bar on the config list
-- fix recursive query set selection
 - statistics
 
 - [MAYBE] mark all tasks as "not running" on startup

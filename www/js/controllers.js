@@ -178,7 +178,7 @@ app.controller('configEditController',
 			args.bind = args.bind || [];
 
 			config.zoneset = config.zoneset || 'root';
-			config.queryset = config.queryset || 'default';
+			config.queryset = config.queryset || '';
 			config.options = config.options || '';
 			config.global = config.global || '';
 		}
