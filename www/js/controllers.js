@@ -15,7 +15,7 @@ app.controller('configListController',
 	function($scope, Configs) {
 
 		$scope.configs = Configs;
-		$scope.filter = JSON.parse(localStorage.filter || "false");
+		$scope.filter = JSON.parse(localStorage.filter || 'false');
 
 		$scope.toggleFilter = function(val) {
 			localStorage.filter = $scope.filter = !$scope.filter;
@@ -23,7 +23,12 @@ app.controller('configListController',
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
-				$scope.predicate = ['-queue.enabled', '-queue.priority', 'queue.completed'];
+				$scope.predicate = [
+					'-queue.running',
+					'-queue.enabled',
+					'-queue.priority',
+					'queue.completed'
+				];
 			} else {
 				$scope.predicate = 'name';
 			}
