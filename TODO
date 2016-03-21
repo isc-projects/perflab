@@ -20,13 +20,18 @@
 - [DONE] Login system via Apache reverse proxy with krb5
 - [DONE] fix git revision log extraction
 - [DONE] ignore first dnsperf run for stats purposes (but do record it)
+- [DONE] hide inactive configurations in the UI
+- [DONE] config list sort options
 
 - [PARTIAL] make listings and graph watch for real-time updates too
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
 
-- hide inactive configurations in the UI
 - trap internal NodeJS errors into the log better
 - "clone" configurations
+- protect important configurations so they can't be deleted
+- progress bar on the config list
+- fix recursive query set selection
+- statistics
 
 - [MAYBE] mark all tasks as "not running" on startup
 

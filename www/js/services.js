@@ -165,15 +165,22 @@ app.service('Configs',
 
 		function reindex() {
 			confById = {};
-			configs.forEach(function(conf) {
+			configs.forEach(function(conf, index) {
+				conf.index = index;
 				confById[conf._id] = conf;
 			});
 		}
 
 		function getConfigs() {
 			return ConfigResource.query().$promise.then(function(data) {
-				configs.length = 0;
-				configs.push.apply(configs, data);
+				data.forEach(function(conf) {
+					var _id = conf._id;
+					if (_id in confById) {
+						configs[confById[_id].index] = conf;
+					} else {
+						configs.push(conf);
+					}
+				});
 				reindex();
 				loading = false;
 			}).catch(Notify.danger);

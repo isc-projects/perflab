@@ -13,11 +13,25 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 app.controller('configListController',
 	['$scope', 'Configs',
 	function($scope, Configs) {
+
 		$scope.configs = Configs;
 		$scope.filter = JSON.parse(localStorage.filter || "false");
-		$scope.filterChanged = function() {
-			localStorage.filter = $scope.filter;
+
+		$scope.toggleFilter = function(val) {
+			localStorage.filter = $scope.filter = !$scope.filter;
 		}
+
+		$scope.setSort = function(sort) {
+			if (sort === 'pri') {
+				$scope.predicate = ['-queue.priority', 'queue.completed'];
+			} else {
+				$scope.predicate = 'name';
+			}
+			localStorage.sort = $scope.sort = sort;
+		}
+
+		// do initial sort
+		$scope.setSort(localStorage.sort || "name");
 	}
 ]);
 

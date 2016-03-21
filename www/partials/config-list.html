@@ -4,14 +4,30 @@
 	  <div class="panel panel-default">
 		<div class="panel-heading">
 		  <span>Configurations</span>
-		  <span class="pull-right">Hide &nbsp;<input type="checkbox" ng-model="filter" ng-change="filterChanged()"></span>
+		  <span class="pull-right">
+<div class="btn-group">
+<!-- Hide &nbsp;<input type="checkbox" ng-model="filter" ng-change="filterChanged()"></span> -->
+<button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle" title="view settings"
+	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span class="fa fa-caret-down"></span> View
+</button>
+<ul class="dropdown-menu dropdown-menu-right fa-ul">
+  <li class="dropdown-header">Sort by...</li>
+  <li class="bfa-icon" ng-class="{'fa-check': sort === 'name'}"><a href="#" ng-click="setSort('name')">Name</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': sort === 'pri'}"><a href="#" ng-click="setSort('pri')">Run order</a></li>
+  <li role="separator" class="divider"></li>
+  <li class="dropdown-header">Filter</li>
+  <li class="bfa-icon" ng-class="{'fa-check': filter}"><a href="#" ng-click="toggleFilter()">Hide inactive</a></li>
+</ul>
+</div>
+        </span>
 		</div>
 		<div class="panel-body">
 		  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-condensed config-list">
 			<tbody>
-			  <tr ng-repeat="config in configs.all track by config._id" class="config" ng-class="{hipri: config.queue.priority}" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
+			  <tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-class="{hipri: config.queue.priority}" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
 				<td class="running">
 				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-spinner fa-spin' : ''"></span>
 				</td>
@@ -19,7 +35,7 @@
 				  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
 				</td>
 <td><div class="btn-group">
-  <button type="button" class="btn btn-xs btn-primary dropdown-toggle"
+  <button type="button" class="btn btn-xs btn-primary dropdown-toggle" title="Queue settings"
     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="fa fa-caret-down"></span>
     <span class="fa" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-repeat' : 'fa-play') : 'fa-pause'">
