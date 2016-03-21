@@ -23,13 +23,13 @@
 - [DONE] hide inactive configurations in the UI
 - [DONE] config list sort options
 - [DONE] fix recursive query set selection
+- [DONE] virtual "delete" operation (hides, doesn't actually delete)
 
 - [PARTIAL] make listings and graph watch for real-time updates too
 - [PARTIAL] move all $http code into Angular "Services" or "Resources"
 
 - trap internal NodeJS errors into the log better
 - "clone" configurations
-- protect important configurations so they can't be deleted
 - progress bar on the config list
 - statistics
 
