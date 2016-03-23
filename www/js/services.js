@@ -246,7 +246,9 @@ app.service('Stats',
 				Object.keys(stats[group]).map(function(k) {
 					return stats[group][k];
 				})
-			).sort(function(a, b) { return a - b });
+			)
+			.filter(function(n) { return !isNaN(n); })
+			.sort(function(a, b) { return a - b });
 		}
 
 		function calculate() {
