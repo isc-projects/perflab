@@ -88,7 +88,7 @@ li.bfa-icon:before {
 	border-bottom: 2px solid #c0c0c0;
 }
 
-#stats tr:last-child {
+#stats tr:nth-child(6) {
 	border-top: 2px solid #c0c0c0;
 }
 

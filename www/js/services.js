@@ -265,10 +265,14 @@ app.service('Stats',
 				};
 			}
 
+			var t = ss.tTestTwoSample(a, b, 0);
+			var p = Math.studentP(t, a.length + b.length - 2);
+
 			return {
 				a: info(a),
 				b: info(b),
-				t: ss.tTestTwoSample(a, b, 0)
+				t: t,
+				p: p
 			};
 		}
 
