@@ -231,4 +231,84 @@ app.service('Configs',
 	}
 ]);
 
+app.service('Stats',
+	[function() {
+
+		var defaults = JSON.stringify({a:{}, b:{}});
+		var stats = JSON.parse(localStorage.stats || defaults);
+
+		function store() {
+			localStorage.stats = JSON.stringify(stats);
+		}
+
+		function getData(group) {
+			return [].concat.apply([], 
+				Object.keys(stats[group]).map(function(k) {
+					return stats[group][k];
+				})
+			).sort(function(a, b) { return a - b });
+		}
+
+		function calculate() {
+
+			var a = getData('a');
+			var b = getData('b');
+
+			function info(data) {
+				return {
+					count: data.length,
+					mean: ss.mean(data),
+					stddev: ss.sampleStandardDeviation(data),
+					median: ss.quantileSorted(data, 0.5)
+				};
+			}
+
+			return {
+				a: info(a),
+				b: info(b),
+				t: ss.tTestTwoSample(a, b, 0)
+			};
+		}
+
+		return {
+			calculate: calculate,
+
+			ready: function() {
+				return !!(Object.keys(stats.a).length && Object.keys(stats.b).length);
+			},
+
+			empty: function() {
+				return !Object.keys(stats.a).length && !Object.keys(stats.b).length;
+			},
+
+			reset: function() {
+				stats = JSON.parse(defaults);
+				store();
+			},
+
+			getgroup: function(id) {
+				return id in stats.a ? 'a' :
+					   id in stats.b ? 'b' :
+					   undefined;
+			},
+
+			setgroup: function(id, data, group) {
+				if (group === 'a') {
+					delete stats.b[id];
+				} else if (group === 'b') {
+					delete stats.a[id];
+				}
+				stats[group][id] = data;
+				store();
+			},
+
+			del: function(id) {
+				delete stats.a[id];
+				delete stats.b[id];
+				store();
+			}
+		}
+	}
+]);
+
 })();

@@ -44,9 +44,9 @@ app.controller('systemController',
 
 app.controller('runListController',
 	['$scope', '$route', '$routeParams', '$location',
-	 'ConfigResource', 'RunResource', 'OpLog', 'Notify',
+	 'ConfigResource', 'RunResource', 'TestResource', 'OpLog', 'Notify', 'Stats',
 	function($scope, $route, $routeParams, $location,
-			 ConfigResource, RunResource, OpLog, Notify) {
+			 ConfigResource, RunResource, TestResource, OpLog, Notify, Stats) {
 
 		var id = $routeParams.config_id;
 		var search = $location.search();
@@ -55,11 +55,30 @@ app.controller('runListController',
 		if (limit <= 0) {
 			limit = 15;
 		}
+
 		$scope.page = Math.floor(skip / limit) + 1;
 
 		$scope.skipto = function(arg) {
 			$location.search(arg);
 			$route.reload();
+		};
+
+		$scope.getgroup = function(run) {
+			return Stats.getgroup(run._id);
+		}
+
+		$scope.statsToggle = function(run, group) {
+			if (Stats.getgroup(run._id) === group) {
+				Stats.del(run._id);
+			} else {
+				var stats = TestResource.query({run_id: run._id}, function(data) {
+					data = data.map(function(d) {
+						return d.count;
+					});
+					data.shift();		// ignore first point
+					Stats.setgroup(run._id, data, group);
+				}, Notify.danger);
+			}
 		};
 
 		ConfigResource.get({id: id}, function(config) {
@@ -78,6 +97,7 @@ app.controller('runListController',
 				link.next = makelink(skip + limit, limit);
 			}
 			$scope.link = link;
+
 		}, Notify.danger);
 
 		function makelink(skip, limit) {
@@ -213,6 +233,24 @@ app.controller('configEditController',
 				}).catch(Notify.danger).then(doneSaving);
 			}
 		}
+	}
+]);
+
+app.controller('statsController', ['$scope', 'Stats',
+	function($scope, Stats) {
+		$scope.stats = Stats;
+
+		$scope.open = function() {
+			$('#stats').modal();
+		}
+	}
+]);
+
+app.controller('statsResultsController', ['$scope', 'Stats',
+	function($scope, Stats) {
+		$('#stats').on('show.bs.modal', function() {
+			$scope.data = Stats.calculate();
+		});
 	}
 ]);
 

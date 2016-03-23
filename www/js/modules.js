@@ -99,5 +99,4 @@
 			toggleMute: toggleMute
 		}
 	}
-
 })();

@@ -1,30 +1,78 @@
 <div class="navbar navbar-inverse navbar-static-top" role="navigation">
   <div class="container">
-	<div class="navbar-header">
+	<div class="navbar-header" ng-controller="beepController">
+	  <a class="navbar-brand" href="/"><span class="fa fa-home"></span> ISC Perflab</a>
+	  <button ng-click="beeper.toggleMute()" class="icon-button btn btn-xs btn-primary navbar-btn" title="Sound">
+		<span class="fa fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
+	  </button>
+	  <button ng-click="control.unpause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">
+		<span class="fa fa-play"></span>
+	  </button>
+	  <button ng-click="control.pause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
+		<span class="fa fa-pause"></span>
+	  </button>
 	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 	  </button>
-	  <div class="navbar-brand"><a href="/"><span class="fa fa-home"></span></a> ISC PerfLab</div>
 	</div>
-	<ul class="nav navbar-nav">
-	  <li><a href="#/logs/">Logs</a></li>
-	</ul>
-	<div class="nav navbar-nav navbar-right">
-	  <span ng-controller="beepController" style="padding-right: 14px">
-	    <button ng-click="beeper.toggleMute()" class="icon-button btn btn-xs btn-primary navbar-btn" title="Sound">
-	      <span class="fa fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
-	    </button>
-	  </span>
-	  <span style="padding-right: 14px">
-	    <button ng-click="control.unpause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">
-		  <span class="fa fa-play"></span>
-	    </button>
-	    <button ng-click="control.pause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
-		  <span class="fa fa-pause"></span>
-	    </button>
-	  </span>
+	<div class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+		<li><a href="#/logs/">Logs</a></li>
+		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stats</a>
+		  <ul class="dropdown-menu" ng-controller="statsController">
+			<li ng-class="{disabled: !stats.ready()}"><a ng-click="open()">Calculate</a></li>
+			<li ng-class="{disabled: stats.empty()}"><a ng-click="stats.reset()">Reset</a></li>
+		  </ul>
+		</li>
+	  </ul>
+	</div>
+  </div>
+</div>
+<div class="modal fade" id="stats" tabindex="-1" role="dialog" aria-labelledby="calculate" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 class="modal-title">Comparative Statistics</h4>
+	  </div>
+	  <div class="modal-body" ng-controller="statsResultsController">
+		<table width="100%">
+		  <tr>
+			<td></td>
+			<td>Group A</td>
+			<td>Group B</td>
+		  </tr>
+		  <tr>
+			<td>Count</td>
+			<td>{{data.a.count.toFixed(0)}}</td>
+			<td>{{data.b.count.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Median</td>
+			<td>{{data.a.median.toFixed(0)}}</td>
+			<td>{{data.b.median.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Mean</td>
+			<td>{{data.a.mean.toFixed(0)}}</td>
+			<td>{{data.b.mean.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Std. Dev</td>
+			<td>{{data.a.stddev.toFixed(0)}}</td>
+			<td>{{data.b.stddev.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>t Value</td>
+			<td colspan="2">{{data.t.toFixed(2)}}</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default btn-sn" data-dismiss="modal">OK</button>
+	  </div>
 	</div>
   </div>
 </div>
