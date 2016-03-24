@@ -20,10 +20,10 @@
 	<div class="navbar-collapse collapse">
 	  <ul class="nav navbar-nav">
 		<li><a href="#/logs/">Logs</a></li>
-		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Stats</a>
-		  <ul class="dropdown-menu" ng-controller="statsController">
-			<li ng-class="{disabled: !stats.ready()}"><a ng-click="open()">Calculate</a></li>
-			<li ng-class="{disabled: stats.empty()}"><a ng-click="stats.reset()">Clear selection</a></li>
+		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-caret-down"></span> Stats</a>
+		  <ul class="dropdown-menu" role="menu" ng-controller="statsController">
+			<li ng-class="{disabled: !stats.ready()}"><a role="menuitem" href="" ng-click="open()">Calculate</a></li>
+			<li ng-class="{disabled: stats.empty()}"><a role="menuitem" href="" ng-click="stats.reset()">Clear selection</a></li>
 		  </ul>
 		</li>
 	  </ul>
@@ -75,7 +75,7 @@
 		</table>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default btn-sn" data-dismiss="modal">OK</button>
+		<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">OK</button>
 	  </div>
 	</div>
   </div>
