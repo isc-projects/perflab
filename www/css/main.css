@@ -99,3 +99,15 @@ li.bfa-icon:before {
 #stats td:not(:first-child) {
 	text-align: right;
 }
+
+table .progress {
+    margin-bottom: 0 !important;
+}
+
+.progress-bar {
+    -webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
+}

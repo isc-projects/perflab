@@ -168,6 +168,15 @@ app.service('Configs',
 			configs.forEach(function(conf, index) {
 				conf.index = index;
 				confById[conf._id] = conf;
+				if (conf.queue.running) {
+					var state = conf.queue.state || '';
+					var match = state.match(/^test (\d+)\/(\d+)$/);
+					if (match) {
+						conf.progress = 100.0 * (+match[1] / +match[2]);
+					} else {
+						conf.progress = 0;
+					}
+				}
 			});
 		}
 

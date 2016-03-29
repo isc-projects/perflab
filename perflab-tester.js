@@ -53,19 +53,30 @@ function runConfig(config)
 
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || settings.testsPerRun || 30;
-		return (function loop() {
+		let count = 1;
+
+		function loop() {
 			let clientAgent = new Agents[type].client(settings, config);
-			let res = runClient(clientAgent, config._id, run_id, false);
-			return (--iter > 0) ? res.then(loop) : res;
-		})();
+			let res = setStatus(config._id, 'test ' + count + '/' + iter)
+						.then(() => runClient(clientAgent, config._id, run_id, false));
+			return (++count <= iter) ? res.then(loop) : res;
+		};
+
+		return loop().then(() => setStatus(config._id, 'finished'));
 	}).catch((err) => console.trace).then(serverAgent.stop)
+}
+
+function setStatus(id, s)
+{
+	return db.setQueueState(id, s);
 }
 
 // starts the daemon under test with the given configuration
 // and stores the execution results in the database
 function runServer(agent, config_id)
 {
-	return db.insertRun({config_id})
+	return setStatus(config_id, 'building').then(() =>
+			db.insertRun({config_id})
 				.then((run) => {
 					return execute(agent, config_id, run._id)
 						.then(
@@ -75,7 +86,7 @@ function runServer(agent, config_id)
 								throw new Error("execution failed");
 							}
 						).then(() => run._id);
-				});
+				}));
 }
 
 // starts the testing client with the given configuration
