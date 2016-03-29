@@ -24,6 +24,7 @@
 - [DONE] config list sort options
 - [DONE] fix recursive query set selection
 - [DONE] virtual "delete" operation (hides, doesn't actually delete)
+- [DONE] progress bar on the config list
 
 - [PARTIAL] statistics
 - [PARTIAL] make listings and graph watch for real-time updates too
@@ -31,7 +32,6 @@
 
 - trap internal NodeJS errors into the log better
 - "clone" configurations
-- progress bar on the config list
 
 - [MAYBE] mark all tasks as "not running" on startup
 
