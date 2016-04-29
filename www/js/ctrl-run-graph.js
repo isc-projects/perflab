@@ -8,8 +8,10 @@ app.controller('runGraphController',
 	['$scope', '$route', '$routeParams', '$location',
 	 'Notify', 'ConfigResource', 'RunResource',
 	function ($scope, $route, $routeParams, $location,
-			  Notify, ConfigResource, RunResource) {
+			  Notify, ConfigResource, RunResource)
+	{
 		var id = $routeParams.config_id;
+
 		$scope.graph = {
 			data: [],
 			options: {
@@ -32,7 +34,8 @@ app.controller('runGraphController',
 					$route.reload();
 				},
 				plotter: plotter,
-				valueFormatter: formatter
+				valueFormatter: formatter,
+				underlayCallback: drawRegression
 			}
 		};
 
@@ -85,6 +88,48 @@ function plotter(e) {
 		var bodyYmax = area.h * sets[0][p].y_top + area.y;
 		ctx.fillRect(centerX - BAR_WIDTH / 2, bodyYmin, BAR_WIDTH, bodyYmax - bodyYmin);
 	}
+}
+
+function drawRegression(ctx, area, g) {
+
+	if (g === undefined) return;
+
+	// work out coefficients
+	var range = g.xAxisRange();
+	var sum_xy = 0.0, sum_x = 0.0, sum_y = 0.0, sum_x2 = 0.0, num = 0;
+	for (var i = 0, n = g.numRows(); i < n; i++) {
+		var x = g.getValue(i, 0);
+		if (x < range[0] || x > range[1]) continue;
+
+		var y = g.getValue(i, 1);
+		if (y == null) continue;
+		y = y[0];
+
+		num++;
+		sum_x += x;
+		sum_y += y;
+		sum_xy += x * y;
+		sum_x2 += x * x;
+	}
+
+	var a = (sum_xy - sum_x * sum_y / num) / (sum_x2 - sum_x * sum_x / num);
+	var b = (sum_y - a * sum_x) / num;
+	if (isNaN(a) || isNaN(b)) return;
+
+	var x1 = range[0], x2 = range[1];
+	var y1 = a * x1 + b, y2 = a * x2 + b;
+
+	var p1 = g.toDomCoords(x1, y1);
+	var p2 = g.toDomCoords(x2, y2);
+
+	ctx.save();
+	ctx.strokeStyle = '#4040c0';
+	ctx.lineWidth = 1.5;
+	ctx.beginPath();
+	ctx.moveTo(p1[0], p1[1]);
+	ctx.lineTo(p2[0], p2[1]);
+	ctx.stroke();
+	ctx.restore();
 }
 
 function formatter(v, o, s, d, r, c) {
