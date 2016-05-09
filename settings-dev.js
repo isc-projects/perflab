@@ -24,5 +24,6 @@ module.exports = {
 	command: {},
 	wrapper: {},
 	args: {},
-	testsPerRun: 10
+	testsPerRun: 10,
+	queueFilter: {}
 };

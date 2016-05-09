@@ -34,7 +34,8 @@ function runQueue() {
 // entry, runs it, then marks it as done, and if necessary (for
 // non-repeating queue items disables the item)
 function doFirstQueueEntry() {
-	return db.takeNextFromQueue().then((queue) => {
+	let filter = settings.queueFilter || {};
+	return db.takeNextFromQueue(filter).then((queue) => {
 		if (queue) {
 			return db.getConfigById(queue._id)
 				.then(runConfig)

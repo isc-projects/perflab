@@ -33,5 +33,6 @@ module.exports = {
 	wrapper: {
 		dnsperf: ['/bin/numactl', '-C0-11'],
 		bind: ['/bin/numactl', '-C0-11']
-	}
+	},
+	queueFilter: {type: {$in: ['bind', 'echo', 'knot', 'nsd']}}
 };
