@@ -27,16 +27,14 @@
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-condensed config-list">
 			<tbody>
-			  <tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-class="{hipri: config.queue.priority}" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
-				<td class="running">
-				  <span class="fa fa-fw" ng-class="config.queue.running ? 'fa-spinner fa-spin' : ''" title="{{config.queue.state}}"></span>
-				</td>
-				<td width="80%" class="name">
-				  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
-				</td>
+<tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-class="{hipri: config.queue.priority}" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
+<td width="80%" class="name">
+  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
+</td>
 <td width="180px" nowrap>
 <div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
-  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config.progress}}%;">
+  <div class="progress-bar progress-bar-striped active" ng-class="{'progress-bar-info': !config.testing}" role="progressbar" aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config.progress}}%;">
+    <span ng-if="!config.testing">{{config.queue.state}}</span>
   </div>
 </div>
 </td>
@@ -56,26 +54,31 @@
     </li>
   </ul>
 </div></td>
-				<td nowrap align="right">
-				  <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
-				  <a href="#/config/run/{{config._id}}/list" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
-				  <a href="#/config/edit/{{config.type || 'bind'}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary" title="Edit"><span class="fa fa-cog"></span>Edit</a>
-				</td>
-			  </tr>
-			  <tr>
-				<td colspan="5" align="right"><div class="btn-group">
-				  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
-						  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="fa fa-caret-down"></span>New
-				  </button>
-				  <ul class="dropdown-menu dropdown-menu-right">
-				    <li><a href="#/config/new/bind">BIND</a>
-				    <li><a href="#/config/new/nsd">NSD</a>
-				    <li><a href="#/config/new/knot">Knot2</a>
-				    <li><a href="#/config/new/echo">Echo</a>
-				  </ul>
-				</div></td>
-			  </tr>
+<td nowrap align="right">
+  <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
+  <a href="#/config/run/{{config._id}}/list" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
+  <a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-xs btn-primary"><span class="fa fa-download" title="Export CSV"></span></a>
+  <a href="#/config/edit/{{config.type || 'bind'}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary" title="Edit"><span class="fa fa-cog"></span>Edit</a>
+</td>
+</tr>
+
+<tr>
+<td colspan="4" align="right">
+<div class="btn-group">
+  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
+		  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	<span class="fa fa-caret-down"></span>New
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right">
+    <li><a href="#/config/new/bind">BIND</a>
+    <li><a href="#/config/new/nsd">NSD</a>
+    <li><a href="#/config/new/knot">Knot2</a>
+    <li><a href="#/config/new/echo">Echo</a>
+  </ul>
+</div>
+</td>
+</tr>
+
 			</tbody>
 		  </table>
 		</div>
