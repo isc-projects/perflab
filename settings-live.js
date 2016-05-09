@@ -28,11 +28,10 @@ module.exports = {
 		nsd: './sbin/nsd'
 	},
 	args: {
-		dnsperf: ['-c24', '-q82', '-T6' ],
-		bind: ['-n12']
+		dnsperf: ['-c24', '-q82', '-T6' ]
 	},
 	wrapper: {
-		dnsperf: ['/bin/numactl', '-C12-23'],
+		dnsperf: ['/bin/numactl', '-C0-11'],
 		bind: ['/bin/numactl', '-C0-11']
 	}
 };
