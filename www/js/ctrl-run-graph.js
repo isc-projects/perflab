@@ -18,8 +18,8 @@ app.controller('runGraphController',
 				errorBars: true, sigma: 1, showRangeSelector: false,
 				labels: ['x', 'Average', 'Range'],
 				series: {
-					Average: { label: 'Average' },
-					Range: { label: 'Range', highlightCircleSize: 0 }
+					Average: { /* label: 'Average' */  },
+					Range: { /* label: 'Range', */ highlightCircleSize: 0 }
 				},
 				xlabel: 'Date / Time',
 				ylabel: 'Queries per second',
@@ -35,14 +35,20 @@ app.controller('runGraphController',
 				},
 				plotter: plotter,
 				valueFormatter: formatter,
-				underlayCallback: drawRegression
+				underlayCallback: drawRegression,
+				ready: function(g) {
+					if ($scope.annotations) {
+						g.setAnnotations($scope.annotations);
+					}
+				}
 			}
 		};
 
 		$scope.config = ConfigResource.get({id: id});
 
 		RunResource.query({config_id: id}).$promise.then(function(data) {
-			$scope.graph.data = data.filter(function(run) {
+
+			data = data.filter(function(run) {
 				return run.stats !== undefined && run.created !== undefined;
 			}).map(function(run) {
 				var s = run.stats;
@@ -51,9 +57,32 @@ app.controller('runGraphController',
 					[s.average, s.stddev],
 					[(s.min + s.max) / 2, (s.max - s.min) / 2],
 				];
-				r.id = run._id;		// slight hack - store ID as an array property
+				r.id = run._id;		// slight hack - r is now an array with properties
+				r.version = run.version;
 				return r;
 			}).sort(function(a, b) { return a[0] - b[0] });
+
+			var version;
+			$scope.annotations = data.filter(function(run) {
+				if (run.version === undefined) {
+					return false;
+				}
+				if (run.version !== version) {
+					version = run.version;
+					return true;
+				}
+			}).map(function(run) {
+				return {
+					x: +run[0],
+					shortText: '*',
+					text: run.version,
+					series: 'Average',
+					attachAtBottom: true
+				}
+			});
+
+			$scope.graph.data = data;
+
 		}).catch(Notify.danger);
 	}
 ]);
