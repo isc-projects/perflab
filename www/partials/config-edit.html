@@ -24,7 +24,7 @@ pre- and post-edit results.
 		  <div class="form-group form-group-sm">
 			<label for="configBranch">Branch / Tag</label>
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
-			<div><input type="checkbox" ng-model="config.flags.checkout">&nbsp;checkout before every run</div>
+			<div><input id="configCheckout" type="checkbox" ng-model="config.flags.checkout"><label for="configCheckout">checkout before every run</label></div>
 		  </div>
 		  <div class="checkbox">
 		  </div>

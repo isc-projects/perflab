@@ -16,6 +16,12 @@ body {
 	padding-right: 0px;
 }
 
+input[type="checkbox"] + label {
+	margin-left: 8px;
+	font-size: 80%;
+	font-weight: normal !important;
+}
+
 .strike {
 	text-decoration: line-through;
 }
