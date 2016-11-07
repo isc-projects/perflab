@@ -28,7 +28,7 @@ module.exports = {
 		nsd: './sbin/nsd'
 	},
 	args: {
-		dnsperf: ['-c24', '-q82', '-T6' ]
+		dnsperf: ['-c24', '-q82', '-T6', '-x2048' ]
 	},
 	wrapper: {
 		dnsperf: ['/bin/numactl', '-C0-11'],
