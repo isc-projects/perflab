@@ -72,9 +72,9 @@ pre- and post-edit results.
 			<label for="configQueryset">dnsperf Query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
-			  <option ng-if="config.mode === 'auth'" value="default">Nominum default</option>
+			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
 			  <option value="mega-small">1M small zones, 5% NXD</option>
-			  <option ng-if="config.mode === 'auth'" value="kilo-small">1k small zones, 5% NXD</option>
+			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
