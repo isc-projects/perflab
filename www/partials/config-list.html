@@ -46,8 +46,8 @@
   </button>
   <ul class="dropdown-menu">
     <li ng-class="{disabled: !config.queue.enabled}"><a href="#" ng-click="configs.setEnabled(config._id, false)"><span class="fa fa-pause"></span> Disable</a></li>
-    <li ng-class="{disabled: config.queue.enabled && !config.queue.repeat}"><a href="#" ng-click="configs.setEnabled(config._id, true)"><span class="fa fa-play"></span> Run once</a></li>
-    <li ng-class="{disabled: config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, true)"><span class="fa fa-repeat"></span> Repeat</a></li>
+    <li ng-class="{disabled: config.queue.enabled && !config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, false)"><span class="fa fa-play"></span> Run once</a></li>
+    <li ng-class="{disabled: config.queue.enabled && config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, true)"><span class="fa fa-repeat"></span> Repeat</a></li>
 	<li role="separator" class="divider"></li>
 	<li><a href="#" ng-click="configs.togglePriority(config._id)">
 	  <span class="fa" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
