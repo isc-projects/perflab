@@ -200,7 +200,8 @@ app.controller('configEditController',
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];
 			args.make = args.make || [];
-			args.bind = args.bind || [];
+			args.server = args.server || [];
+			args.tester = args.tester || [];
 
 			config.zoneset = config.zoneset || 'root';
 			config.queryset = config.queryset || '';

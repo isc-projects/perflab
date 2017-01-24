@@ -46,7 +46,7 @@ pre- and post-edit results.
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configArgsBind">{{editor.name}} command line options</label>
-			<input class="form-control" id="configArgsBind" ng-model="config.args.bind" ng-list=" " ng-trim="false" />
+			<input class="form-control" id="configArgsBind" ng-model="config.args.server" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm" ng-show="editor.options">
 			<label for="configOptions">{{editor.options}}</label><br/>
@@ -79,7 +79,7 @@ pre- and post-edit results.
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configArgsDnsperf">extra dnsperf command line options</label>
-			<input class="form-control" id="configArgsDnsperf" ng-model="config.args.dnsperf" ng-list=" " ng-trim="false" />
+			<input class="form-control" id="configArgsDnsperf" ng-model="config.args.tester" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configWrapper">exec wrapper and options</label>
