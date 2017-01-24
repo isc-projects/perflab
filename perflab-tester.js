@@ -49,7 +49,7 @@ function doFirstQueueEntry() {
 // -recursively starts a number of iterations of the test client
 function runConfig(config)
 {
-	let type = config.type || 'bind';
+	let type = config.type;
 	let serverAgent = new Agents[type].server(settings, config);
 
 	return runServer(serverAgent, config._id).then((run_id) => {
