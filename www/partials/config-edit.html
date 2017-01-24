@@ -46,7 +46,7 @@ pre- and post-edit results.
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configArgsBind">{{editor.name}} command line options</label>
-			<input class="form-control" id="configArgsBind" ng-model="config.args.bind" ng-list=" " ng-trim="false" />
+			<input class="form-control" id="configArgsBind" ng-model="config.args.server" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm" ng-show="editor.options">
 			<label for="configOptions">{{editor.options}}</label><br/>
@@ -56,7 +56,7 @@ pre- and post-edit results.
 			<label for="configGlobal">{{editor.global}}</label><br/>
 			<textarea class="form-control" id="configGlobal" ng-model="config.global" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="config.mode !== 'recursive'">
+		  <div class="form-group form-group-sm" ng-show="editor.protocol === 'DNS' && config.mode !== 'recursive'">
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
@@ -68,8 +68,8 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
-		  <div class="form-group form-group-sm">
-			<label for="configQueryset">dnsperf Query Set</label>
+		  <div class="form-group form-group-sm" ng-if="editor.protocol === 'DNS'">
+			<label for="configQueryset">{{editor.tester}} Query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
 			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
@@ -78,8 +78,8 @@ pre- and post-edit results.
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configArgsDnsperf">extra dnsperf command line options</label>
-			<input class="form-control" id="configArgsDnsperf" ng-model="config.args.dnsperf" ng-list=" " ng-trim="false" />
+			<label for="configArgsTester">extra {{editor.tester}} command line options</label>
+			<input class="form-control" id="configArgsTester" ng-model="config.args.tester" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configWrapper">exec wrapper and options</label>
