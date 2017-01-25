@@ -3,19 +3,19 @@
 let schema = 'perflab';
 
 module.exports = {
-	path:		'/home/ray/data',
+	path:		'/home/perflab/data',
 	mongo: {
 		schema,
-		url:	`mongodb://localhost/${schema}`,
-		oplog:	'mongodb://localhost/local'
+		url:	`mongodb://perf-ctl.lab.isc.org/${schema}`,
+		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
 	repo: {
 		kea4: 	'git://git.kea.isc.org/kea'
 	},
 	hosts: {
 		kea4: {
-			server: '127.0.0.1',
-			tester:	'localhost'
+			server: '10.255.255.244',
+			tester:	'172.16.1.245'
 		}
 	},
 	command: {},
