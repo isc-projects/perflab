@@ -60,7 +60,7 @@ function runConfig(config)
 			let clientAgent = new Agents[type].client(settings, config);
 			let res = setStatus(config._id, 'test ' + count + '/' + iter)
 						.then(() => runClient(clientAgent, config._id, run_id, false));
-			return (++count <= iter) ? res.then(loop) : res;
+			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
 		};
 
 		return loop().then(() => setStatus(config._id, 'finished'));
