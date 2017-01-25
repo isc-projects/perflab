@@ -13,7 +13,7 @@ module.exports = {
 		kea4: 	'git://git.kea.isc.org/kea'
 	},
 	hosts: {
-		kea4: {
+		dhcp: {
 			server: '10.255.255.244',
 			tester:	'172.16.1.245'
 		}
