@@ -2,10 +2,23 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Log Viewer</div>
+	  <div class="panel-heading">Log Viewer
+<div class="btn-group pull-right">
+<!-- Hide &nbsp;<input type="checkbox" ng-model="filter" ng-change="filterChanged()"></span> -->
+<button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle" title="host filter settings"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  {{filter}} <span class="fa fa-caret-down right"></span>
+</button>
+<ul class="dropdown-menu dropdown-menu-right fa-ul">
+  <li class="bfa-icon" ng-class="{'fa-check': filter === 'All'}"><a ng-click="setFilter('All')">All</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': filter === 'DNS'}"><a ng-click="setFilter('DNS')">DNS</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': filter === 'DHCP'}"><a ng-click="setFilter('DHCP')">DHCP</a></li>
+</ul>
+</div>
+	  </div>
 	  <div class="panel-body scroll">
 		<div class="alert alert-warning" ng-show="lines && !lines.length">None recorded</div>
-<pre ng-repeat="line in logwatch.output track by line._id" class="log" ng-class="line.channel">
+<pre ng-repeat="line in logwatch.output | filter:host track by line._id" class="log" ng-class="line.channel">
 <div ng-show="line.channel === 'command'">{{line.time}}</div>{{line.text}}</pre>
 	    </div>
 	  </div>
