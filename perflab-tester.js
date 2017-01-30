@@ -4,7 +4,8 @@
 
 let Agents = require('./lib/agents'),
 	Database = require('./lib/database'),
-	Promise = require('bluebird');
+	Promise = require('bluebird'),
+	os = require('os');
 
 let settings = require('./settings');
 
@@ -117,6 +118,7 @@ function runClient(agent, config_id, run_id, quiet)
 //
 function execute(agent, config_id, run_id) {
 	let stdout = '', stderr = '';
+	var host = os.hostname().split('.')[0];
 
 	if (run_id !== undefined) {
 		agent.on('mem', (mem) => {
@@ -125,19 +127,19 @@ function execute(agent, config_id, run_id) {
 	}
 
 	agent.on('cmd', (t) => {
-		let log = {channel: 'command', text: t, time: new Date()}
+		let log = {channel: 'command', text: t, host, time: new Date()}
 		db.insertLog(log);
 	});
 
 	agent.on('stdout', (t) => {
 		stdout += t;
-		let log = {channel: 'stdout', text: '' + t, time: new Date()}
+		let log = {channel: 'stdout', text: '' + t, host, time: new Date()}
 		db.insertLog(log);
 	});
 
 	agent.on('stderr', (t) => {
 		stderr += t;
-		let log = {channel: 'stderr', text: '' + t, time: new Date()}
+		let log = {channel: 'stderr', text: '' + t, host, time: new Date()}
 		db.insertLog(log);
 	});
 

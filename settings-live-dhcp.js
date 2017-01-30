@@ -19,7 +19,10 @@ module.exports = {
 		}
 	},
 	command: {},
-	wrapper: {},
+	wrapper: {
+		perfdhcp: ['/bin/numactl', '-C0'],
+		kea4: ['/bin/numactl', '-C0']
+	},
 	args: {},
 	testsPerRun: 10,
 	queueFilter: {type: {$in: ['kea4', 'kea6', 'dhcpd']}}
