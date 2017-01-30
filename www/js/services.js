@@ -134,7 +134,7 @@ app.service('LogWatcher',
 					byid[data._id] = 1;
 					log.push(data);
 				}
-				while (log.length > 100) {
+				while (log.length > 300) {
 					var id = log[0]._id;
 					delete byid[id];
 					log.shift();
