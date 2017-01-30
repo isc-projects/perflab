@@ -6,7 +6,22 @@ var app = angular.module('perflabApp');
 
 app.controller('logViewController', ['$scope', 'LogWatcher',
 	function ($scope, LogWatcher) {
+
 		$scope.logwatch = LogWatcher;
+
+		try {
+			$scope.filter = JSON.parse(localStorage.logFilter);
+		} catch (e) {
+			$scope.filter = 'All';
+		}
+
+		$scope.setFilter = function(filter) {
+			$scope.filter = filter;
+			$scope.host = { All : '', DNS: 'perf-dns-s', DHCP: 'perf-dhcp-s' }[filter]
+			localStorage.logFilter = JSON.stringify(filter);
+		}
+
+		$scope.setFilter($scope.filter);
 	}
 ]);
 
