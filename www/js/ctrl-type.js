@@ -48,6 +48,10 @@ app.controller('configTypeController',
 			kea6: {
 				name: 'Kea IPv6',
 				protocol: 'DHCP'
+			},
+			dhcpd: {
+				name: 'ISC DHCPd',
+				protocol: 'DHCP'
 			}
 		}[$routeParams.type];
 
