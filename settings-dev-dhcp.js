@@ -10,10 +10,12 @@ module.exports = {
 		oplog:	'mongodb://localhost/local'
 	},
 	repo: {
+		bind:	'ssh://repo.isc.org/proj/git/prod/bind9.git',
+		dhcpd:	'ssh://repo.isc.org/proj/git/prod/dhcp.git',
 		kea4: 	'https://github.com/isc-projects/kea.git'
 	},
 	hosts: {
-		kea4: {
+		dhcp: {
 			server: '127.0.0.1',
 			tester:	'localhost'
 		}
