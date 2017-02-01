@@ -10,8 +10,8 @@ module.exports = {
 		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
 	repo: {
-		dhcpd:	'ssh://repo.isc.org/proj/git/prod/dhcp.git',
-		bind:	'ssh://repo.isc.org/proj/git/prod/bind9.git',
+		dhcpd:	'ssh://isclab@repo.isc.org/proj/git/prod/dhcp.git',
+		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9.git',
 		kea4: 	'git://git.kea.isc.org/kea'
 	},
 	hosts: {
