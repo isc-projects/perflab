@@ -73,8 +73,19 @@ pre- and post-edit results.
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
 			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
-			  <option value="mega-small">1M small zones, 5% NXD</option>
+			  <option ng-if="config.mode !== 'recursive'" value="mega-small">1M small zones, 5% NXD</option>
 			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
+			  <option ng-if="config.mode === 'recursive'" value="mega-small">1M zones, 5% NXD</option>
+			  <option ng-if="config.mode === 'recursive'" value="mega-small-recursive">1M zones, 5% NXD, 5% DNAME, www prefixed</option>
+			  <option ng-if="config.mode === 'recursive'" value="mega-small-dname">1M zones, 5% NXD, all DNAME, www prefixed</option>
+
+  <option ng-if="config.mode === 'recursive'" value="sTTL-4l-unique.txt">bconry / sTTL-4l-unique</option>
+  <option ng-if="config.mode === 'recursive'" value="lTTL-4l-unique.txt">bconry / lTTL-4l-unique</option>
+  <option ng-if="config.mode === 'recursive'" value="sTTL-clustered-repeats.txt">bconry / sTTL-clustered-repeats</option>
+  <option ng-if="config.mode === 'recursive'" value="lTTL-clustered-repeats.txt">bconry / lTTL-clustered-repeats</option>
+  <option ng-if="config.mode === 'recursive'" value="sTTL-mix-repeats.txt">bconry / sTTL-mix-repeats</option>
+  <option ng-if="config.mode === 'recursive'" value="lTTL-mix-repeats.txt">bconry / lTTL-mix-repeats</option>
+
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
