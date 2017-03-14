@@ -184,6 +184,17 @@ app.controller('configEditController',
 		var id = $scope.id = $routeParams.id;
 
 		if ($scope.id === undefined) {
+			if ($routeParams.clone !== undefined) {
+				$http.get('/api/config/' + $routeParams.clone).then(function(res) {
+					$scope.config = res.data;
+					$scope.config.name = 'Clone of ' + $scope.config.name;
+					delete $scope.id;
+					delete $scope.config._id;
+					delete $scope.config.created;
+					delete $scope.config.updated;
+					$scope.$$childHead.configEdit.$setDirty();
+				}).catch(redirectNotify);
+			}
 			setDefaults();
 			$scope.config.type = $routeParams.type;
 		} else {

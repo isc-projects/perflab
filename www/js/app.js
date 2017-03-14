@@ -18,6 +18,10 @@ app.config(['$routeProvider',
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})
+			.when('/config/clone/:type/:clone', {
+				templateUrl: 'partials/config-edit.html',
+				controller: 'configEditController'
+			})
 			.when('/config/edit/:type/:id', {
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
