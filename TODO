@@ -39,3 +39,5 @@
 - [LATER] long term chart of different releases
 
 - per-config notes
+
+- extract JSON stats data from BIND after each run
