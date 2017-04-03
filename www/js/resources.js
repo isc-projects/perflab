@@ -38,4 +38,10 @@ module.factory('ConfigResource', ['$resource',
 	}
 ]);
 
+module.factory('SettingsResource', ['$resource',
+	function($resource) {
+		return $resource('/api/settings/:setting', {}, {});
+	}
+]);
+
 })();

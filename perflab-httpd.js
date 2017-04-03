@@ -4,7 +4,7 @@
 
 let httpd = require('./lib/httpd'),
 	Database = require('./lib/database'),
-	settings = require('./settings');
+	settings = require('./settings-httpd');
 
 let db = new Database(settings);
 

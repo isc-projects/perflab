@@ -5,8 +5,8 @@
 var app = angular.module('perflabApp');
 
 app.controller('configTypeController',
-	['$scope', '$routeParams',
-	function ($scope, $routeParams) {
+	['$scope', '$routeParams', 'SettingsResource',
+	function ($scope, $routeParams, SettingsResource) {
 
 		$scope.editor =  {
 			bind: {
@@ -54,6 +54,12 @@ app.controller('configTypeController',
 				protocol: 'DHCP'
 			}
 		}[$routeParams.type];
+
+		var querysets = SettingsResource.get({setting: 'querysets'});
+
+		$scope.editor.updateQuerysets = function() {
+			$scope.editor.currentQueryset = querysets[$scope.config.mode];
+		}
 
 		if ($scope.editor.protocol === 'DNS') {
 			$scope.editor.multimode = Object.keys($scope.editor.type).length > 1;
