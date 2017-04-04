@@ -13,7 +13,7 @@ module.exports = {
 		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9',
 		nsd:    'http://www.nlnetlabs.nl/svn/nsd/tags/',
 		knot:   'git://git.nic.cz/knot-dns.git',
-		echo:	'ssh://isclab@repo.isc.org/proj/git/exp/dns-echo-user.git'
+		echo:	'https://github.com/isc-projects/dns-echo-user.git'
 	},
 	hosts: {
 		dns: {

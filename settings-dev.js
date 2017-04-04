@@ -13,7 +13,7 @@ module.exports = {
 		bind: 	'https://source.isc.org/git/bind9.git',
 		nsd:	'http://www.nlnetlabs.nl/svn/nsd/tags/',
 		knot:	'git://git.nic.cz/knot-dns.git',
-		echo:	'file:///home/ray/src/dns-echo-user'
+		echo:	'https://github.com/isc-projects/dns-echo-user.git'
 	},
 	hosts: {
 		dns: {
