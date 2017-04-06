@@ -119,40 +119,38 @@ app.service('LogWatcher',
 	function($rootScope, $http, OpLog, Notify) {
 
 		var log = { "" : [] };
-		var byid = {};		// used to ensure IDs don't get duplicated
+		var byid = { "": {} };		// used to ensure IDs don't get duplicated
 
 		function save(data, host) {
+
 			var key = host || "";
-			if (!host) {
-				byid[data._id] = 1;
+			var idref = byid[key] = byid[key] || {};
+
+			if (data._id in idref) {
+				return;
 			}
 
 			var ref = log[key] = log[key] || [];
 			ref.push(data);
+			idref[data._id] = 1;
 
 			if (ref.length > 300) {
 				var first = ref.shift();
-				if (!host) {
-					delete byid[first._id];
-				}
+				delete idref[first._id];
 			}
 		}
 
 		$http.get('/api/log/').then(function(res) {
 			res.data.forEach(function(l) {
-				if (l.host) {
-					save(l, l.host);
-				}
 				save(l);
+				save(l, l.host);
 			});
 		}).then(subscribe).catch(Notify.danger);
 
 		function subscribe() {
 			OpLog.on('insert.log', function(ev, l) {
-				if (l.host) {
-					save(l, l.host);
-				}
 				save(l);
+				save(l, l.host);
 			});
 		}
 
