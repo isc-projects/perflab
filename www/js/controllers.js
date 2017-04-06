@@ -10,18 +10,17 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 		$scope.logwatch = LogWatcher;
 
 		try {
-			$scope.filter = JSON.parse(localStorage.logFilter);
+			$scope.host = JSON.parse(localStorage.loghost);
 		} catch (e) {
-			$scope.filter = 'All';
+			$scope.host = '';
 		}
 
-		$scope.setFilter = function(filter) {
-			$scope.filter = filter;
-			$scope.host = { All : '', DNS: 'perf-dns-s', DHCP: 'perf-dhcp-s' }[filter]
-			localStorage.logFilter = JSON.stringify(filter);
+		$scope.setHost = function(host) {
+			$scope.host = host;
+			localStorage.loghost = JSON.stringify(host);
 		}
 
-		$scope.setFilter($scope.filter);
+		$scope.setHost($scope.host);
 	}
 ]);
 
