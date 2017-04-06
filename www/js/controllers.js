@@ -21,7 +21,7 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 		}
 
 		$scope.hasHosts = function() {
-			return !! Object.keys($scope.logwatch.output || {}).length;
+			return Object.keys($scope.logwatch.output || {}).length > 1;
 		}
 
 		$scope.setHost($scope.host);
