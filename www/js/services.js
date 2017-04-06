@@ -118,32 +118,46 @@ app.service('LogWatcher',
 	['$rootScope', '$http', 'OpLog', 'Notify',
 	function($rootScope, $http, OpLog, Notify) {
 
-		var log = [];
+		var log = { "" : [] };
 		var byid = {};		// used to ensure IDs don't get duplicated
 
+		function save(data, host) {
+			var key = host || "";
+			if (!host) {
+				byid[data._id] = 1;
+			}
+
+			var ref = log[key] = log[key] || [];
+			ref.push(data);
+
+			if (ref.length > 300) {
+				var first = ref.shift();
+				if (!host) {
+					delete byid[first._id];
+				}
+			}
+		}
+
 		$http.get('/api/log/').then(function(res) {
-			log.push.apply(log, res.data);
-			log.forEach(function(l) {
-				byid[l._id] = 1;
+			res.data.forEach(function(l) {
+				if (l.host) {
+					save(l, l.host);
+				}
+				save(l);
 			});
 		}).then(subscribe).catch(Notify.danger);
 
 		function subscribe() {
-			OpLog.on('insert.log', function(ev, data) {
-				if (! (data._id in byid)) {
-					byid[data._id] = 1;
-					log.push(data);
+			OpLog.on('insert.log', function(ev, l) {
+				if (l.host) {
+					save(l, l.host);
 				}
-				while (log.length > 300) {
-					var id = log[0]._id;
-					delete byid[id];
-					log.shift();
-				}
+				save(l);
 			});
 		}
 
 		return {
-			output: log
+			output: log,
 		}
 	}
 ]);
