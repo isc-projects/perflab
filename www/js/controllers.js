@@ -20,6 +20,10 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 			localStorage.loghost = JSON.stringify(host);
 		}
 
+		$scope.hasHosts = function() {
+			return !! Object.keys($scope.logwatch.output || {}).length;
+		}
+
 		$scope.setHost($scope.host);
 	}
 ]);

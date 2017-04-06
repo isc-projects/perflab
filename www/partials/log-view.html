@@ -2,15 +2,15 @@
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Log Viewer <span ng-show="host !== ''">({{host}})</span>
-<div class="btn-group pull-right" ng-show="Object.keys(logwatch.output).length > 1">
+	  <div class="panel-heading">Log Viewer <span ng-show="hasHosts()">({{host}})</span>
+<div class="btn-group pull-right" ng-show="hasHosts()">
 <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle" title="host filter settings"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <span class="fa fa-caret-down"></span> Host
 </button>
-<ul class="dropdown-menu dropdown-menu-right fa-ul">
+<ul class="dropdown-menu dropdown-menu-right fa-ul" role="menu">
   <li class="bfa-icon" ng-repeat="(key, value) in logwatch.output" ng-class="{'fa-check': host === key}">
-    <a ng-click="setHost(key)">{{key || "All"}}</a></li>
+    <a role="menuitem" href="" ng-click="setHost(key)">{{key || "All"}}</a></li>
 </ul>
 </div>
 	  </div>
