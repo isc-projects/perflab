@@ -10,10 +10,10 @@ module.exports = {
 		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
 	repo: {
-		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9',
-		nsd:    'http://www.nlnetlabs.nl/svn/nsd/tags/',
-		knot:   'git://git.nic.cz/knot-dns.git',
-		echo:	'https://github.com/isc-projects/dns-echo-user.git'
+		bind:	{ git: 'ssh://isclab@repo.isc.org/proj/git/prod/bind9' },
+		nsd:    { svn: 'http://www.nlnetlabs.nl/svn/nsd/tags/' },
+		knot:   { git: 'git://git.nic.cz/knot-dns.git' },
+		echo:	{ git: 'https://github.com/isc-projects/dns-echo-user.git' }
 	},
 	hosts: {
 		dns: {
