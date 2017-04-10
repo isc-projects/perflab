@@ -4,7 +4,7 @@ ISC Performance Lab Architecture and Installation
 The ISC Performance Lab is written for NodeJS 4.2+ and MongoDB 2.6+.  To
 allow for separation of the actual testing and the web UI the system is
 split into two processes, `perflab-tester` and `perflab-httpd`.  The
-former runs on the same server as the BIND server under test, whilst the
+former runs on the same server as the server under test, whilst the
 latter should be run on a separate system.
 
 `perflab-tester` takes care of reading configurations and queue settings
@@ -18,17 +18,19 @@ to those changes.
 Installation
 ------------
 
-The git repo is at `ssh://repo.isc.org/proj/git/exp/isc-perflab`
+The git repo is at `https://github.com/isc-projects/perflab.git`
 
 All user configurable settings are in `settings.js`, and should
-(hopefully) be self explanatory. The git repo contains
+(hopefully) be relatively self explanatory. The git repo contains
 `settings-live.js` which should be symlinked to `settings.js`.
 `named.conf` templates and include files are found in the `config/bind/`
-sub-directory.  All server-side third party dependencies can be obtained
-by running `npm install` which reads the `package.json` file and
-downloads the required packages. The only third party library that is
-not installed this way is `quip` since there's a bug in the distributed
-version, so a fixed copy is in our git repo.
+sub-directory.
+
+All server-side third party dependencies can be obtained by running
+`npm install` which reads the `package.json` file and downloads the
+required packages. The only third party library that is not installed
+this way is `quip` since there's a bug in the distributed version, so
+a fixed copy is in our git repo.
 
 ### MongoDB Setup
 
@@ -60,12 +62,17 @@ Operation
 
 There aren't any start up scripts (yet) - for now startup is done just
 by starting `./perflab-httpd.js` and `./perflab-tester.js` in the
-background with stdout and stderr redirected to a file.  The dnsperf
-tests are started by `perflab-tester.js` by making an SSH connection to
-a client machine, so password-less SSH from the BIND server to the test
-client need to be configured outside of this system.  Similarly
-`perflab-tester.js` needs to be able to access the BIND git source
-repository without interactive authorisation.
+background with stdout and stderr redirected to a file.
+
+The dnsperf tests are started by `perflab-tester.js` by making an SSH
+connection to a client machine, so password-less SSH from the BIND
+server to the test client need to be configured outside of this system.
+
+Similarly `perflab-tester.js` needs to be able to access the servers'
+source repositories without interactive authorisation.
+
+NB: dnsperf is not included - install it from source or via your O/S
+package manager.
 
 Code Architecture
 -----------------
