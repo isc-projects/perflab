@@ -55,11 +55,14 @@ app.controller('configTypeController',
 			}
 		}[$routeParams.type];
 
-		var querysets = SettingsResource.get({setting: 'querysets'});
-
 		$scope.editor.updateQuerysets = function() {
 			$scope.editor.currentQueryset = querysets[$scope.config.mode];
 		}
+
+		var querysets = SettingsResource.get({setting: 'querysets'});
+		querysets.$promise.then(function() {
+			$scope.editor.updateQuerysets();
+		});
 
 		if ($scope.editor.protocol === 'DNS') {
 			$scope.editor.multimode = Object.keys($scope.editor.type).length > 1;
