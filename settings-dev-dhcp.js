@@ -1,12 +1,9 @@
 'use strict';
 
-let schema = 'perflab';
-
 module.exports = {
 	path:		'/home/ray/data',
 	mongo: {
-		schema,
-		url:	`mongodb://localhost/${schema}`,
+		url:	'mongodb://localhost/perflab',
 		oplog:	'mongodb://localhost/local'
 	},
 	hosts: {
