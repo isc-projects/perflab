@@ -9,30 +9,32 @@ module.exports = {
 		url:	`mongodb://perf-ctl.lab.isc.org/${schema}`,
 		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
-	repo: {
-		bind:	'ssh://isclab@repo.isc.org/proj/git/prod/bind9',
-		nsd:    'http://www.nlnetlabs.nl/svn/nsd/tags/',
-		knot:   'git://git.nic.cz/knot-dns.git',
-		echo:	'https://github.com/isc-projects/dns-echo-user.git'
-	},
 	hosts: {
 		dns: {
 			server: '172.16.2.242',
 			tester:	'perf-dns-c.lab.isc.org'
 		}
 	},
-	command: {
-		dnsperf: '/usr/local/nom/bin/dnsperf',
-		bind: './sbin/named',
-		knot: './sbin/knotd',
-		nsd: './sbin/nsd'
-	},
-	args: {
-		dnsperf: ['-c24', '-q82', '-T6', '-x2048' ]
-	},
-	wrapper: {
-		dnsperf: ['/bin/numactl', '-C0-11'],
-		bind: ['/bin/numactl', '-C0-11']
-	},
-	queueFilter: {type: {$in: ['bind', 'echo', 'knot', 'nsd']}}
+	queueFilter: {type: {$in: ['bind', 'echo', 'knot', 'nsd']}},
+
+	agents: {
+		bind: {
+			repo: { git: 'ssh://isclab@repo.isc.org/proj/git/prod/bind9' },
+			wrapper: ['/bin/numactl', '-C0-11']
+		},
+		nsd: {
+			repo: { svn: 'http://www.nlnetlabs.nl/svn/nsd/tags/' }
+		},
+		knot: {
+			repo: { git: 'git://git.nic.cz/knot-dns.git' }
+		},
+		echo: {
+			repo: { git: 'https://github.com/isc-projects/dns-echo-user.git' }
+		},
+		dnsperf: {
+			command: '/usr/local/nom/bin/dnsperf',
+			wrapper: [ '/bin/numactl', '-C0-11' ],
+			args: ['-c24', '-q82', '-T6', '-x2048' ]
+		}
+	}
 };

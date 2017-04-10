@@ -9,23 +9,29 @@ module.exports = {
 		url:	`mongodb://perf-ctl.lab.isc.org/${schema}`,
 		oplog:	'mongodb://perf-ctl.lab.isc.org/local'
 	},
-	repo: {
-		dhcpd:	'ssh://repo.isc.org/proj/git/prod/dhcp.git',
-		bind:	'ssh://repo.isc.org/proj/git/prod/bind9.git',
-		kea4: 	'git://git.kea.isc.org/kea'
-	},
 	hosts: {
 		dhcp: {
 			server: '10.255.255.244',
 			tester:	'172.16.1.245'
 		}
 	},
-	command: {},
-	wrapper: {
-		perfdhcp: ['/bin/numactl', '-C0'],
-		kea4: ['/bin/numactl', '-C0']
-	},
-	args: {},
+
 	testsPerRun: 10,
-	queueFilter: {type: {$in: ['kea4', 'kea6', 'dhcpd']}}
+	queueFilter: {type: {$in: ['kea4', 'kea6', 'dhcpd']}},
+
+	agents: {
+		bind: {
+			repo: { git: 'ssh://repo.isc.org/proj/git/prod/bind9.git' }
+		},
+		dhcpd: {
+			repo: { git: 'ssh://repo.isc.org/proj/git/prod/dhcp.git' }
+		},
+		kea4: {
+			repo: { git: 'https://github.com/isc-projects/kea.git' },
+			wrapper: [ '/bin/numactl', '-C0' ]
+		},
+		perfdhcp: {
+			wrapper: [ '/bin/numactl', '-C0' ]
+		}
+	}
 };
