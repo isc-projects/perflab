@@ -5,6 +5,7 @@
 let	Database = require('../lib/database'),
 	Agents = require('../lib/agents'),
 	Promise = require('bluebird'),
+	mongoCF = require('../etc/mongo'),
 	settings = require('../settings');
 
 Promise.longStackTraces();
@@ -15,13 +16,13 @@ if (process.argv.length < 3) {
 }
 
 let id = process.argv[2];
-let db = new Database(settings);
+let db = new Database(mongoCF);
 
 db.getConfigById(id).then((config) => {
 	config.flags = config.flags || {};
 	config.flags.checkout = false;
 	let type = config.type;
-	let agent = new Agents[type].server(settings, config);
+	let agent = new Agents[type](settings, config);
 	agent.on('stdout', t => console.log('1:' + t));
 	agent.on('stderr', t => console.log('2:' + t));
 	return agent.run();

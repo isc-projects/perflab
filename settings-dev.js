@@ -2,10 +2,6 @@
 
 module.exports = {
 	path:		'/home/ray/data',
-	mongo: {
-		url:	'mongodb://localhost/perflab',
-		oplog:	'mongodb://localhost/local'
-	},
 	hosts: {
 		dns: {
 			server: '127.0.0.1',
@@ -17,23 +13,29 @@ module.exports = {
 
 	agents: {
 		bind: {
-			repo: { git: 'https://source.isc.org/git/bind9.git' }
+			repo: { vcs: 'git', url: 'https://source.isc.org/git/bind9.git' }
 		},
 		nsd: {
-			repo: { svn: 'http://www.nlnetlabs.nl/svn/nsd/tags/' }
+			repo: { vcs: 'svn', url: 'http://www.nlnetlabs.nl/svn/nsd/tags/' }
 		},
 		knot: {
-			repo: { git: 'git://git.nic.cz/knot-dns.git' }
+			repo: { vcs: 'git', url: 'git://git.nic.cz/knot-dns.git' }
 		},
 		echo: {
-			repo: { git: 'https://github.com/isc-projects/dns-echo-user.git' }
+			repo: { vcs: 'git', url: 'https://github.com/isc-projects/dns-echo-user.git' }
 		},
 		dnsperf: {
+		},
+		dhcpd: {
+			repo: { url: 'https://source.isc.org/git/dhcp.git' }
+		},
+		kea4: {
+			repo: { url: 'https://github.com/isc-projects/kea.git' }
 		}
 	},
 
 	querysets: {
-		auth: [
+		authoritative: [
 			{	file: 'test_a', name: 'Test Authoritative' }
 		],
 		recursive: [

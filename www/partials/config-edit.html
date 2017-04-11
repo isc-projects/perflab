@@ -12,7 +12,7 @@ pre- and post-edit results.
   <br ng-show="existing" />
 
   <div class="row">
-	<div class="col-md-12" ng-controller="configTypeController">
+	<div class="col-md-12">
 	  <div class="panel panel-default">
 	  <div class="panel-heading">Configuration</div>
 	  <div class="panel-body">
@@ -24,16 +24,18 @@ pre- and post-edit results.
 		  <div class="form-group form-group-sm">
 			<label for="configBranch">Branch / Tag</label>
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
-			<div><input id="configCheckout" type="checkbox" ng-model="config.flags.checkout"><label for="configCheckout">checkout before every run</label></div>
+			<div>
+			  <input id="configCheckout" type="checkbox" ng-model="config.flags.checkout">
+			  <label for="configCheckout">checkout before every run ({{:: settings.agents[type].repo.vcs | uppercase}} {{:: settings.agents[type].repo.url }})</label>
+			</div>
 		  </div>
 		  <div class="checkbox">
 		  </div>
-		  <div class="form-group form-group-sm" ng-if="editor.multimode">
+		  <div class="form-group form-group-sm" ng-if="agent.subtypes && agent.subtypes.length > 1">
 			<label for="configMode">Server mode</label>
-			<select ng-required="config.mode !== ''" class="form-control" id="configMode" ng-model="config.mode" ng-change="editor.updateQuerysets()">
+			<select ng-required="config.mode !== ''" class="form-control" id="configMode" ng-model="config.mode">
 			  <option value="">- select mode -</option>
-			  <option ng-show="editor.type.auth" value="auth">Authoritative</option>
-			  <option ng-show="editor.type.recursive" value="recursive">Recursive</option>
+			  <option ng-repeat="type in agent.subtypes" value="{{::type}}">{{::type}}</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
@@ -45,18 +47,18 @@ pre- and post-edit results.
 			<input class="form-control" id="configArgsMake" ng-model="config.args.make" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configArgsServer">{{editor.name}} command line options</label>
+			<label for="configArgsServer">{{::agent.name}} command line options</label>
 			<input class="form-control" id="configArgsServer" ng-model="config.args.server" ng-list=" " ng-trim="false" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="editor.options">
-			<label for="configOptions">{{editor.options}}</label><br/>
+		  <div class="form-group form-group-sm" ng-show="agent.string.options">
+			<label for="configOptions">{{::agent.string.options}}</label><br/>
 			<textarea class="form-control" id="configOptions" ng-model="config.options" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="editor.global">
-			<label for="configGlobal">{{editor.global}}</label><br/>
+		  <div class="form-group form-group-sm" ng-show="agent.string.global">
+			<label for="configGlobal">{{::agent.string.global}}</label><br/>
 			<textarea class="form-control" id="configGlobal" ng-model="config.global" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="editor.protocol === 'DNS' && config.mode !== 'recursive'">
+		  <div class="form-group form-group-sm" ng-show="agent.type === 'DNS' && config.mode !== 'recursive'">
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>
@@ -68,25 +70,23 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
-		  <div class="form-group form-group-sm" ng-if="editor.protocol === 'DNS'">
-			<label for="configQueryset">{{editor.tester}} Query Set</label>
+		  <div class="form-group form-group-sm" ng-if="agent.client.name === 'dnsperf'">
+			<label for="configQueryset">{{::agent.client.name}} Query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
 			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
 			  <option ng-if="config.mode !== 'recursive'" value="mega-small">1M small zones, 5% NXD</option>
 			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
 			  <option ng-if="config.mode === 'recursive'" value="mega-small">1M zones, 5% NXD</option>
-			  <option ng-if="config.mode === 'recursive'" value="mega-small-recursive">1M zones, 5% NXD, 5% DNAME, www prefixed</option>
-			  <option ng-if="config.mode === 'recursive'" value="mega-small-dname">1M zones, 5% NXD, all DNAME, www prefixed</option>
-  			  <option ng-repeat="set in editor.currentQueryset" value="{{set.file}}">{{set.name}}</option>
+  			  <option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configRuns">{{editor.tester}} runs per test (0 = use system default)</label>
+			<label for="configRuns">{{::agent.client.name}} runs per test (0 = use system default)</label>
 			<input type="number" min="0" class="form-control" id="configRuns" ng-model="config.testsPerRun" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configArgsTester">extra {{editor.tester}} command line options</label>
+			<label for="configArgsTester">extra {{::agent.client.name}} command line options</label>
 			<input class="form-control" id="configArgsTester" ng-model="config.args.tester" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
@@ -96,7 +96,7 @@ pre- and post-edit results.
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
 			  <span class="fa fa-fw fa-save"></span>Save</button>
-			<a href="#/config/clone/{{config.type}}/{{config._id}}" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$dirty || saving" ng-show="id !== undefined">
+			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$dirty || saving" ng-show="id !== undefined">
 			  <span class="fa fa-fw fa-clone"></span>Clone</a>
 			<button type="submit" class="fixed-button btn btn-xs btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="id !== undefined" ng-disabled="saving">
 			  <span class="fa fa-trash"></span>Delete...</button>
