@@ -14,7 +14,14 @@ pre- and post-edit results.
   <div class="row">
 	<div class="col-md-12">
 	  <div class="panel panel-default">
-	  <div class="panel-heading">Configuration</div>
+	  <div class="panel-heading">
+      <span>Configuration</span>
+	  <span class="pull-right" ng-show="existing">
+<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
+<a href="#/config/run/{{config._id}}/list" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
+<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-xs btn-primary"><span class="fa fa-download" title="Export CSV"></span></a>
+      </span>
+      </div>
 	  <div class="panel-body">
 		<form name="configEdit">
 		  <div class="form-group form-group-sm">
