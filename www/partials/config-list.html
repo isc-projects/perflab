@@ -6,6 +6,15 @@
 		  <span>Configurations</span>
 		  <span class="pull-right">
 <div class="btn-group">
+  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
+		  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	<span class="fa fa-caret-down"></span>New
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right">
+    <li ng-repeat="agent in agents"><a href="#/config/new/{{agent.key}}">{{agent.name}}</a></li>
+  </ul>
+</div>
+<div class="btn-group">
 <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle" title="view settings"
 	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <span class="fa fa-caret-down"></span> View
@@ -60,21 +69,6 @@
   <a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-xs btn-primary"><span class="fa fa-cog" title="Edit"></span></a>
 </td>
 </tr>
-
-<tr>
-<td colspan="4" align="right">
-<div class="btn-group">
-  <button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle"
-		  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	<span class="fa fa-caret-down"></span>New
-  </button>
-  <ul class="dropdown-menu dropdown-menu-right">
-    <li ng-repeat="agent in agents"><a href="#/config/new/{{agent.key}}">{{agent.name}}</a></li>
-  </ul>
-</div>
-</td>
-</tr>
-
 			</tbody>
 		  </table>
 		</div>
