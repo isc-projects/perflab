@@ -26,10 +26,6 @@ input[type="checkbox"] + label {
 	text-decoration: line-through;
 }
 
-.hipri {
-	background-color: #e0f0ff;
-}
-
 .scroll {
 	max-height: 600px;
 	overflow-y: auto;

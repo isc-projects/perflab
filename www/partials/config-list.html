@@ -26,9 +26,9 @@
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-condensed config-list">
 			<tbody>
-<tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-class="{hipri: config.queue.priority}" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
+<tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
 <td width="80%" class="name">
-  <span ng-class="{strike: !config.queue.enabled, hipri: config.queue.priority}">{{config.name}}</span>
+  <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span>
 </td>
 <td width="180px" nowrap>
 <div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
@@ -38,7 +38,7 @@
 </div>
 </td>
 <td><div class="btn-group">
-  <button type="button" class="btn btn-xs btn-primary dropdown-toggle" title="Queue settings"
+  <button type="button" class="btn btn-xs btn-primary dropdown-toggle" title="Queue settings" ng-class="{'btn-danger': config.queue.priority}"
     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="fa fa-caret-down"></span>
     <span class="fa" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-repeat' : 'fa-play') : 'fa-pause'">
