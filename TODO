@@ -26,6 +26,8 @@
 - [DONE] virtual "delete" operation (hides, doesn't actually delete)
 - [DONE] progress bar on the config list
 - [DONE] "clone" configurations
+- [DONE] graph date labels too long
+- [DONE] more generic Y axis label for run graphs
 
 - [PARTIAL] statistics
 - [PARTIAL] make listings and graph watch for real-time updates too

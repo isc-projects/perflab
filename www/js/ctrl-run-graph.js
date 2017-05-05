@@ -22,9 +22,12 @@ app.controller('runGraphController',
 					Range: { /* label: 'Range', */ highlightCircleSize: 0 }
 				},
 				xlabel: 'Date / Time',
-				ylabel: 'Queries per second',
+				ylabel: 'Ops per second',
 				valueRange: [0, null],
-				axes: { y: { axisLabelWidth: 70 } },
+				axes: {
+					x: { axisLabelWidth: 70 },
+					y: { axisLabelWidth: 70 }
+				},
 				height: 500,
 				legend: 'follow',
 				labelsSeparateLines: true,
