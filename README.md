@@ -20,11 +20,13 @@ Installation
 
 The git repo is at `https://github.com/isc-projects/perflab.git`
 
-All user configurable settings are in `settings.js`, and should
-(hopefully) be relatively self explanatory. The git repo contains
-`settings-live.js` which should be symlinked to `settings.js`.
-`named.conf` templates and include files are found in the `config/bind/`
-sub-directory.
+Sample configuration files are in `./etc/mongo.js-sample` and
+`./etc/settings.js-sample`.  These will need to be copied
+(without the `-sample` suffix) and modified to suit your
+local configuration.
+
+`named.conf` templates and include files are found in the
+`config/bind/` sub-directory.
 
 All server-side third party dependencies can be obtained by running
 `npm install` which reads the `package.json` file and downloads the
