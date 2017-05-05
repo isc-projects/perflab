@@ -7,11 +7,12 @@ let Agents = require('./lib/agents'),
 	Promise = require('bluebird'),
 	os = require('os');
 
-let settings = require('./settings');
+let	mongoCF = require('./etc/mongo'),
+	settings = require('./etc/settings');
 
 Promise.longStackTraces();
 
-let db = new Database(require('./etc/mongo'));
+let db = new Database(mongoCF);
 try {
 	db.createIndexes().then(runQueue);
 } catch (e) {

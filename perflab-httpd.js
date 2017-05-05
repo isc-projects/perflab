@@ -4,10 +4,11 @@
 
 let httpd = require('./lib/httpd'),
 	Database = require('./lib/database'),
-	Agents = require('./lib/agents'),
-	mongoCF = require('./etc/mongo'),
-	Settings = require('./settings');
+	Agents = require('./lib/agents');
+
+let mongoCF = require('./etc/mongo'),
+	settings = require('./etc/settings');
 
 let db = new Database(mongoCF);
 
-httpd(mongoCF, Settings, Agents, db, __dirname + '/www');
+httpd(mongoCF, settings, Agents, db, __dirname + '/www');
