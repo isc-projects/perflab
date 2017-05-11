@@ -15,6 +15,9 @@ interface over which UI clients learn about configuration and queue
 status changes in real-time and automatically update the UI in response
 to those changes.
 
+NB: this is _unsupported_ software from an internal research project,
+released for the benefit of the DNS community.
+
 Installation
 ------------
 
@@ -58,6 +61,15 @@ is the "name" parameter:
     > use local
     switched to db local
     > rs.initiate()
+
+### Query Sets and Config files
+
+Run `node ./scripts/install_server.js` on the server node to create
+the zone files and related query sets and install them into the
+application's data folder.   The query sets will need to be manually
+copied onto the client machine.
+
+See below for more information on these files.
 
 Operation
 ---------
@@ -178,7 +190,7 @@ There are (currently) three dnsperf query files suitable for testing
 against those zones:
 
 * Nominum default - a mix of real DNS queries, suitable for testing the
-root zone
+root zone (get this from your dnsperf distribution)
 * 1M small zones, 5% NXD - suitable for any of the 1M
 record/delegation/zones configurations
 * 1k small zones, 5% NXD - suitable for any of the 1k
