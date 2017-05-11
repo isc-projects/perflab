@@ -16,7 +16,10 @@ status changes in real-time and automatically update the UI in response
 to those changes.
 
 NB: this is _unsupported_ software from an internal research project,
-released for the benefit of the DNS community.
+released for the benefit of the DNS community.   The project is
+maintained by Ray Bellis.   Please use the Github issue tracker for
+comments, suggestions.  Pull requests are welcome, but response times
+are not guaranteed.
 
 Installation
 ------------
