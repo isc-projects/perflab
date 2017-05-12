@@ -21,11 +21,11 @@
 </button>
 <ul class="dropdown-menu dropdown-menu-right fa-ul">
   <li class="dropdown-header">Sort by...</li>
-  <li class="bfa-icon" ng-class="{'fa-check': sort === 'name'}"><a href="#" ng-click="setSort('name')">Name</a></li>
-  <li class="bfa-icon" ng-class="{'fa-check': sort === 'pri'}"><a href="#" ng-click="setSort('pri')">Run order</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': sort === 'name'}"><a href="" ng-click="setSort('name')">Name</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': sort === 'pri'}"><a href="" ng-click="setSort('pri')">Run order</a></li>
   <li role="separator" class="divider"></li>
   <li class="dropdown-header">Filter</li>
-  <li class="bfa-icon" ng-class="{'fa-check': filter}"><a href="#" ng-click="toggleFilter()">Hide inactive</a></li>
+  <li class="bfa-icon" ng-class="{'fa-check': filter}"><a href="" ng-click="toggleFilter()">Hide inactive</a></li>
 </ul>
 </div>
         </span>
@@ -53,11 +53,11 @@
     <span class="fa" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-repeat' : 'fa-play') : 'fa-pause'">
   </button>
   <ul class="dropdown-menu">
-    <li ng-class="{disabled: !config.queue.enabled}"><a href="#" ng-click="configs.setEnabled(config._id, false)"><span class="fa fa-pause"></span> Disable</a></li>
-    <li ng-class="{disabled: config.queue.enabled && !config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, false)"><span class="fa fa-play"></span> Run once</a></li>
-    <li ng-class="{disabled: config.queue.enabled && config.queue.repeat}"><a href="#" ng-click="configs.setRepeat(config._id, true)"><span class="fa fa-repeat"></span> Repeat</a></li>
+    <li ng-class="{disabled: !config.queue.enabled}"><a href="" ng-click="configs.setEnabled(config._id, false)"><span class="fa fa-pause"></span> Disable</a></li>
+    <li ng-class="{disabled: config.queue.enabled && !config.queue.repeat}"><a href="" ng-click="configs.setRepeat(config._id, false)"><span class="fa fa-play"></span> Run once</a></li>
+    <li ng-class="{disabled: config.queue.enabled && config.queue.repeat}"><a href="" ng-click="configs.setRepeat(config._id, true)"><span class="fa fa-repeat"></span> Repeat</a></li>
 	<li role="separator" class="divider"></li>
-	<li><a href="#" ng-click="configs.togglePriority(config._id)">
+	<li><a href="" ng-click="configs.togglePriority(config._id)">
 	  <span class="fa" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
     </li>
   </ul>
