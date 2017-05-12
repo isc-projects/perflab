@@ -31,7 +31,7 @@ app.controller('runGraphController',
 				height: 500,
 				legend: 'follow',
 				labelsSeparateLines: true,
-				dateWindow: [Date.now() - 7 * 86400000, Date.now()],
+				dateWindow: [Date.now() - 56 * 86400000, Date.now()],
 				pointClickCallback: function(e, point) {
 					var id = $scope.graph.data[point.idx].id;
 					$location.path('/run/test/' + id + '/');
