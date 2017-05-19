@@ -6,7 +6,7 @@ let	Database = require('../lib/database'),
 	Agents = require('../lib/agents'),
 	Promise = require('bluebird'),
 	mongoCF = require('../etc/mongo'),
-	settings = require('../settings');
+	settings = require('../etc/settings');
 
 Promise.longStackTraces();
 
