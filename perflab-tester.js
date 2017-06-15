@@ -7,11 +7,12 @@ let Agents = require('./lib/agents'),
 	Promise = require('bluebird'),
 	os = require('os');
 
-let settings = require('./settings');
+let	mongoCF = require('./etc/mongo'),
+	settings = require('./etc/settings');
 
 Promise.longStackTraces();
 
-let db = new Database(settings);
+let db = new Database(mongoCF);
 try {
 	db.createIndexes().then(runQueue);
 } catch (e) {
@@ -51,14 +52,14 @@ function doFirstQueueEntry() {
 function runConfig(config)
 {
 	let type = config.type;
-	let serverAgent = new Agents[type].server(settings, config);
+	let serverAgent = new Agents[type](settings, config);
 
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || settings.testsPerRun || 30;
 		let count = 1;
 
 		function loop() {
-			let clientAgent = new Agents[type].client(settings, config);
+			let clientAgent = new Agents[type].configuration.client(settings, config);
 			let res = setStatus(config._id, 'test ' + count + '/' + iter)
 						.then(() => runClient(clientAgent, config._id, run_id, false));
 			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;

@@ -22,12 +22,16 @@ app.controller('runGraphController',
 					Range: { /* label: 'Range', */ highlightCircleSize: 0 }
 				},
 				xlabel: 'Date / Time',
-				ylabel: 'Queries per second',
-				axes: { y: { axisLabelWidth: 70 } },
+				ylabel: 'Ops per second',
+				valueRange: [0, null],
+				axes: {
+					x: { axisLabelWidth: 70 },
+					y: { axisLabelWidth: 70 }
+				},
 				height: 500,
 				legend: 'follow',
 				labelsSeparateLines: true,
-				dateWindow: [Date.now() - 7 * 86400000, Date.now()],
+				dateWindow: [Date.now() - 56 * 86400000, Date.now()],
 				pointClickCallback: function(e, point) {
 					var id = $scope.graph.data[point.idx].id;
 					$location.path('/run/test/' + id + '/');

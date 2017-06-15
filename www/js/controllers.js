@@ -10,24 +10,27 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 		$scope.logwatch = LogWatcher;
 
 		try {
-			$scope.filter = JSON.parse(localStorage.logFilter);
+			$scope.host = JSON.parse(localStorage.loghost);
 		} catch (e) {
-			$scope.filter = 'All';
+			$scope.host = '';
 		}
 
-		$scope.setFilter = function(filter) {
-			$scope.filter = filter;
-			$scope.host = { All : '', DNS: 'perf-dns-s', DHCP: 'perf-dhcp-s' }[filter]
-			localStorage.logFilter = JSON.stringify(filter);
+		$scope.setHost = function(host) {
+			$scope.host = host;
+			localStorage.loghost = JSON.stringify(host);
 		}
 
-		$scope.setFilter($scope.filter);
+		$scope.hasHosts = function() {
+			return Object.keys($scope.logwatch.output || {}).length > 1;
+		}
+
+		$scope.setHost($scope.host);
 	}
 ]);
 
 app.controller('configListController',
-	['$scope', 'Configs',
-	function($scope, Configs) {
+	['$scope', 'Configs', 'AgentResource',
+	function($scope, Configs, AgentResource) {
 
 		$scope.configs = Configs;
 		$scope.filter = JSON.parse(localStorage.filter || 'false');
@@ -35,6 +38,8 @@ app.controller('configListController',
 		$scope.toggleFilter = function(val) {
 			localStorage.filter = $scope.filter = !$scope.filter;
 		}
+
+		$scope.agents = AgentResource.query();
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
@@ -177,15 +182,29 @@ app.controller('testDetailController',
 
 app.controller('configEditController',
 	['$scope', '$http', '$route', '$location', '$routeParams',
-	 'Notify', 'RunResource', 'ConfigResource',
+	 'Notify', 'RunResource', 'ConfigResource', 'SettingsResource', 'AgentResource',
 	function($scope, $http, $route, $location, $routeParams,
-			 Notify, RunResource, ConfigResource) {
+			 Notify, RunResource, ConfigResource, SettingsResource, AgentResource) {
 
 		var id = $scope.id = $routeParams.id;
+		$scope.agent = AgentResource.get({agent: $routeParams.type});
+		$scope.type = $routeParams.type;
+		$scope.settings = SettingsResource.get();
 
 		if ($scope.id === undefined) {
+			if ($routeParams.clone !== undefined) {
+				$http.get('/api/config/' + $routeParams.clone).then(function(res) {
+					$scope.config = res.data;
+					$scope.config.name = 'Clone of ' + $scope.config.name;
+					delete $scope.id;
+					delete $scope.config._id;
+					delete $scope.config.created;
+					delete $scope.config.updated;
+					$scope.$$childHead.configEdit.$setDirty();
+				}).catch(redirectNotify);
+			}
 			setDefaults();
-			$scope.config.type = $routeParams.type;
+			$scope.config.type = $scope.type;
 		} else {
 			$http.get('/api/config/' + $scope.id).then(function(res) {
 				$scope.config = res.data;
@@ -211,6 +230,9 @@ app.controller('configEditController',
 
 			config.flags = config.flags || {checkout: false};
 			config.wrapper = config.wrapper || [];
+			if ($scope.agent.type === 'DNS' && !config.mode) {
+				config.mode = ($scope.agent.subtype && $scope.agent.subtypes[0]) || 'authoritative';
+			}
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];

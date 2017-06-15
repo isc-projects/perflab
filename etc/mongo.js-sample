@@ -1,0 +1,5 @@
+module.exports = {
+	schema:	'perflab',
+	url:	'mongodb://localhost/perflab',
+	oplog:	'mongodb://localhost/local'
+};

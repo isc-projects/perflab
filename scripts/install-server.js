@@ -2,7 +2,7 @@
 
 'use strict';
 
-const settings = require('../settings'),
+const settings = require('../etc/settings'),
 	child = require('child_process'),
 	fs = require('fs'),
 	util = require('util');
@@ -28,7 +28,7 @@ let res = child.spawnSync('/usr/bin/rsync', ['-av', 'zones', settings.path ]);
 console.log(res.stdout.toString());
 
 console.log('Copying standard config files');
-let res = child.spawnSync('/usr/bin/rsync', ['-av', 'config', settings.path ]);
+res = child.spawnSync('/usr/bin/rsync', ['-av', 'config', settings.path ]);
 console.log(res.stdout.toString());
 
 console.log('Generating zone config and data files');

@@ -1,0 +1,48 @@
+'use strict';
+
+module.exports = {
+	path:		'/path/to/data',
+
+	hosts: {
+		dns: {
+			server: 'dns-server-host',
+			tester:	'dns-client-host'
+		},
+		dhcp: {
+			server: 'dhcp-server-host',
+			tester: 'dhcp-client-host'
+		},
+	},
+
+	queueFilter: {type: {$in: ['bind', 'echo', 'knot', 'nsd']}},
+
+	agents: {
+		bind: {
+			repo: { vcs: 'git', url: 'https://source.isc.org/git/bind9.git' }
+		},
+		nsd: {
+			repo: { vcs: 'svn', url: 'http://www.nlnetlabs.nl/svn/nsd/tags/' }
+		},
+		knot: {
+			repo: { vcs: 'git', url: 'git://git.nic.cz/knot-dns.git' }
+		},
+		echo: {
+			repo: { vcs: 'git', url: 'https://github.com/isc-projects/dns-echo-user.git' }
+		},
+		dhcpd: {
+			repo: { url: 'https://source.isc.org/git/dhcp.git' }
+		},
+		kea4: {
+			repo: { url: 'https://github.com/isc-projects/kea.git' }
+		}
+	},
+
+	querysets: {
+		authoritative: [
+			{	file: 'test_a', name: 'Test Authoritative' }
+		],
+		recursive: [
+			{	file: 'test_b', name: 'Test Recursive' }
+		]
+	}
+};

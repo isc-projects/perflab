@@ -38,4 +38,21 @@ module.factory('ConfigResource', ['$resource',
 	}
 ]);
 
+module.factory('AgentResource', ['$resource',
+	function($resource) {
+		return $resource('/api/agent/:agent', {}, {
+			query: {
+				url: '/api/agent/',
+				isArray: true
+			}
+		});
+	}
+]);
+
+module.factory('SettingsResource', ['$resource',
+	function($resource) {
+		return $resource('/api/settings/', {}, {});
+	}
+]);
+
 })();

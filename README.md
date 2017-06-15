@@ -4,7 +4,7 @@ ISC Performance Lab Architecture and Installation
 The ISC Performance Lab is written for NodeJS 4.2+ and MongoDB 2.6+.  To
 allow for separation of the actual testing and the web UI the system is
 split into two processes, `perflab-tester` and `perflab-httpd`.  The
-former runs on the same server as the BIND server under test, whilst the
+former runs on the same server as the server under test, whilst the
 latter should be run on a separate system.
 
 `perflab-tester` takes care of reading configurations and queue settings
@@ -15,20 +15,30 @@ interface over which UI clients learn about configuration and queue
 status changes in real-time and automatically update the UI in response
 to those changes.
 
+NB: this is _unsupported_ software from an internal research project,
+released for the benefit of the DNS community.   The project is
+maintained by Ray Bellis.   Please use the Github issue tracker for
+comments, suggestions.  Pull requests are welcome, but response times
+are not guaranteed.
+
 Installation
 ------------
 
-The git repo is at `ssh://repo.isc.org/proj/git/exp/isc-perflab`
+The git repo is at `https://github.com/isc-projects/perflab.git`
 
-All user configurable settings are in `settings.js`, and should
-(hopefully) be self explanatory. The git repo contains
-`settings-live.js` which should be symlinked to `settings.js`.
-`named.conf` templates and include files are found in the `config/bind/`
-sub-directory.  All server-side third party dependencies can be obtained
-by running `npm install` which reads the `package.json` file and
-downloads the required packages. The only third party library that is
-not installed this way is `quip` since there's a bug in the distributed
-version, so a fixed copy is in our git repo.
+Sample configuration files are in `./etc/mongo.js-sample` and
+`./etc/settings.js-sample`.  These will need to be copied
+(without the `-sample` suffix) and modified to suit your
+local configuration.
+
+`named.conf` templates and include files are found in the
+`config/bind/` sub-directory.
+
+All server-side third party dependencies can be obtained by running
+`npm install` which reads the `package.json` file and downloads the
+required packages. The only third party library that is not installed
+this way is `quip` since there's a bug in the distributed version, so
+a fixed copy is in our git repo.
 
 ### MongoDB Setup
 
@@ -55,17 +65,31 @@ is the "name" parameter:
     switched to db local
     > rs.initiate()
 
+### Query Sets and Config files
+
+Run `node ./scripts/install_server.js` on the server node to create
+the zone files and related query sets and install them into the
+application's data folder.   The query sets will need to be manually
+copied onto the client machine.
+
+See below for more information on these files.
+
 Operation
 ---------
 
 There aren't any start up scripts (yet) - for now startup is done just
 by starting `./perflab-httpd.js` and `./perflab-tester.js` in the
-background with stdout and stderr redirected to a file.  The dnsperf
-tests are started by `perflab-tester.js` by making an SSH connection to
-a client machine, so password-less SSH from the BIND server to the test
-client need to be configured outside of this system.  Similarly
-`perflab-tester.js` needs to be able to access the BIND git source
-repository without interactive authorisation.
+background with stdout and stderr redirected to a file.
+
+The dnsperf tests are started by `perflab-tester.js` by making an SSH
+connection to a client machine, so password-less SSH from the BIND
+server to the test client need to be configured outside of this system.
+
+Similarly `perflab-tester.js` needs to be able to access the servers'
+source repositories without interactive authorisation.
+
+NB: dnsperf is not included - install it from source or via your O/S
+package manager.
 
 Code Architecture
 -----------------
@@ -169,7 +193,7 @@ There are (currently) three dnsperf query files suitable for testing
 against those zones:
 
 * Nominum default - a mix of real DNS queries, suitable for testing the
-root zone
+root zone (get this from your dnsperf distribution)
 * 1M small zones, 5% NXD - suitable for any of the 1M
 record/delegation/zones configurations
 * 1k small zones, 5% NXD - suitable for any of the 1k
