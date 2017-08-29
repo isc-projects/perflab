@@ -33,7 +33,7 @@
 		<div class="panel-body">
 		  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
-		  <table class="table table-condensed config-list">
+		  <table class="table table-condensed table-striped config-list">
 			<tbody>
 <tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
 <td width="80%" class="name">
