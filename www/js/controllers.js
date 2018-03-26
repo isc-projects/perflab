@@ -200,7 +200,7 @@ app.controller('configEditController',
 					delete $scope.config._id;
 					delete $scope.config.created;
 					delete $scope.config.updated;
-					$scope.$$childHead.configEdit.$setDirty();
+					$scope.configEdit.$setDirty();
 				}).catch(redirectNotify);
 			}
 			setDefaults();
@@ -261,8 +261,7 @@ app.controller('configEditController',
 				}).catch(Notify.danger).then(doneSaving);
 			} else {
 				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
-					// TODO: fix this
-					$scope.$$childHead.configEdit.$setPristine();
+					$scope.configEdit.$setPristine();
 					Notify.info('Saved');
 				}).catch(Notify.danger).then(doneSaving);
 			}
