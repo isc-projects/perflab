@@ -22,7 +22,7 @@ db.getConfigById(id).then((config) => {
 	config.flags = config.flags || {};
 	config.flags.checkout = false;
 	let type = config.type;
-	let agent = new Agents[type](settings, config);
+	let agent = new Agents.servers[type](settings, config);
 	agent.on('stdout', t => console.log('1:' + t));
 	agent.on('stderr', t => console.log('2:' + t));
 	return agent.run();

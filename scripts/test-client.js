@@ -21,10 +21,9 @@ let db = new Database(mongoCF);
 db.getConfigById(id).then((config) => {
 	config.flags = config.flags || {};
 	config.flags.checkout = false;
-	let type = config.type;
-console.log(Agents[type].configuration.client);
-	let agent = new Agents[type].configuration.client(settings, config);
-	agent.on('stdout', t => console.log('1:' + t));
-	agent.on('stderr', t => console.log('2:' + t));
-	return agent.run();
+	let clientClass = Agents.clients[config.client] || Agents.servers[config.type].configuration.client;
+	let clientAgent = new clientClass(settings, config);
+	clientAgent.on('stdout', t => console.log('1:' + t));
+	clientAgent.on('stderr', t => console.log('2:' + t));
+	return clientAgent.run();
 }).catch(console.trace).then(db.close).then(process.exit);

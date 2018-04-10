@@ -3,7 +3,6 @@
 'use strict';
 
 let	Database = require('../lib/database'),
-	Agents = require('../lib/agents'),
 	Promise = require('bluebird'),
 	settings = require('../settings');
 
