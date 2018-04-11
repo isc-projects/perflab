@@ -55,13 +55,13 @@ function runConfig(config)
 	let serverAgent = new Agents.servers[serverType](settings, config);
 
 	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
-	let clientAgent = new clientClass(settings, config);
 
 	return runServer(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || settings.testsPerRun || 30;
 		let count = 1;
 
 		function loop() {
+			let clientAgent = new clientClass(settings, config);
 			let res = setStatus(config._id, 'test ' + count + '/' + iter)
 						.then(() => runClient(clientAgent, config._id, run_id, false));
 			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
