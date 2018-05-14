@@ -40,9 +40,9 @@ module.factory('ConfigResource', ['$resource',
 
 module.factory('AgentResource', ['$resource',
 	function($resource) {
-		return $resource('/api/agent/:agent', {}, {
+		return $resource('/api/agent/server/:agent', {}, {
 			query: {
-				url: '/api/agent/',
+				url: '/api/agent/server/',
 				isArray: true
 			}
 		});
