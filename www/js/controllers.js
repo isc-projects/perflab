@@ -196,6 +196,7 @@ app.controller('configEditController',
 				$http.get('/api/config/' + $routeParams.clone).then(function(res) {
 					$scope.config = res.data;
 					$scope.config.name = 'Clone of ' + $scope.config.name;
+					$scope.config.notes = 'Clone of ' + $scope.config.name + ' ' + Date().toString();
 					delete $scope.id;
 					delete $scope.config._id;
 					delete $scope.config.created;
@@ -244,6 +245,7 @@ app.controller('configEditController',
 			config.queryset = config.queryset || '';
 			config.options = config.options || '';
 			config.global = config.global || '';
+			config.notes = config.notes || '';
 		}
 
 		function doneSaving() {

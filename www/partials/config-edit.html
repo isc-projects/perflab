@@ -29,6 +29,10 @@ pre- and post-edit results.
 			<input type="text" required class="form-control" id="configName" placeholder="configuration name" ng-model="config.name"/>
 		  </div>
 		  <div class="form-group form-group-sm">
+			<label for="configOptions">Notes</label><br/>
+			<textarea class="form-control" id="configNotes" ng-model="config.notes" />
+		  </div>
+		  <div class="form-group form-group-sm">
 			<label for="configBranch">Branch / Tag</label>
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
 			<div>
