@@ -68,7 +68,13 @@ function runConfig(config)
 		};
 
 		return loop().then(() => setStatus(config._id, 'finished'));
-	}).catch((err) => console.trace).then(serverAgent.stop).then(() => cleanConfig(serverAgent, config));
+	}).catch((err) => {
+		console.trace(err);
+	}).then(() => {
+		return serverAgent.stop();
+	}).then(() => {
+		return cleanConfig(serverAgent, config);
+	});
 }
 
 function cleanConfig(agent, config)
