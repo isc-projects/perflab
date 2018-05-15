@@ -29,7 +29,7 @@ pre- and post-edit results.
 			<input type="text" required class="form-control" id="configName" placeholder="configuration name" ng-model="config.name"/>
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configOptions">Notes</label><br/>
+			<label for="configNotes">Notes</label><br/>
 			<textarea class="form-control" id="configNotes" ng-model="config.notes" />
 		  </div>
 		  <div class="form-group form-group-sm">
@@ -103,6 +103,10 @@ pre- and post-edit results.
 		  <div class="form-group form-group-sm">
 			<label for="configWrapper">daemon exec wrapper and options</label>
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configCleanup">post-run cleanup program</label>
+			<input class="form-control" id="configCleanup" ng-model="config.cleanup" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">

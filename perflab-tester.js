@@ -68,7 +68,17 @@ function runConfig(config)
 		};
 
 		return loop().then(() => setStatus(config._id, 'finished'));
-	}).catch((err) => console.trace).then(serverAgent.stop)
+	}).catch((err) => console.trace).then(serverAgent.stop).then(() => cleanConfig(serverAgent, config));
+}
+
+function cleanConfig(agent, config)
+{
+	if (config.cleanup) {
+		let runPath = settings.path + '/tests/' + config._id + '/run';
+		return agent.spawn(config.cleanup, [], {cwd: runPath, quiet: true});
+	} else {
+		return Promise.resolve();
+	}
 }
 
 function setStatus(id, s)
