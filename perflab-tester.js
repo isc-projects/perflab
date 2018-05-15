@@ -71,7 +71,7 @@ function runConfig(config)
 	}).catch((err) => {
 		console.trace(err);
 	}).then(() => {
-		return serverAgent.stop();
+		return serverAgent.stop ? serverAgent.stop() : Promise.resolve();
 	}).then(() => {
 		return cleanConfig(serverAgent, config);
 	});
@@ -81,7 +81,8 @@ function cleanConfig(agent, config)
 {
 	if (config.cleanup) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
-		return agent.spawn(config.cleanup, [], {cwd: runPath, quiet: true});
+		let [cmd, args] = config.cleanup;
+		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
