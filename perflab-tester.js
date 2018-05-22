@@ -105,7 +105,7 @@ function runServer(agent, config_id)
 							(result) => db.updateRunById(run._id, result),
 							(result) => {
 								db.updateRunById(run._id, result);
-								throw new Error("execution failed");
+								console.log("execution failed");
 							}
 						).then(() => run._id);
 				}));
