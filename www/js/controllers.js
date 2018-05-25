@@ -196,7 +196,7 @@ app.controller('configEditController',
 				$http.get('/api/config/' + $routeParams.clone).then(function(res) {
 					$scope.config = res.data;
 					$scope.config.name = 'Clone of ' + $scope.config.name;
-					$scope.config.notes = 'Clone of ' + $scope.config.name + ' ' + Date().toString();
+					$scope.config.notes = $scope.config.name + ' ' + Date().toString();
 					delete $scope.id;
 					delete $scope.config._id;
 					delete $scope.config.created;
