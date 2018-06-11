@@ -105,8 +105,12 @@ pre- and post-edit results.
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
+			<label for="configCleanup">post-test cleanup program</label>
+			<input class="form-control" id="postTest" ng-model="config.postTest" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm">
 			<label for="configCleanup">post-run cleanup program</label>
-			<input class="form-control" id="configCleanup" ng-model="config.cleanup" ng-list=" " ng-trim="false" />
+			<input class="form-control" id="postRun" ng-model="config.postRun" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">

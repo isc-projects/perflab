@@ -246,7 +246,8 @@ app.controller('configEditController',
 			config.options = config.options || '';
 			config.global = config.global || '';
 			config.notes = config.notes || '';
-			config.cleanup = config.cleanup || '';
+			config.postTest = config.postTest || '';
+			config.postRun = config.postRun || '';
 		}
 
 		function doneSaving() {

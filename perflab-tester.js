@@ -56,14 +56,15 @@ function runConfig(config)
 
 	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
 
-	return runServer(serverAgent, config._id).then((run_id) => {
+	return runServerAgent(serverAgent, config._id).then((run_id) => {
 		let iter = config.testsPerRun || settings.testsPerRun || 30;
 		let count = 1;
 
 		function loop() {
 			let clientAgent = new clientClass(settings, config);
 			let res = setStatus(config._id, 'test ' + count + '/' + iter)
-						.then(() => runClient(clientAgent, config._id, run_id, false));
+						.then(() => runTestAgent(clientAgent, config._id, run_id, false))
+						.then(() => postTest(clientAgent, config._id))
 			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
 		};
 
@@ -73,15 +74,26 @@ function runConfig(config)
 	}).then(() => {
 		return serverAgent.stop ? serverAgent.stop() : Promise.resolve();
 	}).then(() => {
-		return cleanConfig(serverAgent, config);
+		return postRun(serverAgent, config);
 	});
 }
 
-function cleanConfig(agent, config)
+function postTest(agent, config)
 {
-	if (config.cleanup) {
+	if (config.postTest) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
-		let [cmd, args] = config.cleanup;
+		let [cmd, args] = config.postTest;
+		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
+	} else {
+		return Promise.resolve();
+	}
+}
+
+function postRun(agent, config)
+{
+	if (config.postRun) {
+		let runPath = settings.path + '/tests/' + config._id + '/run';
+		let [cmd, args] = config.postRun;
 		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
@@ -95,7 +107,7 @@ function setStatus(id, s)
 
 // starts the daemon under test with the given configuration
 // and stores the execution results in the database
-function runServer(agent, config_id)
+function runServerAgent(agent, config_id)
 {
 	return setStatus(config_id, 'building').then(() =>
 			db.insertRun({config_id})
@@ -113,7 +125,7 @@ function runServer(agent, config_id)
 
 // starts the testing client with the given configuration
 // and (usually) stores the output in the database
-function runClient(agent, config_id, run_id, quiet)
+function runTestAgent(agent, config_id, run_id, quiet)
 {
 	if (quiet) {
 		return execute(agent, config_id, run_id);
