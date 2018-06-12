@@ -80,7 +80,7 @@ function runConfig(config)
 
 function postTest(agent, config)
 {
-	if (config.postTest.length) {
+	if (config.postTest && config.postTest.length) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, args] = config.postTest;
 		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
@@ -91,7 +91,7 @@ function postTest(agent, config)
 
 function postRun(agent, config)
 {
-	if (config.postRun.length) {
+	if (config.postRun && config.postRun.length) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, args] = config.postRun;
 		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
