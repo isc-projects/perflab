@@ -64,7 +64,7 @@ function runConfig(config)
 			let clientAgent = new clientClass(settings, config);
 			let res = setStatus(config._id, 'test ' + count + '/' + iter)
 						.then(() => runTestAgent(clientAgent, config._id, run_id, false))
-						.then(() => postTest(clientAgent, config._id))
+						.then(() => postTest(clientAgent, config))
 			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
 		};
 
@@ -80,7 +80,7 @@ function runConfig(config)
 
 function postTest(agent, config)
 {
-	if (config.postTest) {
+	if (config.postTest.length) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, args] = config.postTest;
 		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
@@ -91,7 +91,7 @@ function postTest(agent, config)
 
 function postRun(agent, config)
 {
-	if (config.postRun) {
+	if (config.postRun.length) {
 		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, args] = config.postRun;
 		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
