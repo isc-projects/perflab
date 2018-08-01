@@ -123,7 +123,7 @@ function runServerAgent(agent, config)
 							(result) => db.updateRunById(run._id, result),
 							(result) => {
 								db.updateRunById(run._id, result);
-								console.log("execution failed");
+								throw new Error("execution failed"); // propagate the error
 							}
 						).then(() => run._id);
 				}));
