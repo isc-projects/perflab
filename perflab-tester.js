@@ -167,18 +167,23 @@ function execute(agent, config_id, run_id) {
 	}
 
 	agent.on('cmd', (t) => {
+		console.log(t);
 		let log = {channel: 'command', text: t, host, time: new Date()}
 		db.insertLog(log);
 	});
 
 	agent.on('stdout', (t) => {
-		stdout += t;
+		if (stdout.length < 10240) {
+			stdout += t;
+		}
 		let log = {channel: 'stdout', text: '' + t, host, time: new Date()}
 		db.insertLog(log);
 	});
 
 	agent.on('stderr', (t) => {
-		stderr += t;
+		if (stderr.length < 10240) {
+			stderr += t;
+		}
 		let log = {channel: 'stderr', text: '' + t, host, time: new Date()}
 		db.insertLog(log);
 	});
