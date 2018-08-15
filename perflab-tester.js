@@ -14,7 +14,7 @@ Promise.longStackTraces();
 
 let db = new Database(mongoCF);
 try {
-	db.createIndexes().then(runQueue);
+	db.createIndexes().then(clearQueue).then(runQueue);
 } catch (e) {
 	console.error('catch: ' + e);
 }
@@ -30,6 +30,12 @@ function runQueue() {
 			doFirstQueueEntry().then(() => setTimeout(runQueue, 1000))
 		}
 	})
+}
+
+// marks all running jobs as stopped
+function clearQueue() {
+	let filter = settings.queueFilter || {};
+	return db.clearQueue(filter);
 }
 
 // looks for a queue entry, and if found gets the matching config
