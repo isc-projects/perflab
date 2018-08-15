@@ -173,7 +173,7 @@ function execute(agent, config_id, run_id) {
 	});
 
 	agent.on('stdout', (t) => {
-		if (stdout.length < 10240) {
+		if (stdout.length < 65535) {
 			stdout += t;
 		}
 		let log = {channel: 'stdout', text: '' + t, host, time: new Date()}
@@ -181,7 +181,7 @@ function execute(agent, config_id, run_id) {
 	});
 
 	agent.on('stderr', (t) => {
-		if (stderr.length < 10240) {
+		if (stderr.length < 65535) {
 			stderr += t;
 		}
 		let log = {channel: 'stderr', text: '' + t, host, time: new Date()}
