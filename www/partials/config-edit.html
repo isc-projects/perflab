@@ -28,9 +28,9 @@ pre- and post-edit results.
 			<label for="configName">Name</label>
 			<input type="text" required class="form-control" id="configName" placeholder="configuration name" ng-model="config.name"/>
 		  </div>
-		  <div class="form-group form-group-sm">
+		  <div class="form-group">
 			<label for="configNotes">Notes</label><br/>
-			<textarea class="form-control" id="configNotes" ng-model="config.notes" />
+			<textarea rows="5" class="form-control" id="configNotes" ng-model="config.notes" style="resize: vertical"/>
 		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configBranch">Branch / Tag</label>
@@ -92,6 +92,11 @@ pre- and post-edit results.
   			  <option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
 			</select>
 		  </div>
+<div class="form-group form-group-sm">
+<button class="fixed-button btn btn-xs dropdown-toggle" data-toggle="collapse" data-target="#advanced">
+Advanced <span class="fa fa-caret-down"></span></button>
+</div>
+<div id="advanced" class="panel-group collapse">
 		  <div class="form-group form-group-sm">
 			<label for="configRuns">{{::agent.client.name}} runs per test (0 = use system default)</label>
 			<input type="number" min="0" class="form-control" id="configRuns" ng-model="config.testsPerRun" />
@@ -105,13 +110,22 @@ pre- and post-edit results.
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">post-test cleanup program</label>
+			<label for="configCleanup">pre-run script</label>
+			<input class="form-control" id="preRun" ng-model="config.preRun" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configCleanup">pre-test script</label>
+			<input class="form-control" id="preTest" ng-model="config.preTest" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm">
+			<label for="configCleanup">post-test script</label>
 			<input class="form-control" id="postTest" ng-model="config.postTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">post-run cleanup program</label>
+			<label for="configCleanup">post-run script</label>
 			<input class="form-control" id="postRun" ng-model="config.postRun" ng-list=" " ng-trim="false" />
 		  </div>
+</div>
 		  <div class="form-group">
 			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
 			  <span class="fa fa-fw fa-save"></span>Save</button>
