@@ -59,36 +59,51 @@ function runConfig(config)
 {
 	let serverType = config.type;
 	let serverAgent = new Agents.servers[serverType](settings, config);
-
 	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
 
-	return runServerAgent(serverAgent, config).then((run_id) => {
-		let iter = config.testsPerRun || settings.testsPerRun || 30;
-		let count = 1;
+	process.env.PERFLAB_CONFIG_PATH = settings.path + '/test/' + config._id + '/run';
 
-		function loop() {
-			let clientAgent = new clientClass(settings, config);
-			let res = setStatus(config, 'test ' + count + '/' + iter)
-						.then(() => runTestAgent(clientAgent, config, run_id, false));
-			return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
-		};
+	return preRun(serverAgent, Config)
+		.then(() => runServerAgent(serverAgent, config))
+		.then((run_id) => {
+			let iter = config.testsPerRun || settings.testsPerRun || 30;
+			let count = 1;
 
-		return loop().then(() => setStatus(config, 'finished'));
-	}).catch((err) => {
-		console.trace(err);
-	}).then(() => {
-		return serverAgent.stop ? serverAgent.stop() : Promise.resolve();
-	}).then(() => {
-		return postRun(serverAgent, config);
-	});
+			process.env.PERFLAB_TEST_MAX = iter;
+
+			function loop() {
+				process.env.PERFLAB_TEST_COUNT = count;
+				let clientAgent = new clientClass(settings, config);
+				let res = setStatus(config, 'test ' + count + '/' + iter)
+							.then(() => runTestAgent(clientAgent, config, run_id, false));
+				return (++count <= iter) ? res.then(loop).catch(console.trace) : res;
+			};
+
+			return loop().then(() => setStatus(config, 'finished'));
+		}).catch((err) => {
+			console.trace(err);
+		}).then(() => {
+			return serverAgent.stop ? serverAgent.stop() : Promise.resolve();
+		}).then(() => {
+			return postRun(serverAgent, config);
+		});
+}
+
+function preTest(agent, config)
+{
+	if (config.preTest && config.preTest.length) {
+		let [cmd, ...args] = config.preTest;
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
+	} else {
+		return Promise.resolve();
+	}
 }
 
 function postTest(agent, config, testResult)
 {
 	if (config.postTest && config.postTest.length) {
-		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, ...args] = config.postTest;
-		return agent.spawn(cmd, args, {cwd: runPath, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
 			.then((result) => {
 				testResult = testResult || { stdout: "", stderr: "" };
 				testResult.stdout += (result.stdout || "");
@@ -101,12 +116,21 @@ function postTest(agent, config, testResult)
 	}
 }
 
+function preRun(agent, config)
+{
+	if (config.preRun && config.preRun.length) {
+		let [cmd, ...args] = config.preRun;
+		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+	} else {
+		return Promise.resolve();
+	}
+}
+
 function postRun(agent, config)
 {
 	if (config.postRun && config.postRun.length) {
-		let runPath = settings.path + '/tests/' + config._id + '/run';
 		let [cmd, ...args] = config.postRun;
-		return agent.spawn(cmd, args, {cwd: runPath, quiet: true}).catch(console.trace);
+		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
@@ -139,13 +163,19 @@ function runServerAgent(agent, config)
 // and (usually) stores the output in the database
 function runTestAgent(agent, config, run_id, quiet)
 {
+	process.env.PERFLAB_CONFIG_ID = config._id;
+	process.env.PERFLAB_RUN_ID = run_id;
+
 	if (quiet) {
-		return execute(agent, config._id, run_id)
-						.then(result => postTest(agent, config, result));
+		return preTest(agent, config)
+			.then(() => execute(agent, config._id, run_id))
+			.then(result => postTest(agent, config, result));
 	} else {
 		return db.insertTest({config_id: config._id, run_id})
 				.then((test) => {
-					return execute(agent, config._id, run_id)
+					process.env.PERFLAB_TEST_ID = test._id;
+					return preTest(agent, config)
+						.then(() => execute(agent, config._id, run_id))
 						.then((result) => postTest(agent, config, result))
 						.then((result) => db.updateTestById(test._id, result))
 						.then(() => db.updateStatsByRunId(run_id));
