@@ -5,6 +5,7 @@
 let Agents = require('./lib/agents'),
 	Database = require('./lib/database'),
 	Promise = require('bluebird'),
+	fs = Promise.promisifyAll(require('fs-extra')),
 	os = require('os');
 
 let	mongoCF = require('./etc/mongo'),
@@ -60,15 +61,33 @@ function runConfig(config)
 	let serverType = config.type;
 	let serverAgent = new Agents.servers[serverType](settings, config);
 	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
+	let path = settings.path + '/tests/' + config._id + '/run';
 
-	process.env.PERFLAB_CONFIG_PATH = settings.path + '/test/' + config._id + '/run';
+	// clean up environment
+	for (let key in process.env) {
+		if (/^PERFLAB_/.test(key)) {
+			delete process.env[key];
+		}
+	}
 
-	return preRun(serverAgent, Config)
+	// create new environment
+	process.env.PERFLAB_CONFIG_PATH = path
+	process.env.PERFLAB_CONFIG_ID = config._id;
+	process.env.PERFLAB_CONFIG_NAME = config.name;
+	process.env.PERFLAB_CONFIG_BRANCH = config.branch;
+	process.env.PERFLAB_CONFIG_TYPE = config.type;
+	if (config.mode) {
+		process.env.PERFLAB_CONFIG_MODE = config.mode;
+	}
+
+	return fs.mkdirsAsync(path)
+		.then(() => preRun(serverAgent, config))
 		.then(() => runServerAgent(serverAgent, config))
 		.then((run_id) => {
 			let iter = config.testsPerRun || settings.testsPerRun || 30;
 			let count = 1;
 
+			process.env.PERFLAB_PHASE = "running";
 			process.env.PERFLAB_TEST_MAX = iter;
 
 			function loop() {
@@ -91,6 +110,8 @@ function runConfig(config)
 
 function preTest(agent, config)
 {
+	process.env.PERFLAB_PHASE = "pre-test";
+
 	if (config.preTest && config.preTest.length) {
 		let [cmd, ...args] = config.preTest;
 		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
@@ -101,6 +122,8 @@ function preTest(agent, config)
 
 function postTest(agent, config, testResult)
 {
+	process.env.PERFLAB_PHASE = "post-test";
+
 	if (config.postTest && config.postTest.length) {
 		let [cmd, ...args] = config.postTest;
 		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
@@ -118,9 +141,11 @@ function postTest(agent, config, testResult)
 
 function preRun(agent, config)
 {
+	process.env.PERFLAB_PHASE = "pre-run";
+
 	if (config.preRun && config.preRun.length) {
 		let [cmd, ...args] = config.preRun;
-		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
@@ -128,9 +153,17 @@ function preRun(agent, config)
 
 function postRun(agent, config)
 {
+	// clean up environment
+	for (let key in process.env) {
+		if (/^PERFLAB_TEST_/.test(key)) {
+			delete process.env[key];
+		}
+	}
+
 	if (config.postRun && config.postRun.length) {
 		let [cmd, ...args] = config.postRun;
-		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		process.env.PERFLAB_PHASE = "post-run";
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
