@@ -117,7 +117,7 @@ function preTest(agent, config)
 
 	if (config.preTest && config.preTest.length) {
 		let [cmd, ...args] = config.preTest;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
 	} else {
 		return Promise.resolve();
 	}
@@ -129,7 +129,7 @@ function postTest(agent, config, testResult)
 
 	if (config.postTest && config.postTest.length) {
 		let [cmd, ...args] = config.postTest;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
 			.then((result) => {
 				testResult = testResult || { stdout: "", stderr: "" };
 				testResult.stdout += (result.stdout || "");
@@ -148,7 +148,7 @@ function preRun(agent, config)
 
 	if (config.preRun && config.preRun.length) {
 		let [cmd, ...args] = config.preRun;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
@@ -166,7 +166,7 @@ function postRun(agent, config)
 	if (config.postRun && config.postRun.length) {
 		let [cmd, ...args] = config.postRun;
 		process.env.PERFLAB_PHASE = "post-run";
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
