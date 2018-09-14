@@ -233,8 +233,10 @@ function execute(logname, agent, config_id, run_id) {
 	var host = os.hostname().split('.')[0];
 
 	let logpath = process.env.PERFLAB_CONFIG_PATH + '/' + logname;
-	let cout = fs.createWriteStream(logpath + '.out');
-	let cerr = fs.createWriteStream(logpath + '.err');
+	if (logname == 'server') {
+		var cout = fs.createWriteStream(logpath + '.out');
+		var cerr = fs.createWriteStream(logpath + '.err');
+	}
 
 	if (run_id !== undefined) {
 		agent.on('mem', (mem) => {
@@ -249,7 +251,7 @@ function execute(logname, agent, config_id, run_id) {
 	});
 
 	agent.on('stdout', (t) => {
-		cout.write(t);
+		cout && cout.write(t);
 		if (stdout.length < 1048576) {
 			stdout += t;
 		}
@@ -258,7 +260,7 @@ function execute(logname, agent, config_id, run_id) {
 	});
 
 	agent.on('stderr', (t) => {
-		cerr.write(t);
+		cerr && cerr.write(t);
 		if (stderr.length < 1048576) {
 			stderr += t;
 		}
@@ -267,8 +269,8 @@ function execute(logname, agent, config_id, run_id) {
 	});
 
 	agent.on('exit', () => {
-		cout.end();
-		cerr.end();
+		cout && cout.end();
+		cerr && cerr.end();
 	});
 
 	return agent.run().then((result) => Object.assign(result, {
