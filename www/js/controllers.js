@@ -29,8 +29,8 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'Configs', 'AgentResource',
-	function($scope, Configs, AgentResource) {
+	['$scope', 'Configs', 'ServerAgentResource',
+	function($scope, Configs, ServerAgentResource) {
 
 		$scope.configs = Configs;
 		$scope.filter = JSON.parse(localStorage.filter || 'false');
@@ -39,7 +39,7 @@ app.controller('configListController',
 			localStorage.filter = $scope.filter = !$scope.filter;
 		}
 
-		$scope.agents = AgentResource.query();
+		$scope.agents = ServerAgentResource.query();
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
@@ -182,12 +182,17 @@ app.controller('testDetailController',
 
 app.controller('configEditController',
 	['$scope', '$http', '$route', '$location', '$routeParams',
-	 'Notify', 'RunResource', 'ConfigResource', 'SettingsResource', 'AgentResource',
+	 'Notify', 'RunResource', 'ConfigResource', 'SettingsResource',
+	 'ServerAgentResource', 'ClientAgentResource',
 	function($scope, $http, $route, $location, $routeParams,
-			 Notify, RunResource, ConfigResource, SettingsResource, AgentResource) {
+			 Notify, RunResource, ConfigResource, SettingsResource,
+			 ServerAgentResource, ClientAgentResource) {
 
 		var id = $scope.id = $routeParams.id;
-		$scope.agent = AgentResource.get({agent: $routeParams.type});
+		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
+		$scope.agent.$promise.then(function(agent) {
+			$scope.clients = ClientAgentResource.query({type: agent.type})
+		});
 		$scope.type = $routeParams.type;
 		$scope.settings = SettingsResource.get();
 

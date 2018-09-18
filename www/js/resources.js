@@ -38,11 +38,22 @@ module.factory('ConfigResource', ['$resource',
 	}
 ]);
 
-module.factory('AgentResource', ['$resource',
+module.factory('ServerAgentResource', ['$resource',
 	function($resource) {
 		return $resource('/api/agent/server/:agent', {}, {
 			query: {
 				url: '/api/agent/server/',
+				isArray: true
+			}
+		});
+	}
+]);
+
+module.factory('ClientAgentResource', ['$resource',
+	function($resource) {
+		return $resource('/api/agent/client/:agent', {}, {
+			query: {
+				url: '/api/agent/client/_type/:type',
 				isArray: true
 			}
 		});

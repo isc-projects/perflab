@@ -81,8 +81,8 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
-		  <div class="form-group form-group-sm" ng-if="agent.client.name === 'dnsperf'">
-			<label for="configQueryset">{{::agent.client.name}} Query Set</label>
+		  <div class="form-group form-group-sm" ng-if="config.client === 'dnsperf'">
+			<label for="configQueryset">Test client query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
 			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
@@ -97,32 +97,39 @@ pre- and post-edit results.
 Advanced <span class="fa fa-caret-down"></span></button>
 </div>
 <div id="advanced" class="panel-group collapse">
+		  <div class="form-group form-group-sm" ng-if="clients && clients.length > 1">
+			<label for="configClient">Test client application</label>
+			<select ng-required="config.client !== ''" class="form-control" id="configClient" ng-model="config.client">
+			  <option value="">- select client -</option>
+			  <option ng-repeat="client in clients" value="{{client.name}}">{{client.name}}</option>
+			</select>
+		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configRuns">{{::agent.client.name}} runs per test (0 = use system default)</label>
+			<label for="configRuns">Test client runs per test (0 = use system default)</label>
 			<input type="number" min="0" class="form-control" id="configRuns" ng-model="config.testsPerRun" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configArgsTester">extra {{::agent.client.name}} command line options</label>
+			<label for="configArgsTester">Extra test client command line options</label>
 			<input class="form-control" id="configArgsTester" ng-model="config.args.tester" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configWrapper">daemon exec wrapper and options</label>
+			<label for="configWrapper">Server daemon exec wrapper and options</label>
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">pre-run script</label>
+			<label for="configCleanup">Pre-run script</label>
 			<input class="form-control" id="preRun" ng-model="config.preRun" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">pre-test script</label>
+			<label for="configCleanup">Pre-test script</label>
 			<input class="form-control" id="preTest" ng-model="config.preTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">post-test script</label>
+			<label for="configCleanup">Post-test script</label>
 			<input class="form-control" id="postTest" ng-model="config.postTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">post-run script</label>
+			<label for="configCleanup">Post-run script</label>
 			<input class="form-control" id="postRun" ng-model="config.postRun" ng-list=" " ng-trim="false" />
 		  </div>
 </div>
