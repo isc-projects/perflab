@@ -60,7 +60,8 @@ function runConfig(config)
 {
 	let serverType = config.type;
 	let serverAgent = new Agents.servers[serverType](settings, config);
-	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
+	let clientType = config.client || settings.default_clients[serverAgent.type];
+	let clientClass = Agents.clients[clientType];
 
 	let path = settings.path + '/tests/' + config._id;
 	let runPath = path + '/run';
