@@ -5,6 +5,7 @@
 let Agents = require('./lib/agents'),
 	Database = require('./lib/database'),
 	Promise = require('bluebird'),
+	fs = Promise.promisifyAll(require('fs-extra')),
 	os = require('os');
 
 let	mongoCF = require('./etc/mongo'),
@@ -59,16 +60,39 @@ function runConfig(config)
 {
 	let serverType = config.type;
 	let serverAgent = new Agents.servers[serverType](settings, config);
-	let clientClass = Agents.clients[config.client] || Agents.servers[serverType].configuration.client;
+	let clientType = config.client || settings.default_clients[serverAgent.protocol];
+	let clientClass = Agents.clients[clientType];
 
-	process.env.PERFLAB_CONFIG_PATH = settings.path + '/test/' + config._id + '/run';
+	let path = settings.path + '/tests/' + config._id;
+	let runPath = path + '/run';
 
-	return preRun(serverAgent, Config)
+	// clean up environment
+	for (let key in process.env) {
+		if (/^PERFLAB_/.test(key)) {
+			delete process.env[key];
+		}
+	}
+
+	// create new environment
+	process.env.PERFLAB_CONFIG_PATH = path
+	process.env.PERFLAB_CONFIG_RUNPATH = runPath;
+	process.env.PERFLAB_CONFIG_ID = config._id;
+	process.env.PERFLAB_CONFIG_NAME = config.name;
+	process.env.PERFLAB_CONFIG_BRANCH = config.branch;
+	process.env.PERFLAB_CONFIG_TYPE = config.type;
+	process.env.PERFLAB_CONFIG_PROTOCOL = serverAgent.protocol;
+	if (config.mode) {
+		process.env.PERFLAB_CONFIG_MODE = config.mode;
+	}
+
+	return fs.mkdirsAsync(runPath)
+		.then(() => preRun(serverAgent, config))
 		.then(() => runServerAgent(serverAgent, config))
 		.then((run_id) => {
 			let iter = config.testsPerRun || settings.testsPerRun || 30;
 			let count = 1;
 
+			process.env.PERFLAB_PHASE = "running";
 			process.env.PERFLAB_TEST_MAX = iter;
 
 			function loop() {
@@ -91,9 +115,11 @@ function runConfig(config)
 
 function preTest(agent, config)
 {
+	process.env.PERFLAB_PHASE = "pre-test";
+
 	if (config.preTest && config.preTest.length) {
 		let [cmd, ...args] = config.preTest;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
 	} else {
 		return Promise.resolve();
 	}
@@ -101,9 +127,11 @@ function preTest(agent, config)
 
 function postTest(agent, config, testResult)
 {
+	process.env.PERFLAB_PHASE = "post-test";
+
 	if (config.postTest && config.postTest.length) {
 		let [cmd, ...args] = config.postTest;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_PATH, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
 			.then((result) => {
 				testResult = testResult || { stdout: "", stderr: "" };
 				testResult.stdout += (result.stdout || "");
@@ -118,9 +146,11 @@ function postTest(agent, config, testResult)
 
 function preRun(agent, config)
 {
+	process.env.PERFLAB_PHASE = "pre-run";
+
 	if (config.preRun && config.preRun.length) {
 		let [cmd, ...args] = config.preRun;
-		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
@@ -128,9 +158,17 @@ function preRun(agent, config)
 
 function postRun(agent, config)
 {
+	// clean up environment
+	for (let key in process.env) {
+		if (/^PERFLAB_TEST_/.test(key)) {
+			delete process.env[key];
+		}
+	}
+
 	if (config.postRun && config.postRun.length) {
 		let [cmd, ...args] = config.postRun;
-		return agent.spawn(cmd, args, {cwd: PERFLAB_CONFIG_PATH, quiet: true}).catch(console.trace);
+		process.env.PERFLAB_PHASE = "post-run";
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true}).catch(console.trace);
 	} else {
 		return Promise.resolve();
 	}
@@ -148,7 +186,7 @@ function runServerAgent(agent, config)
 	return setStatus(config, 'building').then(() =>
 			db.insertRun({config_id: config._id})
 				.then((run) => {
-					return execute(agent, config._id, run._id)
+					return execute("server", agent, config._id, run._id)
 						.then(
 							(result) => db.updateRunById(run._id, result),
 							(result) => {
@@ -175,7 +213,7 @@ function runTestAgent(agent, config, run_id, quiet)
 				.then((test) => {
 					process.env.PERFLAB_TEST_ID = test._id;
 					return preTest(agent, config)
-						.then(() => execute(agent, config._id, run_id))
+						.then(() => execute("client", agent, config._id, run_id))
 						.then((result) => postTest(agent, config, result))
 						.then((result) => db.updateTestById(test._id, result))
 						.then(() => db.updateStatsByRunId(run_id));
@@ -192,9 +230,15 @@ function runTestAgent(agent, config, run_id, quiet)
 // output accumulated in Executor._run is only captured for one
 // build stage at a time
 //
-function execute(agent, config_id, run_id) {
+function execute(logname, agent, config_id, run_id) {
 	let stdout = '', stderr = '';
 	var host = os.hostname().split('.')[0];
+
+	let logpath = process.env.PERFLAB_CONFIG_PATH + '/' + logname;
+	if (logname == 'server') {
+		var cout = fs.createWriteStream(logpath + '.out');
+		var cerr = fs.createWriteStream(logpath + '.err');
+	}
 
 	if (run_id !== undefined) {
 		agent.on('mem', (mem) => {
@@ -209,6 +253,7 @@ function execute(agent, config_id, run_id) {
 	});
 
 	agent.on('stdout', (t) => {
+		cout && cout.write(t);
 		if (stdout.length < 1048576) {
 			stdout += t;
 		}
@@ -217,11 +262,17 @@ function execute(agent, config_id, run_id) {
 	});
 
 	agent.on('stderr', (t) => {
+		cerr && cerr.write(t);
 		if (stderr.length < 1048576) {
 			stderr += t;
 		}
 		let log = {channel: 'stderr', text: '' + t, host, time: new Date()}
 		db.insertLog(log);
+	});
+
+	agent.on('exit', () => {
+		cout && cout.end();
+		cerr && cerr.end();
 	});
 
 	return agent.run().then((result) => Object.assign(result, {
