@@ -59,8 +59,9 @@ function doFirstQueueEntry() {
 function runConfig(config)
 {
 	let serverType = config.type;
-	let serverAgent = new Agents.servers[serverType](settings, config);
-	let clientType = config.client || settings.default_clients[serverAgent.protocol];
+	let serverClass = Agents.servers[serverType];
+	let serverAgent = new serverClass(settings, config);
+	let clientType = config.client || settings.default_clients[serverClass.config.protocol];
 	let clientClass = Agents.clients[clientType];
 
 	let path = settings.path + '/tests/' + config._id;
