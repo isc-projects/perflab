@@ -69,7 +69,7 @@ pre- and post-edit results.
 			<label for="configGlobal">{{::agent.string.global}}</label><br/>
 			<textarea class="form-control" id="configGlobal" ng-model="config.global" />
 		  </div>
-		  <div class="form-group form-group-sm" ng-show="agent.type === 'DNS' && config.mode !== 'recursive'">
+		  <div class="form-group form-group-sm" ng-show="agent.protocol === 'dns' && config.mode !== 'recursive'">
 			<label for="configZoneset">Zone configuration</label>
 			<select required class="form-control" id="configZoneset" ng-model="config.zoneset">
 			  <option value="root">Root zone</option>

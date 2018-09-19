@@ -53,7 +53,7 @@ module.factory('ClientAgentResource', ['$resource',
 	function($resource) {
 		return $resource('/api/agent/client/:agent', {}, {
 			query: {
-				url: '/api/agent/client/_type/:type',
+				url: '/api/agent/client/_protocol/:protocol',
 				isArray: true
 			}
 		});

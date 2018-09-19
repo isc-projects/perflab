@@ -191,7 +191,7 @@ app.controller('configEditController',
 		var id = $scope.id = $routeParams.id;
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
-			$scope.clients = ClientAgentResource.query({type: agent.type})
+			$scope.clients = ClientAgentResource.query({protocol: agent.protocol})
 		});
 		$scope.type = $routeParams.type;
 		$scope.settings = SettingsResource.get();
@@ -236,11 +236,11 @@ app.controller('configEditController',
 
 			config.flags = config.flags || {checkout: false};
 			config.wrapper = config.wrapper || [];
-			if ($scope.agent.type === 'DNS' && !config.mode) {
+			if ($scope.agent.protocol === 'dns' && !config.mode) {
 				config.mode = ($scope.agent.subtype && $scope.agent.subtypes[0]) || 'authoritative';
 			}
 
-			config.client = $scope.settings.default_clients[$scope.agent.type];
+			config.client = $scope.settings.default_clients[$scope.agent.protocol];
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];

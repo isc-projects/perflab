@@ -60,7 +60,7 @@ function runConfig(config)
 {
 	let serverType = config.type;
 	let serverAgent = new Agents.servers[serverType](settings, config);
-	let clientType = config.client || settings.default_clients[serverAgent.type];
+	let clientType = config.client || settings.default_clients[serverAgent.protocol];
 	let clientClass = Agents.clients[clientType];
 
 	let path = settings.path + '/tests/' + config._id;
@@ -80,6 +80,7 @@ function runConfig(config)
 	process.env.PERFLAB_CONFIG_NAME = config.name;
 	process.env.PERFLAB_CONFIG_BRANCH = config.branch;
 	process.env.PERFLAB_CONFIG_TYPE = config.type;
+	process.env.PERFLAB_CONFIG_PROTOCOL = serverAgent.protocol;
 	if (config.mode) {
 		process.env.PERFLAB_CONFIG_MODE = config.mode;
 	}
