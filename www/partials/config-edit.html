@@ -81,7 +81,7 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
-		  <div class="form-group form-group-sm" ng-if="config.client === 'dnsperf'">
+		  <div class="form-group form-group-sm" ng-if="agent.protocol === 'dns'">
 			<label for="configQueryset">Test client query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
 			  <option value="">- select set -</option>
