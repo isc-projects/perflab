@@ -60,8 +60,7 @@ function runConfig(config)
 {
 	let serverType = config.type;
 	let serverClass = Agents.servers[serverType];
-	let serverAgent = new serverClass(settings, config);
-	let clientType = config.client || settings.default_clients[serverClass.config.protocol];
+	let clientType = config.client || settings.default_clients[serverClass.configuration.protocol];
 	let clientClass = Agents.clients[clientType];
 
 	let path = settings.path + '/tests/' + config._id;
@@ -81,10 +80,12 @@ function runConfig(config)
 	process.env.PERFLAB_CONFIG_NAME = config.name;
 	process.env.PERFLAB_CONFIG_BRANCH = config.branch;
 	process.env.PERFLAB_CONFIG_TYPE = config.type;
-	process.env.PERFLAB_CONFIG_PROTOCOL = serverAgent.protocol;
+	process.env.PERFLAB_CONFIG_PROTOCOL = serverClass.configuration.protocol;
 	if (config.mode) {
 		process.env.PERFLAB_CONFIG_MODE = config.mode;
 	}
+
+	let serverAgent = new serverClass(settings, config);
 
 	return fs.mkdirsAsync(runPath)
 		.then(() => preRun(serverAgent, config))
