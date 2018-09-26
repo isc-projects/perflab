@@ -121,7 +121,7 @@ function preTest(agent, config)
 
 	if (config.preTest && config.preTest.length) {
 		let [cmd, ...args] = config.preTest;
-		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
+		return agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false}).catch(console.test);
 	} else {
 		return Promise.resolve();
 	}
