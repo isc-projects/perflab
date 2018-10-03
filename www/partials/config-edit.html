@@ -81,6 +81,13 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			</select>
 		  </div>
+		  <div class="form-group form-group-sm" ng-if="clients && clients.length > 1">
+			<label for="configClient">Test client application</label>
+			<select ng-required="config.client !== ''" class="form-control" id="configClient" ng-model="config.client">
+			  <option value="">- select client -</option>
+			  <option ng-repeat="client in clients" value="{{client.name}}">{{client.name}}</option>
+			</select>
+		  </div>
 		  <div class="form-group form-group-sm" ng-if="agent.protocol === 'dns'">
 			<label for="configQueryset">Test client query Set</label>
 			<select ng-required class="form-control" id="configQueryset" ng-model="config.queryset">
@@ -97,13 +104,6 @@ pre- and post-edit results.
 Advanced <span class="fa fa-caret-down"></span></button>
 </div>
 <div id="advanced" class="panel-group collapse">
-		  <div class="form-group form-group-sm" ng-if="clients && clients.length > 1">
-			<label for="configClient">Test client application</label>
-			<select ng-required="config.client !== ''" class="form-control" id="configClient" ng-model="config.client">
-			  <option value="">- select client -</option>
-			  <option ng-repeat="client in clients" value="{{client.name}}">{{client.name}}</option>
-			</select>
-		  </div>
 		  <div class="form-group form-group-sm">
 			<label for="configRuns">Test client runs per test (0 = use system default)</label>
 			<input type="number" min="0" class="form-control" id="configRuns" ng-model="config.testsPerRun" />
