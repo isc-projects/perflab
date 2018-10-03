@@ -242,7 +242,9 @@ app.controller('configEditController',
 				config.mode = ($scope.agent.subtype && $scope.agent.subtypes[0]) || 'authoritative';
 			}
 
-			config.client = $scope.settings.default_clients[$scope.agent.protocol];
+			if (!config.client) {
+				config.client = $scope.settings.default_clients[$scope.agent.protocol];
+			}
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];
