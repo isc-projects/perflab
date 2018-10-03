@@ -209,12 +209,14 @@ app.controller('configEditController',
 					$scope.configEdit.$setDirty();
 				}).catch(redirectNotify);
 			}
-			setDefaults();
-			$scope.config.type = $scope.type;
+			$scope.settings.$promise.then(function() {
+				setDefaults();
+				$scope.config.type = $scope.type;
+			});
 		} else {
 			$http.get('/api/config/' + $scope.id).then(function(res) {
 				$scope.config = res.data;
-				setDefaults();
+				$scope.settings.$promise.then(setDefaults);
 			}).catch(redirectNotify);
 
 			// just used to check if this config has any results
