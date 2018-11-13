@@ -9,6 +9,11 @@ let httpd = require('./lib/httpd'),
 let mongoCF = require('./etc/mongo'),
 	settings = require('./etc/settings');
 
-let db = new Database(mongoCF);
-
-httpd(mongoCF, settings, Agents, db, __dirname + '/www');
+(async () => {
+	try {
+		let dbo = await new Database(mongoCF).init();
+		httpd(mongoCF, settings, Agents, dbo, __dirname + '/www');
+	} catch (e) {
+		console.trace(e);
+	}
+})();
