@@ -25,6 +25,7 @@ Promise.longStackTraces();
 		// main loop - checks global pause status setting and either attempts
 		// to take a job from the queue, or waits one second before looping
 		async function runQueue() {
+			/* eslint no-constant-condition: 0 */
 			while (true) {
 				let res = await db.getPaused();
 				if (res.paused) {
@@ -75,7 +76,7 @@ Promise.longStackTraces();
 			}
 
 			// create new environment
-			process.env.PERFLAB_CONFIG_PATH = path
+			process.env.PERFLAB_CONFIG_PATH = path;
 			process.env.PERFLAB_CONFIG_RUNPATH = runPath;
 			process.env.PERFLAB_CONFIG_ID = config._id;
 			process.env.PERFLAB_CONFIG_NAME = config.name;
@@ -95,13 +96,13 @@ Promise.longStackTraces();
 			try {
 				let iter = config.testsPerRun || settings.testsPerRun || 30;
 
-				process.env.PERFLAB_PHASE = "running";
+				process.env.PERFLAB_PHASE = 'running';
 				process.env.PERFLAB_TEST_MAX = iter;
 
 				for (let count = 1; count <= iter; ++count) {
 					process.env.PERFLAB_TEST_COUNT = count;
 					let clientAgent = new clientClass(settings, config);
-					let res = await setStatus(config, 'test ' + count + '/' + iter);
+					await setStatus(config, 'test ' + count + '/' + iter);
 					await runTestAgent(clientAgent, config, run_id, false);
 				}
 
@@ -118,7 +119,7 @@ Promise.longStackTraces();
 
 		async function preTest(agent, config)
 		{
-			process.env.PERFLAB_PHASE = "pre-test";
+			process.env.PERFLAB_PHASE = 'pre-test';
 
 			if (config.preTest && config.preTest.length) {
 				let [cmd, ...args] = config.preTest;
@@ -132,15 +133,15 @@ Promise.longStackTraces();
 
 		async function postTest(agent, config, testResult)
 		{
-			process.env.PERFLAB_PHASE = "post-test";
+			process.env.PERFLAB_PHASE = 'post-test';
 
 			if (config.postTest && config.postTest.length) {
 				let [cmd, ...args] = config.postTest;
 				try {
-					let result = await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false})
-					testResult = testResult || { stdout: "", stderr: "" };
-					testResult.stdout += (result.stdout || "");
-					testResult.stderr += (result.stderr || "");
+					let result = await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false});
+					testResult = testResult || { stdout: '', stderr: '' };
+					testResult.stdout += (result.stdout || '');
+					testResult.stderr += (result.stderr || '');
 					return testResult;
 				} catch (e) {
 					console.trace(e);
@@ -150,7 +151,7 @@ Promise.longStackTraces();
 
 		async function preRun(agent, config)
 		{
-			process.env.PERFLAB_PHASE = "pre-run";
+			process.env.PERFLAB_PHASE = 'pre-run';
 
 			if (config.preRun && config.preRun.length) {
 				let [cmd, ...args] = config.preRun;
@@ -173,7 +174,7 @@ Promise.longStackTraces();
 
 			if (config.postRun && config.postRun.length) {
 				let [cmd, ...args] = config.postRun;
-				process.env.PERFLAB_PHASE = "post-run";
+				process.env.PERFLAB_PHASE = 'post-run';
 				try {
 					return await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true});
 				} catch (e) {
@@ -195,11 +196,11 @@ Promise.longStackTraces();
 			let run = await db.insertRun({config_id: config._id});
 
 			try {
-				let result = await execute("server", agent, config._id, run._id);
+				let result = await execute('server', agent, config._id, run._id);
 				await db.updateRunById(run._id, result);
 			} catch (e) {
-				await db.updateRunById(run._id, result);
-				throw new Error("execution failed"); // propagate the error
+				await db.updateRunById(run._id, {});
+				throw new Error('execution failed'); // propagate the error
 			}
 
 			return run._id;
@@ -221,7 +222,7 @@ Promise.longStackTraces();
 
 				process.env.PERFLAB_TEST_ID = test._id;
 				await preTest(agent, config);
-				let result = await execute("client", agent, config._id, run_id);
+				let result = await execute('client', agent, config._id, run_id);
 				result = await postTest(agent, config, result);
 				await db.updateTestById(test._id, result);
 				await db.updateStatsByRunId(run_id);
@@ -253,7 +254,7 @@ Promise.longStackTraces();
 
 			agent.on('cmd', (t) => {
 				console.log(t);
-				let log = {channel: 'command', text: t, host, time: new Date()}
+				let log = {channel: 'command', text: t, host, time: new Date()};
 				db.insertLog(log);
 			});
 
@@ -262,7 +263,7 @@ Promise.longStackTraces();
 				if (stdout.length < 1048576) {
 					stdout += t;
 				}
-				let log = {channel: 'stdout', text: '' + t, host, time: new Date()}
+				let log = {channel: 'stdout', text: '' + t, host, time: new Date()};
 				db.insertLog(log);
 			});
 
@@ -271,7 +272,7 @@ Promise.longStackTraces();
 				if (stderr.length < 1048576) {
 					stderr += t;
 				}
-				let log = {channel: 'stderr', text: '' + t, host, time: new Date()}
+				let log = {channel: 'stderr', text: '' + t, host, time: new Date()};
 				db.insertLog(log);
 			});
 
@@ -282,8 +283,8 @@ Promise.longStackTraces();
 
 			let result = await agent.run();
 			return Object.assign(result, {
-					stdout, stderr,
-					completed: new Date()
+				stdout, stderr,
+				completed: new Date()
 			});
 		}
 	} catch (e) {
