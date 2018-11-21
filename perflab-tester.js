@@ -17,6 +17,7 @@ Promise.longStackTraces();
 
 	try {
 
+		let $ENV = process.env;
 		let db = await new Database(mongoCF).init();
 		await db.createIndexes();
 		await clearQueue();
@@ -31,7 +32,11 @@ Promise.longStackTraces();
 				if (res.paused) {
 					await new Promise((resolve) => setTimeout(resolve, 1000));
 				} else {
-					await doFirstQueueEntry();
+					try {
+						await doFirstQueueEntry();
+					} catch (e) {
+						console.trace(e);
+					}
 				}
 			}
 		}
@@ -68,23 +73,26 @@ Promise.longStackTraces();
 			let path = settings.path + '/tests/' + config._id;
 			let runPath = path + '/run';
 
-			// clean up environment
-			for (let key in process.env) {
+			// remove existing PERFLAB environment variables
+			for (let key in $ENV) {
 				if (/^PERFLAB_/.test(key)) {
-					delete process.env[key];
+					delete $ENV[key];
 				}
 			}
 
-			// create new environment
-			process.env.PERFLAB_CONFIG_PATH = path;
-			process.env.PERFLAB_CONFIG_RUNPATH = runPath;
-			process.env.PERFLAB_CONFIG_ID = config._id;
-			process.env.PERFLAB_CONFIG_NAME = config.name;
-			process.env.PERFLAB_CONFIG_BRANCH = config.branch;
-			process.env.PERFLAB_CONFIG_TYPE = config.type;
-			process.env.PERFLAB_CONFIG_PROTOCOL = serverClass.configuration.protocol;
+			// create new environment variables
+			Object.assign($ENV, {
+				PERFLAB_CONFIG_PATH: path,
+				PERFLAB_CONFIG_RUNPATH: runPath,
+				PERFLAB_CONFIG_ID: config._id,
+				PERFLAB_CONFIG_NAME: config.name,
+				PERFLAB_CONFIG_BRANCH: config.branch,
+				PERFLAB_CONFIG_TYPE: config.type,
+				PERFLAB_CONFIG_PROTOCOL: serverClass.configuration.protocol
+			});
+
 			if (config.mode) {
-				process.env.PERFLAB_CONFIG_MODE = config.mode;
+				$ENV.PERFLAB_CONFIG_MODE = config.mode;
 			}
 
 			let serverAgent = new serverClass(settings, config);
@@ -96,11 +104,11 @@ Promise.longStackTraces();
 			try {
 				let iter = config.testsPerRun || settings.testsPerRun || 30;
 
-				process.env.PERFLAB_PHASE = 'running';
-				process.env.PERFLAB_TEST_MAX = iter;
+				$ENV.PERFLAB_PHASE = 'running';
+				$ENV.PERFLAB_TEST_MAX = iter;
 
 				for (let count = 1; count <= iter; ++count) {
-					process.env.PERFLAB_TEST_COUNT = count;
+					$ENV.PERFLAB_TEST_COUNT = count;
 					let clientAgent = new clientClass(settings, config);
 					await setStatus(config, 'test ' + count + '/' + iter);
 					await runTestAgent(clientAgent, config, run_id, false);
@@ -119,12 +127,12 @@ Promise.longStackTraces();
 
 		async function preTest(agent, config)
 		{
-			process.env.PERFLAB_PHASE = 'pre-test';
+			$ENV.PERFLAB_PHASE = 'pre-test';
 
 			if (config.preTest && config.preTest.length) {
 				let [cmd, ...args] = config.preTest;
 				try {
-					return await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false});
+					return await agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: false});
 				} catch (e) {
 					console.trace(e);
 				}
@@ -133,12 +141,12 @@ Promise.longStackTraces();
 
 		async function postTest(agent, config, testResult)
 		{
-			process.env.PERFLAB_PHASE = 'post-test';
+			$ENV.PERFLAB_PHASE = 'post-test';
 
 			if (config.postTest && config.postTest.length) {
 				let [cmd, ...args] = config.postTest;
 				try {
-					let result = await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: false});
+					let result = await agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: false});
 					testResult = testResult || { stdout: '', stderr: '' };
 					testResult.stdout += (result.stdout || '');
 					testResult.stderr += (result.stderr || '');
@@ -151,12 +159,12 @@ Promise.longStackTraces();
 
 		async function preRun(agent, config)
 		{
-			process.env.PERFLAB_PHASE = 'pre-run';
+			$ENV.PERFLAB_PHASE = 'pre-run';
 
 			if (config.preRun && config.preRun.length) {
 				let [cmd, ...args] = config.preRun;
 				try {
-					return await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true});
+					return agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: true});
 				} catch (e) {
 					console.trace(e);
 				}
@@ -165,18 +173,18 @@ Promise.longStackTraces();
 
 		async function postRun(agent, config)
 		{
-			// clean up environment
-			for (let key in process.env) {
+			// remove test-related variables from $ENV
+			for (let key in $ENV) {
 				if (/^PERFLAB_TEST_/.test(key)) {
-					delete process.env[key];
+					delete $ENV[key];
 				}
 			}
 
 			if (config.postRun && config.postRun.length) {
 				let [cmd, ...args] = config.postRun;
-				process.env.PERFLAB_PHASE = 'post-run';
+				$ENV.PERFLAB_PHASE = 'post-run';
 				try {
-					return await agent.spawn(cmd, args, {cwd: process.env.PERFLAB_CONFIG_RUNPATH, quiet: true});
+					return agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: true});
 				} catch (e) {
 					console.trace(e);
 				}
@@ -210,8 +218,8 @@ Promise.longStackTraces();
 		// and (usually) stores the output in the database
 		async function runTestAgent(agent, config, run_id, quiet)
 		{
-			process.env.PERFLAB_CONFIG_ID = config._id;
-			process.env.PERFLAB_RUN_ID = run_id;
+			$ENV.PERFLAB_CONFIG_ID = config._id;
+			$ENV.PERFLAB_RUN_ID = run_id;
 
 			if (quiet) {
 				await preTest(agent, config);
@@ -220,7 +228,7 @@ Promise.longStackTraces();
 			} else {
 				let test = await db.insertTest({config_id: config._id, run_id});
 
-				process.env.PERFLAB_TEST_ID = test._id;
+				$ENV.PERFLAB_TEST_ID = test._id;
 				await preTest(agent, config);
 				let result = await execute('client', agent, config._id, run_id);
 				result = await postTest(agent, config, result);
@@ -242,7 +250,7 @@ Promise.longStackTraces();
 			let stdout = '', stderr = '';
 			var host = os.hostname().split('.')[0];
 
-			let logpath = process.env.PERFLAB_CONFIG_PATH + '/' + logname;
+			let logpath = $ENV.PERFLAB_CONFIG_PATH + '/' + logname;
 			if (logname == 'server') {
 				var cout = fs.createWriteStream(logpath + '.out');
 				var cerr = fs.createWriteStream(logpath + '.err');
