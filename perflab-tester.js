@@ -205,6 +205,7 @@ Promise.longStackTraces();
 			let run = await db.insertRun({config_id: config._id});
 
 			try {
+				$ENV.PERFLAB_RUN_ID = run._id;
 				let result = await execute('server', agent, config._id, run._id);
 				await db.updateRunById(run._id, result);
 				return run._id;
@@ -227,8 +228,8 @@ Promise.longStackTraces();
 				return postTest(agent, config, result);
 			} else {
 				let test = await db.insertTest({config_id: config._id, run_id});
-
 				$ENV.PERFLAB_TEST_ID = test._id;
+
 				await preTest(agent, config);
 				let result = await execute('client', agent, config._id, run_id);
 				result = await postTest(agent, config, result);
