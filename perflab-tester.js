@@ -132,7 +132,7 @@ Promise.longStackTraces();
 			if (config.preTest && config.preTest.length) {
 				let [cmd, ...args] = config.preTest;
 				try {
-					return await agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: false});
+					return agent.spawn(cmd, args, {cwd: $ENV.PERFLAB_CONFIG_RUNPATH, quiet: false});
 				} catch (e) {
 					console.trace(e);
 				}
@@ -206,12 +206,11 @@ Promise.longStackTraces();
 			try {
 				let result = await execute('server', agent, config._id, run._id);
 				await db.updateRunById(run._id, result);
+				return run._id;
 			} catch (e) {
 				await db.updateRunById(run._id, {});
 				throw new Error('execution failed'); // propagate the error
 			}
-
-			return run._id;
 		}
 
 		// starts the testing client with the given configuration
