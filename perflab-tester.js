@@ -150,11 +150,12 @@ Promise.longStackTraces();
 					testResult = testResult || { stdout: '', stderr: '' };
 					testResult.stdout += (result.stdout || '');
 					testResult.stderr += (result.stderr || '');
-					return testResult;
 				} catch (e) {
 					console.trace(e);
 				}
 			}
+
+			return testResult;
 		}
 
 		async function preRun(agent, config)
@@ -233,6 +234,8 @@ Promise.longStackTraces();
 				result = await postTest(agent, config, result);
 				await db.updateTestById(test._id, result);
 				await db.updateStatsByRunId(run_id);
+
+				return result;
 			}
 		}
 
