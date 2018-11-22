@@ -215,7 +215,7 @@ Promise.longStackTraces();
 				return run._id;
 			} catch (e) {
 				await db.updateRunById(run._id, {});
-				throw new Error('execution failed'); // propagate the error
+				throw e;
 			}
 		}
 

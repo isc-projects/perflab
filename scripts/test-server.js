@@ -23,9 +23,9 @@ let id = process.argv[2];
 
 		await db.getConfigById(id).then((config) => {
 			config.flags = config.flags || {};
-			config.flags.checkout = true;
+			let path = `${settings.path}/tests/${config._id}`;
 			let type = config.type;
-			let agent = new Agents.servers[type](settings, config);
+			let agent = new Agents.servers[type](settings, config, path);
 			agent.on('stdout', t => console.log('1:' + t));
 			agent.on('stderr', t => console.log('2:' + t));
 			return agent.run();
