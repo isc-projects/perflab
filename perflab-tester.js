@@ -70,8 +70,9 @@ Promise.longStackTraces();
 			let clientType = config.client || settings.default_clients[serverClass.configuration.protocol];
 			let clientClass = Agents.clients[clientType];
 
+			// create server agent pointing at its instance directory
 			let path = settings.path + '/tests/' + config._id;
-			let runPath = path + '/run';
+			let serverAgent = new serverClass(settings, config, path);
 
 			// remove existing PERFLAB environment variables
 			for (let key in $ENV) {
@@ -83,7 +84,7 @@ Promise.longStackTraces();
 			// create new environment variables
 			Object.assign($ENV, {
 				PERFLAB_CONFIG_PATH: path,
-				PERFLAB_CONFIG_RUNPATH: runPath,
+				PERFLAB_CONFIG_RUNPATH: serverAgent.path.run,
 				PERFLAB_CONFIG_ID: config._id,
 				PERFLAB_CONFIG_NAME: config.name,
 				PERFLAB_CONFIG_BRANCH: config.branch,
@@ -95,13 +96,14 @@ Promise.longStackTraces();
 				$ENV.PERFLAB_CONFIG_MODE = config.mode;
 			}
 
-			let serverAgent = new serverClass(settings, config);
-
-			await fs.mkdirsAsync(runPath);
+			// prepare the instance directory
+			await fs.mkdirsAsync(serverAgent.path.run);
 			await preRun(serverAgent, config);
-			let run_id = await runServerAgent(serverAgent, config);
 
 			try {
+				// start the server running
+				let run_id = await runServerAgent(serverAgent, config);
+
 				let iter = config.testsPerRun || settings.testsPerRun || 30;
 
 				$ENV.PERFLAB_PHASE = 'running';
@@ -114,11 +116,13 @@ Promise.longStackTraces();
 					await runTestAgent(clientAgent, config, run_id, false);
 				}
 
+				await setStatus(config, 'finished');
+
 			} catch (e) {
+				await setStatus(config, 'error');
 				console.trace(e);
 			}
 
-			await setStatus(config, 'finished');
 			if (serverAgent.stop) {
 				await serverAgent.stop();
 			}
