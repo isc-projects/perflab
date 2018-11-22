@@ -37,7 +37,7 @@
 			<tbody>
 <tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
 <td width="80%" class="name">
-  <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span>
+  <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span><span ng-if="config.queue.state === 'error'" class="fa fa-warning"></span>
 </td>
 <td width="180px" nowrap>
 <div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
