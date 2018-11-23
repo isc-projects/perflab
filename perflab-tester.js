@@ -4,7 +4,7 @@
 
 let Database = require('./lib/database'),
 	Tester = require('./lib/tester'),
-	Queue = require('./lib/tester/queue'),
+	Queue = require('./lib/queue'),
 	mongoCF = require('./etc/mongo'),
 	settings = require('./etc/settings');
 
