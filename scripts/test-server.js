@@ -16,14 +16,23 @@ if (process.argv.length < 3) {
 }
 
 let id = process.argv[2];
-let db = new Database(mongoCF);
 
-db.getConfigById(id).then((config) => {
-	config.flags = config.flags || {};
-	config.flags.checkout = false;
-	let type = config.type;
-	let agent = new Agents.servers[type](settings, config);
-	agent.on('stdout', t => console.log('1:' + t));
-	agent.on('stderr', t => console.log('2:' + t));
-	return agent.run();
-}).catch(console.trace).then(db.close);
+(async function() {
+	try {
+		let db = await new Database(mongoCF).init();
+
+		await db.getConfigById(id).then((config) => {
+			config.flags = config.flags || {};
+			let path = `${settings.path}/tests/${config._id}`;
+			let type = config.type;
+			let agent = new Agents.servers[type](settings, config, path);
+			agent.on('stdout', t => console.log('1:' + t));
+			agent.on('stderr', t => console.log('2:' + t));
+			return agent.run();
+		});
+
+		await db.close();
+	} catch (e) {
+		console.trace(e);
+	}
+})();

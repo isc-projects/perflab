@@ -3,7 +3,9 @@
   "version": "0.2.0",
   "description": "ISC Performance Lab",
   "main": "perflab-httpd.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
