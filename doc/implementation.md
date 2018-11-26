@@ -27,7 +27,7 @@ particularly when passing callback functions.
 
 * `perflab-tester.js` - main tester process, handles all test running
 * `lib/queue.js` - watches the queue, takings jobs and passing them to:
-* `lib/tester.js` - code to 
+* `lib/tester.js` - code to run a single test
 * `lib/agents/index.js` - maps from applications to the necessary client and server test agents
 * `lib/agents/_base.js` - utility classes for forking a UNIX command and capturing its output and exit status (Executor), and a subclass of that for handling compilation with make style dependencies (Builder)
 * `lib/agents/bind.js` - instance of Builder that knows how to get BIND from git, configure it, make it, install it, and then finally execute it (see also lib/agents/knot.js and lib/agents/nsd.js)
