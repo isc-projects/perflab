@@ -3,29 +3,31 @@ Code Architecture
 
 ### Server Side
 
-The code is written using the latest ES2015 syntax where possible, to
-run under NodeJS 4.2 or later.  As there is no true threading in
-JavaScript most libraries make use of asynchronous methods throughout to
-prevent execution from being blocked on things like database lookups and
-network operations. The code makes extensive use of "Promises", a JS
-pattern that allows an asynchronous method to return a "promise" to
-provide a value later (akin to Java's "Futures"). Promises can be
-"chained" using the `.then` method, and an error in a chain of promises
-can be caught with the `.catch` method, e.g.:
+The code is written using the latest ES2017 syntax where possible,
+to run under NodeJS 7.6 or later.  As there is no true threading in
+JavaScript most libraries make use of asynchronous methods throughout
+to prevent execution from being blocked on things like database
+lookups and network operations.
 
-    doSomething().then(doSomethingElse).then(mutateTheResult).catch(console.error);
+The code makes extensive use of "Promises" and ES2017's `async`/`await`
+feature.   The latter allows asychronous code that would otherwise
+require extensive use of callback functions to be written in a much
+more linear style.
 
-The code also uses the new ES2015 "arrow function" where possible,
+The code also uses the ES2015 "arrow function" where possible,
 particularly when passing callback functions.
 
 #### Common Code
 
 * `lib/database.js` - shared code encapsulating all database accesses
-* `settings.js` - system-wide configuration options (e.g. for MongoDB connection URLs, git repo location, etc).
+* `etc/settings.js` - system-wide configuration options (e.g., git repo location, etc).
+* `etc/mongo.js` - settings for MongoDB connection URLs
 
 #### Performance Testing Code
 
 * `perflab-tester.js` - main tester process, handles all test running
+* `lib/queue.js` - watches the queue, takings jobs and passing them to:
+* `lib/tester.js` - code to run a single test
 * `lib/agents/index.js` - maps from applications to the necessary client and server test agents
 * `lib/agents/_base.js` - utility classes for forking a UNIX command and capturing its output and exit status (Executor), and a subclass of that for handling compilation with make style dependencies (Builder)
 * `lib/agents/bind.js` - instance of Builder that knows how to get BIND from git, configure it, make it, install it, and then finally execute it (see also lib/agents/knot.js and lib/agents/nsd.js)
@@ -67,7 +69,7 @@ The individual templates refer to "controllers" that are contained in
 AngularJS best practise says that all state should be contained in a
 service and this has already been done for those cases where a singleton
 was necessary (e.g. for the WebSocket connection) to ensure that those
-singleton objects persist correctly throughout the applications
+singleton objects persist correctly throughout the application's
 lifetime.
 
 Whenever a database update is received over the OpLog WebSocket the UI
