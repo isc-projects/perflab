@@ -1,7 +1,6 @@
 acl clients { localnets; localhost; };
 
 options {
-	allow-query { clients; };
 	recursion yes;
 	notify no;
 	include "./etc/named-options.conf";
