@@ -39,16 +39,15 @@
 </td>
 <td width="180px" nowrap>
 <div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
-  <div class="progress-bar progress-bar-striped active" ng-class="{'progress-bar-info': !config.testing}" role="progressbar" aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config.progress}}%;">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" ng-class="{'progress-bar-info': !config.testing}" role="progressbar" aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config.progress}}%; height: 100%">
 	<span ng-if="!config.testing">{{config.queue.state}}</span>
   </div>
 </div>
 </td>
-<td><div class="btn-group">
+<td nowrap align="right">
   <button type="button" class="btn btn-sm btn-primary dropdown-toggle" title="Queue settings" ng-class="{'btn-danger': config.queue.priority}"
 	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	<!-- <span class="fas fa-caret-down"></span> -->
-	<span class="fas" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-redo-alt' : 'fa-play') : 'fa-pause'">
+	<span class="fas" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-redo-alt' : 'fa-play') : 'fa-pause'"></span>
   </button>
   <div class="dropdown-menu">
 	<a class="dropdown-item" ng-class="{disabled: !config.queue.enabled}" href="" ng-click="configs.setEnabled(config._id, false)"><span class="fas fa-pause"></span> Disable</a>
@@ -59,8 +58,6 @@
 	  <span class="fas" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
 	</a>
   </div>
-</div></td>
-<td nowrap align="right">
   <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-chart-bar" title="Graph"></span></a>
   <a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>
   <a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>

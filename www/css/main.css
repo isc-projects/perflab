@@ -119,7 +119,8 @@ pre.log {
 }
 
 table .progress {
-	margin-bottom: 0 !important;
+	margin: 4px;
+	height: 1.5rem;
 }
 
 .progress-bar {
