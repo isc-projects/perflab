@@ -1,17 +1,17 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-        <div class="panel-heading" ng-show="config.$resolved">
+	  <div class="card">
+        <div class="card-header" ng-show="config.$resolved">
 		  <span>Runs of configuration "{{config.name}}"</span>
-		  <span class="pull-right">
-<a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
-<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-xs btn-primary"><span class="fa fa-download" title="Export CSV"></span></a>
-<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-xs btn-primary"><span class="fa fa-cog" title="Edit"></span></a>
+		  <span class="float-right">
+<a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>
+<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>
+<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-cog" title="Edit"></span></a>
 			</a>
 		  </span>
         </div>
-		<div class="panel-body">
+		<div class="card-body">
 		  <dygraphs ng-if="graph.data.length" opts="graph.options" data="graph.data"><dygraphs>
 		</div>
 	  </div>

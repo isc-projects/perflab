@@ -1,22 +1,22 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-		<div class="panel-heading" ng-show="config.$resolved">
+	  <div class="card">
+		<div class="card-header" ng-show="config.$resolved">
 		  Tests of configuration "{{config.name}}" started at {{run.created}}
-		  <span class="pull-right">
-			<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-xs btn-primary">
-			  <span class="fa fa-cog" title="Edit"></span></a>
-			<a href="#/run/memory/{{run._id}}/" class="fixed-button btn btn-xs btn-primary">
-			  <span class="fa fa-line-chart"></span>Memory</a>
+		  <span class="float-right">
+			<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary">
+			  <span class="fas fa-cog" title="Edit"></span></a>
+			<a href="#/run/memory/{{run._id}}/" class="fixed-button btn btn-sm btn-primary">
+			  <span class="fas fa-chart-line"></span>Memory</a>
 		  </span>
 		</div>
-		<div class="panel-body">
+		<div class="card-body">
 		  <div class="alert alert-info" ng-show="!tests.$resolved">Loading...</div>
 		  <div class="alert alert-warning" ng-show="tests.$resolved && !tests.length">
 			None recorded <span ng-show="control.running.run_id === run._id">(build in progress?)<span>
 		  </div>
-		  <table class="table table-condensed table-striped" ng-show="tests.length">
+		  <table class="table table-sm table-striped" ng-show="tests.length">
 			<thead>
 			  <tr>
 				<th class="text-right">#</th>
@@ -33,9 +33,15 @@
 			</tbody>
 		  </table>
 		</div>
-		<div class="panel-body" ng-show="run.commit"><pre>{{run.commit}}</pre></div>
-		<div class="panel-body" ng-show="run.stdout"><pre class="scroll">{{run.stdout}}</pre></div>
-		<div class="panel-body" ng-show="run.stderr"><pre class="scroll">{{run.stderr}}</pre></div>
+      </div>
+      <div class="card">
+		<div class="card-body bg-light" ng-show="run.commit"><pre>{{run.commit}}</pre></div>
+	  </div>
+      <div class="card">
+		<div class="card-body bg-light" ng-show="run.stdout"><pre class="scroll">{{run.stdout}}</pre></div>
+	  </div>
+      <div class="card">
+		<div class="card-body bg-light" ng-show="run.stderr"><pre class="scroll">{{run.stderr}}</pre></div>
 	  </div>
 	</div>
   </div>

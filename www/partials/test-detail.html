@@ -1,9 +1,9 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-	  <div class="panel-heading">Test results for ID {{test._id}}</div>
-	  <div class="panel-body">
+	  <div class="card">
+	  <div class="card-header">Test results for ID {{test._id}}</div>
+	  <div class="card-body">
 		<div class="alert alert-warning" ng-hide="test.stdout">None recorded</div>
 		<pre ng-show="test.stdout">{{test.stdout}}</pre>
 	  </div>

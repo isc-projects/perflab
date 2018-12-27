@@ -1,20 +1,18 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-	  <div class="panel-heading">Log Viewer <span ng-show="hasHosts()">({{host}})</span>
-<div class="btn-group pull-right" ng-show="hasHosts()">
-<button type="button" class="fixed-button btn btn-xs btn-primary dropdown-toggle" title="host filter settings"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <span class="fa fa-caret-down"></span> Host
+	  <div class="card">
+	  <div class="card-header">Log Viewer <span ng-show="hasHosts()">({{host || "All"}})</span>
+<div class="btn-group float-right" ng-show="hasHosts()">
+<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle" title="host filter settings"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Host
 </button>
-<ul class="dropdown-menu dropdown-menu-right fa-ul" role="menu">
-  <li class="bfa-icon" ng-repeat="(key, value) in logwatch.output" ng-class="{'fa-check': host === key}">
-    <a role="menuitem" href="" ng-click="setHost(key)">{{key || "All"}}</a></li>
-</ul>
+<div class="dropdown-menu dropdown-menu-right" role="menu">
+  <a role="menuitem" class="dropdown-item bfa-icon" ng-repeat="(key, value) in logwatch.output" ng-class="{'fa-check': host === key}" href="" ng-click="setHost(key)">{{key || "All"}}</a>
+</div>
 </div>
 	  </div>
-	  <div class="panel-body scroll">
+	  <div class="card-body scroll">
 		<div class="alert alert-warning" ng-show="lines && !lines.length">None recorded</div>
 <pre ng-repeat="line in logwatch.output[host] track by line._id" class="log" ng-class="line.channel">
 <div ng-show="line.channel === 'command'">{{line.time}}</div>{{line.text}}</pre>

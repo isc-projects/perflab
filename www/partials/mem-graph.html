@@ -1,16 +1,16 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-        <div class="panel-heading" ng-show="run.$resolved">
+	  <div class="card">
+        <div class="card-header" ng-show="run.$resolved">
 		  <span>Memory usage of {{config.name}} started at {{run.created}}</span>
-		  <span class="pull-right">
-			<a href="#/run/test/{{run._id}}/" class="fixed-button btn btn-xs btn-primary">
-			  <span class="fa fa-bars"></span>Details
+		  <span class="float-right">
+			<a href="#/run/test/{{run._id}}/" class="fixed-button btn btn-sm btn-primary">
+			  <span class="fas fa-bars"></span>Details
 			</a>
 		  </span>
         </div>
-		<div class="panel-body">
+		<div class="card-body">
 		  <dygraphs ng-if="graph.data.length" opts="graph.options" data="graph.data"><dygraphs>
 		</div>
 	  </div>

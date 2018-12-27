@@ -78,7 +78,11 @@
 
 		function play() {
 			if (audio) {
-				audio.play();
+				try {
+					audio.play();
+				} catch (e) {
+					console.trace(e);
+				}
 			}
 		}
 

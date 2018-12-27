@@ -1,41 +1,44 @@
-<div class="navbar navbar-inverse navbar-static-top" role="navigation">
+<nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
 	<div class="navbar-header" ng-controller="beepController">
-	  <a class="navbar-brand" href="/"><span class="fa fa-home"></span> ISC Perflab</a>
-	  <button ng-click="beeper.toggleMute()" class="icon-button btn btn-xs btn-primary navbar-btn" title="Sound">
-		<span class="fa fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
+	  <a class="navbar-brand" href="/"><span class="fas fa-home"></span> ISC Perflab</a>
+	  <button ng-click="beeper.toggleMute()" class="icon-button btn btn-sm btn-primary navbar-btn" title="Sound">
+		<span class="fas fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
 	  </button>
-	  <button ng-click="control.unpause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">
-		<span class="fa fa-play"></span>
+	  <button ng-click="control.unpause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">
+		<span class="fas fa-play"></span>
 	  </button>
-	  <button ng-click="control.pause()" class="icon-button btn btn-xs btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
-		<span class="fa fa-pause"></span>
+	  <button ng-click="control.pause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
+		<span class="fas fa-pause"></span>
 	  </button>
-	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
+	  <button type="button" class="btn btn-sm navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="navbar-toggler-icon"></span>
 	  </button>
 	</div>
 	<div class="navbar-collapse collapse">
-	  <ul class="nav navbar-nav">
-		<li><a href="#/logs/">Logs</a></li>
-		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-caret-down"></span> Stats</a>
-		  <ul class="dropdown-menu" role="menu" ng-controller="statsController">
-			<li ng-class="{disabled: !stats.ready()}"><a role="menuitem" href="" ng-click="open()">Calculate</a></li>
-			<li ng-class="{disabled: stats.empty()}"><a role="menuitem" href="" ng-click="stats.reset()">Clear selection</a></li>
+	  <ul class="navbar-nav mr-auto">
+		<li class="nav-item"><a class="nav-link" href="#/logs/">Logs</a></li>
+		<li class="nav-item dropdown">
+		  <a id="dropdownStatsButton" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+             Stats
+		  </a>
+		  <div class="dropdown-menu" ng-controller="statsController" aria-labelleby="dropdownStatsButton">
+			<a class="dropdown-item" href="" ng-class="{disabled: !stats.ready()}" ng-click="open()" role="menuitem">Calculate</a>
+			<a class="dropdown-item" href="" ng-class="{disabled: stats.empty()}" ng-click="stats.reset()">Clear selection</a>
 		  </ul>
 		</li>
 	  </ul>
 	</div>
   </div>
-</div>
+</nav>
 <div class="modal fade" id="stats" tabindex="-1" role="dialog" aria-labelledby="calculate" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog" role="document">
 	<div class="modal-content">
 	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">Comparative Statistics</h4>
+		<h5 class="modal-title">Comparative Statistics</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
 	  </div>
 	  <div class="modal-body" ng-controller="statsResultsController">
 		<table width="100%">
