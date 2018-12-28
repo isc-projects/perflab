@@ -57,3 +57,9 @@ app.config(['$resourceProvider',
 		$resourceProvider.defaults.stripTrailingSlashes = false;
 	}
 ]);
+
+app.config(['$locationProvider',
+	function($locationProvider) {
+		$locationProvider.hashPrefix('');
+	}
+]);
