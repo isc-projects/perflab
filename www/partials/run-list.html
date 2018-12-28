@@ -5,9 +5,9 @@
 	  <div class="card-header" ng-show="config.$resolved">
 		<span class="card-title">Runs of configuration "{{config.name}}"</span>
 		<span class="float-right">
-<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-chart-bar" title="Graph"></span></a>
-<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>
-<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-cog" title="Edit"></span></a>
+		  <cfg-button-graph />
+		  <cfg-button-export />
+		  <cfg-button-edit />
 		</span>
 	  </div>
 	  <div class="card-body">

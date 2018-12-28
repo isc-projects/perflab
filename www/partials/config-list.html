@@ -58,10 +58,10 @@
 	  <span class="fas" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
 	</a>
   </div>
-  <a href="#/config/run/{{config._id}}/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-chart-bar" title="Graph"></span></a>
-  <a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>
-  <a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>
-  <a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-cog" title="Edit"></span></a>
+  <cfg-button-graph />
+  <cfg-button-list />
+  <cfg-button-export />
+  <cfg-button-edit />
 </td>
 </tr>
 			</tbody>
