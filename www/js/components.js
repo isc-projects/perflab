@@ -4,6 +4,12 @@
 
 var app = angular.module('perflabApp');
 
+app.directive('cfgButtonQueue', function() {
+    return {
+        templateUrl: 'partials/config-queue.html'
+	}
+});
+
 app.directive('cfgButtonGraph', function() {
     return {
         template: '<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-chart-bar" title="Graph"></span></a>',

@@ -45,19 +45,7 @@
 </div>
 </td>
 <td nowrap align="right">
-  <button type="button" class="btn btn-sm btn-primary dropdown-toggle" title="Queue settings" ng-class="{'btn-danger': config.queue.priority}"
-	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	<span class="fas" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-redo-alt' : 'fa-play') : 'fa-pause'"></span>
-  </button>
-  <div class="dropdown-menu">
-	<a class="dropdown-item" ng-class="{disabled: !config.queue.enabled}" href="" ng-click="configs.setEnabled(config._id, false)"><span class="fas fa-pause"></span> Disable</a>
-	<a class="dropdown-item" ng-class="{disabled: config.queue.enabled && !config.queue.repeat}" href="" ng-click="configs.setRepeat(config._id, false)"><span class="fas fa-play"></span> Run once</a>
-	<a class="dropdown-item" ng-class="{disabled: config.queue.enabled && config.queue.repeat}" href="" ng-click="configs.setRepeat(config._id, true)"><span class="fas fa-redo-alt"></span> Repeat</a>
-	<div class="dropdown-divider"></div>
-	<a class="dropdown-item" href="" ng-click="configs.togglePriority(config._id)">
-	  <span class="fas" ng-class="config.queue.priority ? 'fa-level-down-alt' : 'fa-level-up-alt'"></span> Change priority</a>
-	</a>
-  </div>
+  <cfg-button-queue />
   <cfg-button-graph />
   <cfg-button-list />
   <cfg-button-export />
