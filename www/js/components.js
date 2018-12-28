@@ -10,33 +10,42 @@ app.directive('cfgButtonQueue', function() {
 	}
 });
 
+app.directive('perflabButton', function() {
+	return {
+		template: '<a href="{{href}}" class="icon-button btn btn-sm btn-primary"><span class="fas {{icon}}" title="{{title}}"></span>{{text}}</a>',
+		restrict: 'E',
+		replace: true,
+		scope: { href: '@', title: '@', icon: '@', text: '@' }
+	}
+});
+
 app.directive('cfgButtonGraph', function() {
 	return {
-		template: '<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-chart-bar" title="Graph"></span></a>',
+		template: '<perflab-button href="#/config/run/{{config._id}}/" icon="fa-chart-bar" title="Graph" />'
 	}
 });
 
 app.directive('cfgButtonList', function() {
 	return {
-		template: '<a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>',
+		template: '<perflab-button href="#/config/run/{{config._id}}/list/" icon="fa-bars" title="List" />'
 	}
 });
 
 app.directive('cfgButtonExport', function() {
 	return {
-		template: '<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>',
+		template: '<perflab-button href="/api/config/run/{{config._id}}/stats" icon="fa-download" title="Export CSV" />',
 	}
 });
 
 app.directive('cfgButtonEdit', function() {
 	return {
-		template: '<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-cog" title="Edit"></span></a>',
+		template: '<perflab-button href="#/config/edit/{{config.type}}/{{config._id}}" icon="fa-cog" title="Edit" />',
 	}
 });
 
 app.directive('runButtonMemory', function() {
 	return {
-		template: '<a href="#/run/memory/{{run._id}}/" class="fixed-button btn btn-sm btn-primary"><span class="fas fa-chart-line"></span>Memory</a>'
+		template: '<perflab-button href="#/run/memory/{{run._id}}/" icon="fa-chart-line" text=" Memory" />'
 	}
 });
 
