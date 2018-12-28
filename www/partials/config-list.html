@@ -55,7 +55,7 @@
 	<a class="dropdown-item" ng-class="{disabled: config.queue.enabled && config.queue.repeat}" href="" ng-click="configs.setRepeat(config._id, true)"><span class="fas fa-redo-alt"></span> Repeat</a>
 	<div class="dropdown-divider"></div>
 	<a class="dropdown-item" href="" ng-click="configs.togglePriority(config._id)">
-	  <span class="fas" ng-class="config.queue.priority ? 'fa-level-down' : 'fa-level-up'"></span> Change priority</a>
+	  <span class="fas" ng-class="config.queue.priority ? 'fa-level-down-alt' : 'fa-level-up-alt'"></span> Change priority</a>
 	</a>
   </div>
   <cfg-button-graph />
