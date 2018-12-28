@@ -34,12 +34,16 @@ app.controller('configListController',
 
 		$scope.configs = Configs;
 		$scope.filter = JSON.parse(localStorage.filter || 'false');
+		$scope.agents = ServerAgentResource.query();
 
 		$scope.toggleFilter = function(val) {
 			localStorage.filter = $scope.filter = !$scope.filter;
 		}
 
-		$scope.agents = ServerAgentResource.query();
+		$scope.filterFn = function(config) {
+			var active = (config.queue.enabled || config.queue.running);
+			return !$scope.filter || active;
+		}
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {

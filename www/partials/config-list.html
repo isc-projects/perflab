@@ -33,7 +33,7 @@
 		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
 		  <table class="table table-sm table-striped config-list">
 			<tbody>
-<tr ng-repeat="config in configs.all | orderBy:predicate track by config._id" class="config" ng-hide="filter && !(config.queue.enabled || config.queue.running)">
+<tr ng-repeat="config in configs.all | filter:filterFn | orderBy:predicate track by config._id" class="config">
 <td width="80%" class="name">
   <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span><span ng-if="config.queue.state === 'error'" class="fas fa-warning"></span>
 </td>
