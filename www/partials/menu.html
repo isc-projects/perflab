@@ -5,12 +5,7 @@
 	  <button ng-controller="beepController" ng-click="beeper.toggleMute()" class="icon-button btn btn-sm btn-primary navbar-btn" title="Sound">
 		<span class="fas fa-fw" ng-class="beeper.muted() ? 'fa-bell-slash' : 'fa-bell'"></span>
 	  </button>
-	  <button ng-click="control.unpause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">
-		<span class="fas fa-play"></span>
-	  </button>
-	  <button ng-click="control.pause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">
-		<span class="fas fa-pause"></span>
-	  </button>
+	  <perflab-control-buttons />
 	  <button type="button" class="btn btn-sm navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
 		<span class="navbar-toggler-icon"></span>
 	  </button>

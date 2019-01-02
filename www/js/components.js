@@ -49,4 +49,14 @@ app.directive('runButtonMemory', function() {
 	}
 });
 
+app.directive('perflabControlButtons', function() {
+	return {
+		template:
+			'<button ng-click="control.unpause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="!control.paused" title="enable queue">' +
+			'<span class="fas fa-play"></span></button> ' +
+			'<button ng-click="control.pause()" class="icon-button btn btn-sm btn-primary navbar-btn" ng-disabled="control.paused" title="pause at end of current run">' +
+			'<span class="fas fa-pause"></span></button>'
+	}
+});
+
 })();
