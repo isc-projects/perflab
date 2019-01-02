@@ -2,13 +2,13 @@
 
   <div class="row" ng-show="existing">
 	<div class="col-md-12">
-      <div>&nbsp;</div>
-      <div class="alert alert-danger alert-dismissable" role="alert">
+	  <div>&nbsp;</div>
+	  <div class="alert alert-danger alert-dismissable" role="alert">
 <b>NB:</b> There are existing results for this configuration.  Please be advised
 that editing this configuration may invalidate any comparisons between
 pre- and post-edit results.
 	  </div>
-    </div>
+	</div>
   </div>
   <br ng-show="existing" />
 
@@ -16,13 +16,13 @@ pre- and post-edit results.
 	<div class="col-md-12">
 	  <div class="card">
 	  <div class="card-header">
-      <span class="float-title">Configuration</span>
+	  <span class="float-title">Configuration</span>
 	  <span class="float-right" ng-show="existing">
 		<cfg-button-graph />
 		<cfg-button-list />
 		<cfg-button-export />
-      </span>
-      </div>
+	  </span>
+	  </div>
 	  <div class="card-body">
 		<form name="configEdit">
 		  <div class="form-group form-group-sm">
@@ -95,7 +95,7 @@ pre- and post-edit results.
 			  <option ng-if="config.mode !== 'recursive'" value="mega-small">1M small zones, 5% NXD</option>
 			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
 			  <option ng-if="config.mode === 'recursive'" value="mega-small">1M zones, 5% NXD</option>
-  			  <option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
+				<option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
 			</select>
 		  </div>
 <div class="form-group form-group-sm">

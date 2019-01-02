@@ -1,61 +1,35 @@
 <div class="container">
-  <div class="row">
-	<div class="col-md-12">
-	  <div class="card">
-		<div class="card-header">
-		  <span>Configurations</span>
-		  <span class="float-right">
-<div class="btn-group">
-  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
-		  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
-  </button>
-  <ul class="dropdown-menu dropdown-menu-right">
-	<a class="dropdown-item" ng-repeat="agent in agents" href="#/config/new/{{agent.key}}">{{agent.name}}</a>
-  </ul>
-</div>
-<div class="btn-group">
-<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle" title="view settings"
-	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View
-</button>
-<div class="dropdown-menu dropdown-menu-right" class="fa-ul">
-  <h5 class="dropdown-header">Sort by...</h5>
-  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'name'}" href="" ng-click="setSort('name')">Name</a>
-  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'pri'}" href="" ng-click="setSort('pri')">Run order</a>
-  <div class="dropdown-divider"></div>
-  <h5 class="dropdown-header">Filter</h5>
-  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': filter}" href="" ng-click="toggleFilter()">Hide inactive</a>
-</div>
-</div>
-		</span>
+  <div class="card">
+	<div class="card-header">
+	  <span>Configurations</span>
+	  <span class="float-right">
+		<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
+			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
+		</button>
+		<ul class="dropdown-menu dropdown-menu-right">
+		  <a class="dropdown-item" ng-repeat="agent in agents" href="#/config/new/{{agent.key}}">{{agent.name}}</a>
+		</ul>
+		<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle" title="view settings"
+			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View
+		</button>
+		<div class="dropdown-menu dropdown-menu-right" class="fa-ul">
+		  <h5 class="dropdown-header">Sort by...</h5>
+		  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'name'}" href="" ng-click="setSort('name')">Name</a>
+		  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'pri'}" href="" ng-click="setSort('pri')">Run order</a>
+		  <div class="dropdown-divider"></div>
+		  <h5 class="dropdown-header">Filter</h5>
+		  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': filter}" href="" ng-click="toggleFilter()">Hide inactive</a>
 		</div>
-		<div class="card-body">
-		  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>
-		  <div class="alert alert-warning" ng-show="configs.all && !configs.all.length">None</div>
-		  <table class="table table-sm table-striped config-list">
-			<tbody>
-<tr ng-repeat="config in configs.all | filter:filterFn | orderBy:predicate track by config._id" class="config">
-<td width="80%" class="name">
-  <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span><span ng-if="config.queue.state === 'error'" class="fas fa-warning"></span>
-</td>
-<td width="180px" nowrap>
-<div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
-  <div class="progress-bar progress-bar-striped progress-bar-animated" ng-class="{'progress-bar-info': !config.testing}" role="progressbar" aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{config.progress}}%; height: 100%">
-	<span ng-if="!config.testing">{{config.queue.state}}</span>
-  </div>
-</div>
-</td>
-<td nowrap align="right">
-  <cfg-button-queue />
-  <cfg-button-graph />
-  <cfg-button-list />
-  <cfg-button-export />
-  <cfg-button-edit />
-</td>
-</tr>
-			</tbody>
-		  </table>
-		</div>
-	  </div>
+	  </span>
+	</div>
+	<div class="card-body">
+	  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>
+	  <div class="alert alert-warning" ng-cloak ng-show="configs.all && !configs.all.length">None</div>
+	  <table class="table table-sm table-striped config-list">
+		<tbody>
+		  <tr perflab-config-entry ng-repeat="config in configs.all | filter:filterFn | orderBy:predicate track by config._id" class="config" />
+		</tbody>
+	  </table>
 	</div>
   </div>
 </div>

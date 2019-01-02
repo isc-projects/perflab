@@ -59,4 +59,12 @@ app.directive('perflabControlButtons', function() {
 	}
 });
 
+app.directive('perflabConfigEntry', function() {
+	return {
+		replace: false,
+		restrict: 'A',
+		templateUrl: 'partials/config-list-entry.html'
+	}
+});
+
 })();
