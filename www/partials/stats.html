@@ -1,0 +1,52 @@
+<div class="modal fade" id="stats" tabindex="-1" role="dialog" aria-labelledby="calculate" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h5 class="modal-title">Comparative Statistics</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body" ng-controller="statsResultsController">
+		<table width="100%">
+		  <tr>
+			<td></td>
+			<td>Group A</td>
+			<td>Group B</td>
+		  </tr>
+		  <tr>
+			<td>Count</td>
+			<td>{{data.a.count.toFixed(0)}}</td>
+			<td>{{data.b.count.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Median</td>
+			<td>{{data.a.median.toFixed(0)}}</td>
+			<td>{{data.b.median.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Mean</td>
+			<td>{{data.a.mean.toFixed(0)}}</td>
+			<td>{{data.b.mean.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>Std. Dev</td>
+			<td>{{data.a.stddev.toFixed(0)}}</td>
+			<td>{{data.b.stddev.toFixed(0)}}</td>
+		  </tr>
+		  <tr>
+			<td>t Score</td>
+			<td colspan="2">{{data.t.toFixed(2)}}</td>
+		  </tr>
+		  <tr>
+			<td>p Value</td>
+			<td colspan="2">{{data.p}}</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">OK</button>
+	  </div>
+	</div>
+  </div>
+</div>
