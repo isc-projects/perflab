@@ -261,6 +261,10 @@ app.controller('configEditController',
 			config.options = config.options || '';
 			config.global = config.global || '';
 			config.notes = config.notes || '';
+			config.preConfigure = config.preConfigure || '';
+			config.preBuild = config.preBuild || '';
+			config.preRun = config.preRun || '';
+			config.preTest = config.preTest || '';
 			config.postTest = config.postTest || '';
 			config.postRun = config.postRun || '';
 		}

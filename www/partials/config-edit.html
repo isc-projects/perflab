@@ -114,20 +114,28 @@ pre- and post-edit results.
 			<label for="configWrapper">Server daemon exec wrapper and options</label>
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
 		  </div>
+		  <div class="form-group form-group-sm" ng-show="::agent.canPreConfigure">
+			<label for="preConfigure">Pre-configure script</label>
+			<input class="form-control" id="preConfigure" ng-model="config.preConfigure" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm" ng-show="::agent.canPreBuild">
+			<label for="preBuild">Pre-build script</label>
+			<input class="form-control" id="preBuild" ng-model="config.preBuild" ng-list=" " ng-trim="false" />
+		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Pre-run script</label>
+			<label for="preRun">Pre-run script</label>
 			<input class="form-control" id="preRun" ng-model="config.preRun" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Pre-test script</label>
+			<label for="preTest">Pre-test script</label>
 			<input class="form-control" id="preTest" ng-model="config.preTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Post-test script</label>
+			<label for="postTest">Post-test script</label>
 			<input class="form-control" id="postTest" ng-model="config.postTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Post-run script</label>
+			<label for="postRun">Post-run script</label>
 			<input class="form-control" id="postRun" ng-model="config.postRun" ng-list=" " ng-trim="false" />
 		  </div>
 </div>
