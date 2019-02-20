@@ -12,10 +12,10 @@ app.directive('cfgButtonQueue', function() {
 
 app.directive('perflabButton', function() {
 	return {
-		template: '<a href="{{href}}" class="icon-button btn btn-sm btn-primary"><span class="fas {{icon}}" title="{{title}}"></span>{{text}}</a>',
+		template: '<a class="icon-button btn btn-sm btn-primary"><span class="fas {{icon}}" title="{{title}}"></span>{{text}}</a>',
 		restrict: 'E',
 		replace: true,
-		scope: { href: '@', title: '@', icon: '@', text: '@' }
+		scope: { title: '@', icon: '@', text: '@' }
 	}
 });
 
