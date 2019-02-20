@@ -8,22 +8,26 @@ let mongoCF = require('../etc/mongo'),
 
 (async function() {
 	let db = await new Database(mongoCF).init();
+	let dbh = db.handle;
+
+	await db.createIndexes();
+
 	let configs = await db.getConfigs();
-
-    for (let config of configs) {
-
+	for (let config of configs) {
+		console.log(config._id.toString());
 		let runs = await db.getRunsByConfigId(config._id);
 		for (let run of runs) {
-			await db.handle.collection('test').update(
+			await dbh.collection('test').update(
 				{run_id: run._id, config_id: {$exists: false}},
 				{$set: {config_id: config._id}},
 				{multi: true});
-			await db.handle.collection('memory').update(
+			await dbh.collection('memory').update(
 				{run_id: run._id, config_id: {$exists: false}},
 				{$set: {config_id: config._id}},
 				{multi: true});
 		}
 	}
 
-    await db.close();
+	await db.createIndexes();
+	await db.close();
 })();
