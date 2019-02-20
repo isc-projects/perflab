@@ -63,7 +63,7 @@
 			audio = new Audio('/sounds/Robot_blip-Marianne_Gagnon-120342607.mp3');
 			audio.addEventListener('volumechange', function() {
 				localStorage.muted = muteState = audio.muted;
-				$rootScope.$apply();
+				$rootScope.$applyAsync();
 			});
 			try {
 				if ('muted' in localStorage) {
@@ -78,7 +78,11 @@
 
 		function play() {
 			if (audio) {
-				audio.play();
+				try {
+					audio.play();
+				} catch (e) {
+					console.trace(e);
+				}
 			}
 		}
 

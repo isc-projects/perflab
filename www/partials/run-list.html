@@ -1,19 +1,19 @@
 <div class="container">
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-	  <div class="panel-heading" ng-show="config.$resolved">
-		<span>Runs of configuration "{{config.name}}"</span>
-		<span class="pull-right">
-<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
-<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-xs btn-primary"><span class="fa fa-download" title="Export CSV"></span></a>
-<a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-xs btn-primary"><span class="fa fa-cog" title="Edit"></span></a>
+	  <div class="card">
+	  <div class="card-header" ng-show="config.$resolved">
+		<span class="card-title">Runs of configuration "{{config.name}}"</span>
+		<span class="float-right">
+		  <cfg-button-graph />
+		  <cfg-button-export />
+		  <cfg-button-edit />
 		</span>
 	  </div>
-	  <div class="panel-body">
+	  <div class="card-body">
 	  <div class="alert alert-info" ng-show="!runs.$resolved">Loading...</div>
 	  <div class="alert alert-warning" ng-show="runs.$resolved && !runs.length">None recorded</div>
-	  <table class="table table-condensed table-striped" ng-show="runs.length">
+	  <table class="table table-sm table-striped" ng-show="runs.length">
 		<thead>
 		  <tr>
 			<th>Time</th>
@@ -37,16 +37,16 @@
 	  <p class="text-center">Page {{page}}</p>
 	  <div>
 		<span>
-		  <button ng-show="link.first" type="button" ng-click="skipto(link.first)" class="fixed-button btn btn-xs btn-primary">
-		    <span class="fa fa-fast-backward"></span>Latest
+		  <button ng-show="link.first" type="button" ng-click="skipto(link.first)" class="fixed-button btn btn-sm btn-primary">
+		    <span class="fas fa-fast-backward"></span>Latest
 		  </button>
-		  <button ng-show="link.prev" type="button" ng-click="skipto(link.prev)" class="fixed-button btn btn-xs btn-primary">
-		    <span class="fa fa-backward"></span>Newer
+		  <button ng-show="link.prev" type="button" ng-click="skipto(link.prev)" class="fixed-button btn btn-sm btn-primary">
+		    <span class="fas fa-backward"></span>Newer
 		  </button>
 		</span>
-		<span class="pull-right">
-		  <button ng-show="link.next" type="button" ng-click="skipto(link.next)" class="fixed-button-right btn btn-xs btn-primary">
-		    Older<span class="fa fa-forward"></span>
+		<span class="float-right">
+		  <button ng-show="link.next" type="button" ng-click="skipto(link.next)" class="fixed-button-right btn btn-sm btn-primary">
+		    Older<span class="fas fa-forward"></span>
 		  </button>
 		</span>
 	  </div>

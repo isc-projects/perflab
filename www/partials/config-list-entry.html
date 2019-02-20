@@ -1,0 +1,21 @@
+<td width="80%" class="name">
+  <span ng-class="{strike: !config.queue.enabled}">{{config.name}}</span>
+  <span ng-if="config.queue.state === 'error'" class="fas fa-warning"></span>
+</td>
+<td width="180px" nowrap>
+  <div ng-if="config.queue.running" class="progress" title="{{config.queue.state}}">
+	<div class="progress-bar progress-bar-striped progress-bar-animated"
+		  ng-class="{'progress-bar-info': !config.testing}" role="progressbar"
+		  aria-valuenow="{{config.progress}}" aria-valuemin="0" aria-valuemax="100"
+		  style="width: {{config.progress}}%; height: 100%">
+	  <span ng-if="!config.testing">{{config.queue.state}}</span>
+	</div>
+  </div>
+</td>
+<td nowrap align="right">
+  <cfg-button-queue />
+  <cfg-button-graph />
+  <cfg-button-list />
+  <cfg-button-export />
+  <cfg-button-edit />
+</td>

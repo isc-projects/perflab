@@ -34,12 +34,16 @@ app.controller('configListController',
 
 		$scope.configs = Configs;
 		$scope.filter = JSON.parse(localStorage.filter || 'false');
+		$scope.agents = ServerAgentResource.query();
 
 		$scope.toggleFilter = function(val) {
 			localStorage.filter = $scope.filter = !$scope.filter;
 		}
 
-		$scope.agents = ServerAgentResource.query();
+		$scope.filterFn = function(config) {
+			var active = (config.queue.enabled || config.queue.running);
+			return !$scope.filter || active;
+		}
 
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
@@ -257,6 +261,10 @@ app.controller('configEditController',
 			config.options = config.options || '';
 			config.global = config.global || '';
 			config.notes = config.notes || '';
+			config.preConfigure = config.preConfigure || '';
+			config.preBuild = config.preBuild || '';
+			config.preRun = config.preRun || '';
+			config.preTest = config.preTest || '';
 			config.postTest = config.postTest || '';
 			config.postRun = config.postRun || '';
 		}
@@ -282,11 +290,12 @@ app.controller('configEditController',
 			}
 		}
 
-		$scope.delete = function() {
+		$scope.archive = function() {
 			$scope.saving = true;
 			if ($scope.id !== undefined) {
-				$http.delete('/api/config/' + $scope.id).then(function(res) {
-					redirectNotify('Configuration deleted');
+				$scope.config.archived = true;
+				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+					redirectNotify('Configuration archived');
 				}).catch(Notify.danger).then(doneSaving);
 			}
 		}

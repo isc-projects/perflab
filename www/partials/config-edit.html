@@ -2,27 +2,28 @@
 
   <div class="row" ng-show="existing">
 	<div class="col-md-12">
-      <div class="alert alert-danger alert-dismissable" role="alert">
+	  <div>&nbsp;</div>
+	  <div class="alert alert-danger alert-dismissable" role="alert">
 <b>NB:</b> There are existing results for this configuration.  Please be advised
 that editing this configuration may invalidate any comparisons between
 pre- and post-edit results.
 	  </div>
-    </div>
+	</div>
   </div>
   <br ng-show="existing" />
 
   <div class="row">
 	<div class="col-md-12">
-	  <div class="panel panel-default">
-	  <div class="panel-heading">
-      <span>Configuration</span>
-	  <span class="pull-right" ng-show="existing">
-<a href="#/config/run/{{config._id}}/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bar-chart" title="Graph"></span></a>
-<a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-xs btn-primary"><span class="fa fa-bars" title="List"></span></a>
-<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-xs btn-primary"><span class="fa fa-download" title="Export CSV"></span></a>
-      </span>
-      </div>
-	  <div class="panel-body">
+	  <div class="card">
+	  <div class="card-header">
+	  <span class="float-title">Configuration</span>
+	  <span class="float-right" ng-show="existing">
+		<cfg-button-graph />
+		<cfg-button-list />
+		<cfg-button-export />
+	  </span>
+	  </div>
+	  <div class="card-body">
 		<form name="configEdit">
 		  <div class="form-group form-group-sm">
 			<label for="configName">Name</label>
@@ -39,8 +40,6 @@ pre- and post-edit results.
 			  <input id="configCheckout" type="checkbox" ng-model="config.flags.checkout">
 			  <label for="configCheckout">checkout before every run ({{:: settings.agents[type].repo.vcs | uppercase}} {{:: settings.agents[type].repo.url }})</label>
 			</div>
-		  </div>
-		  <div class="checkbox">
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="agent.subtypes && agent.subtypes.length > 1">
 			<label for="configMode">Server mode</label>
@@ -96,14 +95,13 @@ pre- and post-edit results.
 			  <option ng-if="config.mode !== 'recursive'" value="mega-small">1M small zones, 5% NXD</option>
 			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
 			  <option ng-if="config.mode === 'recursive'" value="mega-small">1M zones, 5% NXD</option>
-  			  <option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
+				<option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
 			</select>
 		  </div>
 <div class="form-group form-group-sm">
-<button class="fixed-button btn btn-xs dropdown-toggle" data-toggle="collapse" data-target="#advanced">
-Advanced <span class="fa fa-caret-down"></span></button>
+<button class="fixed-button btn btn-sm dropdown-toggle" data-toggle="collapse" data-target="#advanced">Advanced</button>
 </div>
-<div id="advanced" class="panel-group collapse">
+<div id="advanced" class="collapse">
 		  <div class="form-group form-group-sm">
 			<label for="configRuns">Test client runs per test (0 = use system default)</label>
 			<input type="number" min="0" class="form-control" id="configRuns" ng-model="config.testsPerRun" />
@@ -116,49 +114,57 @@ Advanced <span class="fa fa-caret-down"></span></button>
 			<label for="configWrapper">Server daemon exec wrapper and options</label>
 			<input class="form-control" id="configWrapper" ng-model="config.wrapper" ng-list=" " ng-trim="false" />
 		  </div>
+		  <div class="form-group form-group-sm" ng-show="::agent.canPreConfigure">
+			<label for="preConfigure">Pre-configure script</label>
+			<input class="form-control" id="preConfigure" ng-model="config.preConfigure" ng-list=" " ng-trim="false" />
+		  </div>
+		  <div class="form-group form-group-sm" ng-show="::agent.canPreBuild">
+			<label for="preBuild">Pre-build script</label>
+			<input class="form-control" id="preBuild" ng-model="config.preBuild" ng-list=" " ng-trim="false" />
+		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Pre-run script</label>
+			<label for="preRun">Pre-run script</label>
 			<input class="form-control" id="preRun" ng-model="config.preRun" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Pre-test script</label>
+			<label for="preTest">Pre-test script</label>
 			<input class="form-control" id="preTest" ng-model="config.preTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Post-test script</label>
+			<label for="postTest">Post-test script</label>
 			<input class="form-control" id="postTest" ng-model="config.postTest" ng-list=" " ng-trim="false" />
 		  </div>
 		  <div class="form-group form-group-sm">
-			<label for="configCleanup">Post-run script</label>
+			<label for="postRun">Post-run script</label>
 			<input class="form-control" id="postRun" ng-model="config.postRun" ng-list=" " ng-trim="false" />
 		  </div>
 </div>
 		  <div class="form-group">
-			<button type="submit" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
-			  <span class="fa fa-fw fa-save"></span>Save</button>
-			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-xs btn-primary" ng-disabled="configEdit.$invalid || configEdit.$dirty || saving" ng-show="id !== undefined">
-			  <span class="fa fa-fw fa-clone"></span>Clone</a>
-			<button type="submit" class="fixed-button btn btn-xs btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="id !== undefined" ng-disabled="saving">
-			  <span class="fa fa-trash"></span>Delete...</button>
+			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
+			  <span class="fas fa-fw fa-save"></span>Save</button>
+			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-sm btn-primary" ng-disabled="configEdit.$invalid || configEdit.$dirty || saving" ng-show="id !== undefined">
+			  <span class="fas fa-fw fa-clone"></span>Clone</a>
+			<button type="submit" class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-archive" ng-show="id !== undefined" ng-disabled="saving">
+			  <span class="fas fa-archive"></span>Archive...</button>
 		  </div>
 		</form>
 	  </div>
 	  </div>
 	</div>
   </div>
-  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
+  <div class="modal fade" id="confirm-archive" tabindex="-1" role="dialog" aria-labelledby="archive" aria-hidden="true">
 	<div class="modal-dialog">
 	  <div class="modal-content">
 		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		  <h5 class="modal-title">Confirm Delete</h5>
+		  <h6 class="modal-title">Confirm Archive</h6>
+		  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 		</div>
 		<div class="modal-body">
-		  Please confirm that you want to delete this configuration.  Once deleted all related statistics will be lost.
+		  Please confirm that you want to archive this configuration.
 		</div>
 		<div class="modal-footer">
-		  <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-		  <a role="button" class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="delete()">Delete</a>
+		  <button type="button" class="btn btn-default btn-outline-primary btn-sm" data-dismiss="modal">Cancel</button>
+		  <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="archive()">Archive</button>
 		</div>
 	  </div>
 	</div>

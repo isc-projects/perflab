@@ -39,7 +39,7 @@ angular.module("dygraphs-directive", [])
 					scope.view.from = xAxisRange[0];
 					scope.view.to = xAxisRange[1];
 					if (!scope.$root.$$phase) {
-						scope.$apply();
+						scope.$applyAsync();
 					}
 				};
 
