@@ -27,7 +27,7 @@ app.service('OpLog',
 				var op = ops[msg.op];
 				if (op) {
 					$rootScope.$broadcast('oplog.' + op + '.' + coll, msg.doc);
-					$rootScope.$apply();		// force Angular to notice
+					$rootScope.$applyAsync();		// force Angular to notice
 				}
 			}
 		})();
