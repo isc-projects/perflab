@@ -2,32 +2,28 @@
 
 'use strict';
 
-let settings = require('../settings'),
-	Database = require('../database'),
+let mongoCF = require('../etc/mongo'),
+	Database = require('../lib/database'),
 	Promise = require('bluebird');
 
+(async function() {
+	let db = await new Database(mongoCF).init();
+	let configs = await db.getConfigs();
 
-let dbapi = new Database(settings);
+    for (let config of configs) {
 
-dbapi.getConfigs().then((configs) => {
-	return Promise.each(configs, (config) => {
-		return dbapi.getRunsByConfigId(config._id).then((runs) => {
-			return Promise.each(runs, (run) => {
-				return dbapi.query((db) => {
-						db.collection('test').update(
-							{run_id: run._id, config_id: {$exists: false}},
-							{$set: {config_id: config._id}},
-							{multi: true}
-						);
-					}).then(() => 
-					dbapi.query((db) => {
-						db.collection('memory').update(
-							{run_id: run._id, config_id: {$exists: false}},
-							{$set: {config_id: config._id}},
-							{multi: true}
-						);
-					}));
-			});
-		});
-	});
-}).then(dbapi.close);
+		let runs = await db.getRunsByConfigId(config._id);
+		for (let run of runs) {
+			await db.handle.collection('test').update(
+				{run_id: run._id, config_id: {$exists: false}},
+				{$set: {config_id: config._id}},
+				{multi: true});
+			await db.handle.collection('memory').update(
+				{run_id: run._id, config_id: {$exists: false}},
+				{$set: {config_id: config._id}},
+				{multi: true});
+		}
+	}
+
+    await db.close();
+})();
