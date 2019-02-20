@@ -290,11 +290,12 @@ app.controller('configEditController',
 			}
 		}
 
-		$scope.delete = function() {
+		$scope.archive = function() {
 			$scope.saving = true;
 			if ($scope.id !== undefined) {
-				$http.delete('/api/config/' + $scope.id).then(function(res) {
-					redirectNotify('Configuration deleted');
+				$scope.config.archived = true;
+				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+					redirectNotify('Configuration archived');
 				}).catch(Notify.danger).then(doneSaving);
 			}
 		}
