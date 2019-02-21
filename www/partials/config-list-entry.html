@@ -1,5 +1,5 @@
 <td class="name" ng-class="{strike: !config.queue.enabled}">
-  <span ng-class="config.queue.state === 'error'" class="fas fa-exclamation-triangle"></span>
+  <span ng-if="config.queue.state === 'error'" class="fas fa-exclamation-triangle"></span>
   {{config.name}}
 </td>
 <td nowrap>

@@ -175,26 +175,30 @@ app.service('Configs',
 		var confById = {};
 		var loading = true;
 
+		function updateState(conf) {
+			conf.progress = 100;
+			conf.testing = false;
+			if (conf.queue.running) {
+				var state = conf.queue.state || '';
+				var match = state.match(/^test (\d+)\/(\d+)$/);
+				if (match) {
+					conf.testing = true;
+					conf.progress = 100.0 * (+match[1] / +match[2]);
+				}
+			}
+		}
+
 		function reindex() {
 			confById = {};
 			configs.forEach(function(conf, index) {
 				conf.index = index;
 				confById[conf._id] = conf;
-				conf.progress = 100;
-				conf.testing = false;
-				if (conf.queue.running) {
-					var state = conf.queue.state || '';
-					var match = state.match(/^test (\d+)\/(\d+)$/);
-					if (match) {
-						conf.testing = true;
-						conf.progress = 100.0 * (+match[1] / +match[2]);
-					}
-				}
+				updateState(conf);
 			});
 		}
 
 		function getConfigs() {
-			return ConfigResource.query().$promise.then(function(data) {
+			ConfigResource.query().$promise.then(function(data) {
 				configs.length = 0;
 				[].push.apply(configs, data);
 				reindex();
@@ -202,21 +206,42 @@ app.service('Configs',
 			}).catch(Notify.danger);
 		}
 
-		function updateConfig(event, doc) {
-			if (doc && doc.$set && doc.$set['queue.completed']) {
-				Beeper.play();
-				if (confById[doc._id]) {
-					var name = confById[doc._id].name
-					Notify.info({
-						message: `Run of ${name} completed`,
-						url: `#/config/run/${doc._id}/list`,
-						target: '_self'
-					}, {
-						allow_dismiss: true, delay: 30000
-					});
-				}
+		function insertConfig(event, doc) {
+			if (doc) {
+				return ConfigResource.get(doc._id).$promise.then(function(data) {
+					configs.push(data);
+					reindex();
+				}).catch(Notify.danger);
 			}
+		}
+
+		function deleteConfig(event, doc) {
+			//@ TODO - make more efficient
 			getConfigs();
+		}
+
+		function updateConfig(event, doc) {
+			if (!doc) return;
+			var conf = confById[doc._id];
+			if (!conf) return;
+
+			if (doc.$set && doc.$set['queue.completed']) {
+				Beeper.play();
+				Notify.info({
+					message: `Run of ${conf.name} completed`,
+					url: `#/config/run/${doc._id}/list`,
+					target: '_self'
+				}, {
+					allow_dismiss: true, delay: 30000
+				});
+			}
+
+			ConfigResource.get({id: doc._id}).$promise.then(function(data) {
+				conf.name = data.name;
+				conf.queue = data.queue;
+				conf.type = data.type;
+				updateState(conf);
+			});
 		}
 
 		function setEnabled(id, enabled)  {
@@ -238,8 +263,8 @@ app.service('Configs',
 		getConfigs();
 
 		OpLog.on('update.config', updateConfig);
-		OpLog.on('insert.config', updateConfig);
-		OpLog.on('delete.config', updateConfig);
+		OpLog.on('insert.config', insertConfig);
+		OpLog.on('delete.config', deleteConfig);
 
 		return {
 			all: configs,
