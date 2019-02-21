@@ -20,6 +20,8 @@ body {
 }
 
 .config-list .name {
+	width: 100%;
+	max-width: 400px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -124,7 +126,8 @@ pre.log {
 	text-align: right;
 }
 
-table .progress {
+.progress {
+	width: 100px;
 	margin: 4px;
 	height: 1.5rem;
 }

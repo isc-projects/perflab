@@ -13,40 +13,42 @@
 	  <div class="card-body">
 	  <div class="alert alert-info" ng-show="!runs.$resolved">Loading...</div>
 	  <div class="alert alert-warning" ng-show="runs.$resolved && !runs.length">None recorded</div>
+	  <div class="table-responsive-md">
 	  <table class="table table-sm table-striped" ng-show="runs.length">
-		<thead>
-		  <tr>
-			<th>Time</th>
-			<th>A</th><th>B</th>
-			<th class="text-right">Tests</th>
-			<th class="text-right">QPS</th>
-			<th class="text-right">StdDev</th>
-		  </tr>
-		</thead>
-		<tbody>
-		  <tr ng-repeat="run in runs track by run._id">
-			<td class="time"><a href="#/run/test/{{run._id}}/">{{run.created}}</td>
-			<td class=""><input type="checkbox" ng-checked="getgroup(run) === 'a'" ng-click="statsToggle(run, 'a')"/></td>
-			<td class=""><input type="checkbox" ng-checked="getgroup(run) === 'b'" ng-click="statsToggle(run, 'b')"/></td>
-			<td class="tests text-right">{{run.stats ? run.stats.count : "-"}}</td>
-			<td class="average text-right">{{run.stats ? run.stats.average.toFixed(1) : "-"}}</td>
-			<td class="stddev text-right">{{run.stats ? run.stats.stddev.toFixed(1) : "-"}}</td>
-		  </tr>
-		</tbody>
-	  </table>
+		  <thead>
+			<tr>
+			  <th>Time</th>
+			  <th>A</th><th>B</th>
+			  <th class="text-right">Tests</th>
+			  <th class="text-right">QPS</th>
+			  <th class="text-right">StdDev</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			<tr ng-repeat="run in runs track by run._id">
+			  <td class="time"><a href="#/run/test/{{run._id}}/">{{run.created}}</td>
+			  <td class=""><input type="checkbox" ng-checked="getgroup(run) === 'a'" ng-click="statsToggle(run, 'a')"/></td>
+			  <td class=""><input type="checkbox" ng-checked="getgroup(run) === 'b'" ng-click="statsToggle(run, 'b')"/></td>
+			  <td class="tests text-right">{{run.stats ? run.stats.count : "-"}}</td>
+			  <td class="average text-right">{{run.stats ? run.stats.average.toFixed(1) : "-"}}</td>
+			  <td class="stddev text-right">{{run.stats ? run.stats.stddev.toFixed(1) : "-"}}</td>
+			</tr>
+		  </tbody>
+		</table>
+	  </div>
 	  <p class="text-center">Page {{page}}</p>
 	  <div>
 		<span>
 		  <button ng-show="link.first" type="button" ng-click="skipto(link.first)" class="fixed-button btn btn-sm btn-primary">
-		    <span class="fas fa-fast-backward"></span>Latest
+			<span class="fas fa-fast-backward"></span>Latest
 		  </button>
 		  <button ng-show="link.prev" type="button" ng-click="skipto(link.prev)" class="fixed-button btn btn-sm btn-primary">
-		    <span class="fas fa-backward"></span>Newer
+			<span class="fas fa-backward"></span>Newer
 		  </button>
 		</span>
 		<span class="float-right">
 		  <button ng-show="link.next" type="button" ng-click="skipto(link.next)" class="fixed-button-right btn btn-sm btn-primary">
-		    Older<span class="fas fa-forward"></span>
+			Older<span class="fas fa-forward"></span>
 		  </button>
 		</span>
 	  </div>
