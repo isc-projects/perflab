@@ -167,9 +167,9 @@ app.service('LogWatcher',
 // also supports changing the queue 'enabled' and 'repeat' state for
 // individual configurations
 //
-app.service('Configs',
-	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigResource',
-	function($http, Notify, Beeper, OpLog, ConfigResource) {
+app.service('ConfigList',
+	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigListResource',
+	function($http, Notify, Beeper, OpLog, ConfigListResource) {
 
 		var configs = [], queue = [];
 		var confById = {};
@@ -198,7 +198,7 @@ app.service('Configs',
 		}
 
 		function getConfigs() {
-			ConfigResource.query().$promise.then(function(data) {
+			ConfigListResource.query().$promise.then(function(data) {
 				configs.length = 0;
 				[].push.apply(configs, data);
 				reindex();
@@ -208,7 +208,7 @@ app.service('Configs',
 
 		function insertConfig(event, doc) {
 			if (doc) {
-				return ConfigResource.get(doc._id).$promise.then(function(data) {
+				return ConfigListResource.get(doc._id).$promise.then(function(data) {
 					configs.push(data);
 					reindex();
 				}).catch(Notify.danger);
@@ -236,7 +236,7 @@ app.service('Configs',
 				});
 			}
 
-			ConfigResource.get({id: doc._id}).$promise.then(function(data) {
+			ConfigListResource.get({id: doc._id}).$promise.then(function(data) {
 				conf.name = data.name;
 				conf.queue = data.queue;
 				conf.type = data.type;

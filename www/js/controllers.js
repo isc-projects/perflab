@@ -29,10 +29,10 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'Configs', 'ServerAgentResource',
-	function($scope, Configs, ServerAgentResource) {
+	['$scope', 'ConfigList', 'ServerAgentResource',
+	function($scope, ConfigList, ServerAgentResource) {
 
-		$scope.configs = Configs;
+		$scope.configs = ConfigList;
 		$scope.filter = JSON.parse(localStorage.filter || 'false');
 		$scope.agents = ServerAgentResource.query();
 

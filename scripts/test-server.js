@@ -21,7 +21,7 @@ let id = process.argv[2];
 	try {
 		let db = await new Database(mongoCF).init();
 
-		await db.getConfigById(id).then((config) => {
+		await db.getConfig(id).then((config) => {
 			config.flags = config.flags || {};
 			let path = `${settings.path}/tests/${config._id}`;
 			let type = config.type;

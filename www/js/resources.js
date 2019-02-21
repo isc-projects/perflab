@@ -32,6 +32,12 @@ module.factory('RunResource', ['$resource',
 	}
 ]);
 
+module.factory('ConfigListResource', ['$resource',
+	function($resource) {
+		return $resource('/api/config_list/:id', {}, {});
+	}
+]);
+
 module.factory('ConfigResource', ['$resource',
 	function($resource) {
 		return $resource('/api/config/:id', {}, {});

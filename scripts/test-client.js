@@ -18,7 +18,7 @@ if (process.argv.length < 3) {
 let id = process.argv[2];
 let db = new Database(mongoCF);
 
-db.getConfigById(id).then((config) => {
+db.getConfig(id).then((config) => {
 	config.flags = config.flags || {};
 	config.flags.checkout = false;
 	let serverClass = Agents.servers[config.type];
