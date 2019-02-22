@@ -41,8 +41,9 @@ app.controller('configListController',
 		}
 
 		$scope.filterFn = function(config) {
-			var active = (config.queue.enabled || config.queue.running);
-			return !$scope.filter || active;
+			let q = config.queue;
+			let active = (q.enabled || q.running);
+			return !config.archived && (!$scope.filter || active);
 		}
 
 		$scope.setSort = function(sort) {
