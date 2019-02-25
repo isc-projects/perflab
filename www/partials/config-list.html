@@ -20,8 +20,9 @@
 			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'name'}" href="" ng-click="setSort('name')">Name</a>
 			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': sort === 'pri'}" href="" ng-click="setSort('pri')">Run order</a>
 			<div class="dropdown-divider"></div>
-			<h5 class="dropdown-header">Filter</h5>
-			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': filter}" href="" ng-click="toggleFilter()">Hide inactive</a>
+			<h5 class="dropdown-header">Show</h5>
+			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': archived}" href="" ng-click="toggleArchived()">Archived</a>
+			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': inactive, disabled: archived}" href="" ng-click="toggleInactive()">Inactive</a>
 		  </div>
 		</span>
 	  </span>
@@ -32,7 +33,7 @@
 	  <div class="table-responsive-md">
 		<table class="table table-sm table-striped config-list">
 		  <tbody>
-			<tr perflab-config-entry ng-repeat="config in configs.all | filter:filterFn | orderBy:predicate track by config._id" class="config" />
+			<tr perflab-config-entry ng-repeat="config in configs.all | filter:showFn | orderBy:predicate track by config._id" class="config" />
 		  </tbody>
 		</table>
 	  </div>

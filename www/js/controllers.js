@@ -33,17 +33,33 @@ app.controller('configListController',
 	function($scope, ConfigList, ServerAgentResource) {
 
 		$scope.configs = ConfigList;
-		$scope.filter = JSON.parse(localStorage.filter || 'false');
+		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
+		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
 
-		$scope.toggleFilter = function(val) {
-			localStorage.filter = $scope.filter = !$scope.filter;
+		$scope.toggleInactive = function(val) {
+			localStorage.inactive = $scope.inactive = !$scope.inactive;
 		}
 
-		$scope.filterFn = function(config) {
+		$scope.toggleArchived = function(val) {
+			localStorage.archived = $scope.archived = !$scope.archived;
+		}
+
+		$scope.showFn = function(config) {
 			let q = config.queue;
+			let archived = config.archived;
 			let active = (q.enabled || q.running);
-			return !config.archived && (!$scope.filter || active);
+
+			let show = false;
+
+			if ($scope.archived) {
+				return true;
+			} else {
+				if (archived) {
+					return false;
+				}
+				return $scope.inactive ? true : active;
+			}
 		}
 
 		$scope.setSort = function(sort) {
