@@ -240,6 +240,7 @@ app.service('ConfigList',
 				conf.name = data.name;
 				conf.queue = data.queue;
 				conf.type = data.type;
+				conf.archived = data.archived;
 				updateState(conf);
 			});
 		}
