@@ -37,11 +37,11 @@ app.controller('configListController',
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
 
-		$scope.toggleInactive = function(val) {
+		$scope.toggleShowInactive = function(val) {
 			localStorage.inactive = $scope.inactive = !$scope.inactive;
 		}
 
-		$scope.toggleArchived = function(val) {
+		$scope.toggleShowArchived = function(val) {
 			localStorage.archived = $scope.archived = !$scope.archived;
 		}
 
@@ -207,15 +207,15 @@ app.controller('configEditController',
 	 'ServerAgentResource', 'ClientAgentResource',
 	function($scope, $http, $route, $location, $routeParams,
 			 Notify, RunResource, ConfigResource, SettingsResource,
-			 ServerAgentResource, ClientAgentResource) {
-
-		var id = $scope.id = $routeParams.id;
+			 ServerAgentResource, ClientAgentResource)
+	{
+		let settings = SettingsResource.get();
+		let id = $scope.id = $routeParams.id;
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
 			$scope.clients = ClientAgentResource.query({protocol: agent.protocol})
 		});
 		$scope.type = $routeParams.type;
-		$scope.settings = SettingsResource.get();
 
 		if ($scope.id === undefined) {
 			if ($routeParams.clone !== undefined) {
@@ -230,15 +230,9 @@ app.controller('configEditController',
 					$scope.configEdit.$setDirty();
 				}).catch(redirectNotify);
 			}
-			$scope.settings.$promise.then(function() {
-				setDefaults();
-				$scope.config.type = $scope.type;
-			});
+			setDefaults();
 		} else {
-			$http.get('/api/config/' + $scope.id).then(function(res) {
-				$scope.config = res.data;
-				$scope.settings.$promise.then(setDefaults);
-			}).catch(redirectNotify);
+			resetForm();
 
 			// just used to check if this config has any results
 			RunResource.query({config_id: id, limit: 1}, function(data) {
@@ -254,6 +248,18 @@ app.controller('configEditController',
 			}, 3000);
 		}
 
+		function resetForm() {
+			if ($scope.id) {
+				$http.get('/api/config/' + $scope.id).then(function(res) {
+					$scope.config = res.data;
+					$scope.configEdit.$setPristine();
+					setDefaults();
+				}).catch(redirectNotify);
+			} else {
+				setDefaults();
+			}
+		}
+
 		function setDefaults() {
 			var config = $scope.config = $scope.config || {};
 
@@ -264,7 +270,9 @@ app.controller('configEditController',
 			}
 
 			if (!config.client) {
-				config.client = $scope.settings.default_clients[$scope.agent.protocol];
+				settings.$promise.then(function(s) {
+					config.client = s.default_clients[$scope.agent.protocol];
+				});
 			}
 
 			var args = config.args = config.args || {};
@@ -273,6 +281,7 @@ app.controller('configEditController',
 			args.server = args.server || [];
 			args.tester = args.tester || [];
 
+			config.type = $scope.type;
 			config.zoneset = config.zoneset || 'root';
 			config.queryset = config.queryset || '';
 			config.options = config.options || '';
@@ -289,6 +298,8 @@ app.controller('configEditController',
 		function doneSaving() {
 			$scope.saving = false;
 		}
+
+		$scope.reset = resetForm;
 
 		$scope.save = function() {
 			$scope.saving = true;
@@ -307,15 +318,26 @@ app.controller('configEditController',
 			}
 		}
 
-		$scope.archive = function() {
+		$scope.delete = function() {
 			$scope.saving = true;
-			if ($scope.id !== undefined) {
-				$scope.config.archived = true;
-				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
-					redirectNotify('Configuration archived');
-				}).catch(Notify.danger).then(doneSaving);
-			}
+			$http.delete('/api/config/' + $scope.id, { }).then(function() {
+				redirectNotify('Configuration deleted');
+			}).catch(Notify.danger).then(doneSaving);
 		}
+
+        $scope.toggleArchived = function() {
+            if ($scope.id !== undefined) {
+                let c = $scope.config;
+				c.archived = !c.archived;
+                $http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+					if (c.archived)  {
+						Notify.info('Configuration archived');
+					} else {
+						Notify.info('Configuration restored');
+					}
+                }).catch(Notify.danger).then(doneSaving);
+            }
+        }
 	}
 ]);
 

@@ -30,6 +30,7 @@
 		function notify(message, opts) {
 
 			if (message instanceof Error) {
+				console.trace(message);
 				message = message.message;
 			} else if (typeof message === 'object' && message.data) {
 				message = message.data;
