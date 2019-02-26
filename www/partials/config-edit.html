@@ -38,7 +38,7 @@ pre- and post-edit results.
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
 			<div>
 			  <input id="configCheckout" type="checkbox" ng-model="config.flags.checkout">
-			  <label for="configCheckout">checkout before every run ({{:: settings.agents[type].repo.vcs | uppercase}} {{:: settings.agents[type].repo.url }})</label>
+			  <label for="configCheckout">checkout before every run ({{:: settings.agents[type].repo.vcs || "git" | uppercase}} {{:: settings.agents[type].repo.url }})</label>
 			</div>
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="agent.subtypes && agent.subtypes.length > 1">

@@ -209,7 +209,7 @@ app.controller('configEditController',
 			 Notify, RunResource, ConfigResource, SettingsResource,
 			 ServerAgentResource, ClientAgentResource)
 	{
-		let settings = SettingsResource.get();
+		let settings = $scope.settings = SettingsResource.get();
 		let id = $scope.id = $routeParams.id;
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
