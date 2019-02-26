@@ -26,6 +26,7 @@
     "mongo-oplog": "^2.1.4",
     "mongodb": "^2.2.36",
     "parseurl": "^1.3.0",
+    "quip": "git+https://git@github.com/ccorcos/quip.git",
     "serve-static": "^1.13.2",
     "ws": "^6.1.4"
   },
