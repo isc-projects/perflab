@@ -320,7 +320,7 @@ app.controller('configEditController',
 
 		$scope.delete = function() {
 			$scope.saving = true;
-			$http.delete('/api/config/' + $scope.id, { }).then(function() {
+			$http.delete('/api/config/' + $scope.id, { params: { really: true }}).then(function() {
 				redirectNotify('Configuration deleted');
 			}).catch(Notify.danger).then(doneSaving);
 		}
