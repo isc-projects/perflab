@@ -208,7 +208,7 @@ app.service('ConfigList',
 
 		function insertConfig(event, doc) {
 			if (doc) {
-				return ConfigListResource.get(doc._id).$promise.then(function(data) {
+				return ConfigListResource.get({id: doc._id}).$promise.then(function(data) {
 					configs.push(data);
 					reindex();
 				}).catch(Notify.danger);
