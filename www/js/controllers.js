@@ -32,10 +32,26 @@ app.controller('configListController',
 	['$scope', 'ConfigList', 'ServerAgentResource',
 	function($scope, ConfigList, ServerAgentResource) {
 
+		var protomap = {
+			dns:	'DNS',
+			dhcp4:	'DHCP',
+			dhcp6:	'DHCP'
+		};
+
 		$scope.configs = ConfigList;
 		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
+
+		// set up protocol list
+		$scope.agents.$promise.then(function(agents) {
+			let protocols = {};
+			agents.forEach(agent => {
+				var proto = protomap[agent.protocol] || "Unknpwn";
+				protocols[proto] = 1;
+			});
+			$scope.protocols = Object.keys(protocols);
+		});
 
 		$scope.toggleShowInactive = function(val) {
 			localStorage.inactive = $scope.inactive = !$scope.inactive;
