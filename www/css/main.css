@@ -42,6 +42,10 @@ input[type="checkbox"] + label {
 	text-decoration: line-through;
 }
 
+.archived {
+	color: #a0a0a0;
+}
+
 .scroll {
 	max-height: 600px;
 	overflow-y: auto;

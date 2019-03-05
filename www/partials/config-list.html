@@ -8,14 +8,6 @@
       </span>
 	  <span class="text-right ml-auto">
 		<span class="btn-group">
-		  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
-			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
-		  </button>
-		  <ul class="dropdown-menu dropdown-menu-right">
-			<a class="dropdown-item" ng-repeat="agent in agents" href="#/config/new/{{agent.key}}">{{agent.name}}</a>
-		  </ul>
-		 </span>
-		<span class="btn-group">
 		  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle" title="view settings"
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View
 		  </button>
@@ -29,6 +21,14 @@
 			<a class="dropdown-item bfa-icon" ng-class="{'fa-check': inactive, disabled: archived}" href="" ng-click="toggleShowInactive()">Inactive</a>
 		  </div>
 		</span>
+		<span class="btn-group">
+		  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
+			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
+		  </button>
+		  <ul class="dropdown-menu dropdown-menu-right">
+			<a class="dropdown-item" ng-repeat="agent in agents" href="#/config/new/{{agent.key}}">{{agent.name}}</a>
+		  </ul>
+		 </span>
 	  </span>
       </form>
 	</div>
