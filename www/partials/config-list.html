@@ -1,8 +1,12 @@
 <div class="container">
   <div class="card">
 	<div class="card-header">
+      <form class="form-inline">
 	  <span>Configurations</span>
-	  <span class="float-right">
+      <span class="col-auto">
+        <input type="text" class="form-control form-control-sm form-inline" placeholder="Search" ng-model="search" />
+      </span>
+	  <span class="text-right ml-auto">
 		<span class="btn-group">
 		  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
@@ -26,6 +30,7 @@
 		  </div>
 		</span>
 	  </span>
+      </form>
 	</div>
 	<div class="card-body">
 	  <div class="alert alert-info" ng-show="configs.loading()">Loading...</div>

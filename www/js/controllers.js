@@ -50,7 +50,12 @@ app.controller('configListController',
 			let archived = config.archived;
 			let active = (q.enabled || q.running);
 
-			let show = false;
+			if ($scope.search) {
+				let search = $scope.search.trim().toLowerCase();
+				if (search.length && config.name.toLowerCase().indexOf(search) < 0) {
+					return false;
+				}
+			}
 
 			if ($scope.archived) {
 				return true;
