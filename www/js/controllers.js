@@ -32,25 +32,24 @@ app.controller('configListController',
 	['$scope', 'ConfigList', 'ServerAgentResource',
 	function($scope, ConfigList, ServerAgentResource) {
 
-		var protomap = {
-			dns:	'DNS',
-			dhcp4:	'DHCP',
-			dhcp6:	'DHCP'
-		};
-
 		$scope.configs = ConfigList;
 		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
 
 		// set up protocol list
+		let agentProtocol = {};
 		$scope.agents.$promise.then(function(agents) {
 			let protocols = {};
 			agents.forEach(agent => {
-				var proto = protomap[agent.protocol] || "Unknpwn";
+				let proto = protoMap(agent.protocol) || "Unknown";
 				protocols[proto] = 1;
+				agentProtocol[agent.key] = proto;
 			});
 			$scope.protocols = Object.keys(protocols);
+
+			// load previously selected protocal value
+			$scope.setProto(localStorage.proto);
 		});
 
 		$scope.toggleShowInactive = function(val) {
@@ -61,7 +60,15 @@ app.controller('configListController',
 			localStorage.archived = $scope.archived = !$scope.archived;
 		}
 
-		$scope.showFn = function(config) {
+		$scope.agentFilter = function(agent) {
+			if (!$scope.proto) {
+				return true;
+			}
+
+			return $scope.proto === protoMap(agent.protocol);
+		}
+
+		$scope.configFilter = function(config) {
 			let q = config.queue;
 			let archived = config.archived;
 			let active = (q.enabled || q.running);
@@ -71,6 +78,10 @@ app.controller('configListController',
 				if (search.length && config.name.toLowerCase().indexOf(search) < 0) {
 					return false;
 				}
+			}
+
+			if ($scope.proto && $scope.proto !== agentProtocol[config.type]) {
+				return false;
 			}
 
 			if ($scope.archived) {
@@ -83,22 +94,34 @@ app.controller('configListController',
 			}
 		}
 
-		$scope.setSort = function(sort) {
+		function protoMap(proto) {
+			return proto ? proto.replace(/\d/g, '').toUpperCase() : undefined;
+		}
+
+		$scope.setProto = function(proto) {
+			proto = protoMap(proto);
+			if ($scope.protocols.indexOf(proto) < 0) {
+				proto = undefined;
+			}
+			localStorage.proto = $scope.proto = proto;
+		}
+
+		$scope.setConfigOrder = function(sort) {
 			if (sort === 'pri') {
-				$scope.predicate = [
+				$scope.configOrder = [
 					'-queue.running',
 					'-queue.enabled',
 					'-queue.priority',
 					'queue.completed'
 				];
 			} else {
-				$scope.predicate = 'name';
+				$scope.configOrder = 'name';
 			}
 			localStorage.sort = $scope.sort = sort;
 		}
 
-		// do initial sort
-		$scope.setSort(localStorage.sort || "name");
+		// do initial sort and filter
+		$scope.setConfigOrder(localStorage.sort || "name");
 	}
 ]);
 
