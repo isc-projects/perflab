@@ -17,7 +17,7 @@ module.factory('TestResource', ['$resource',
 
 module.factory('MemoryResource', ['$resource',
 	function($resource) {
-		return $resource('/api/run/memory/:run_id/', {}, {});
+		return $resource('/api/run/memory/:run_id/');
 	}
 ]);
 
@@ -34,24 +34,19 @@ module.factory('RunResource', ['$resource',
 
 module.factory('ConfigListResource', ['$resource',
 	function($resource) {
-		return $resource('/api/config_list/:id', {}, {});
+		return $resource('/api/config_list/:id');
 	}
 ]);
 
 module.factory('ConfigResource', ['$resource',
 	function($resource) {
-		return $resource('/api/config/:id', {}, {});
+		return $resource('/api/config/:id');
 	}
 ]);
 
 module.factory('ServerAgentResource', ['$resource',
 	function($resource) {
-		return $resource('/api/agent/server/:agent', {}, {
-			query: {
-				url: '/api/agent/server/',
-				isArray: true
-			}
-		});
+		return $resource('/api/agent/server/:agent');
 	}
 ]);
 
@@ -68,7 +63,7 @@ module.factory('ClientAgentResource', ['$resource',
 
 module.factory('SettingsResource', ['$resource',
 	function($resource) {
-		return $resource('/api/settings/', {}, {});
+		return $resource('/api/settings/');
 	}
 ]);
 
