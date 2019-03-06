@@ -29,15 +29,15 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'ConfigList', 'ServerAgentResource',
-	function($scope, ConfigList, ServerAgentResource) {
+	['$scope', 'ConfigList', 'Agents',
+	function($scope, ConfigList, Agents) {
 
 		// load previously selected protocol value
 		$scope.proto = localStorage.proto || undefined;
 		$scope.configOrder = localStorage.configOrder || "name";
 		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
-		$scope.agents = ServerAgentResource.query();
+		$scope.agents = Agents.servers;
 
 		// set up protocol list
 		let agentProtocol = {};
@@ -259,7 +259,7 @@ app.controller('configEditController',
 		let id = $scope.id = $routeParams.id;
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
-			$scope.clients = ClientAgentResource.query({protocol: agent.protocol})
+			$scope.clients = ClientAgentResource.queryByProtocol({protocol: agent.protocol})
 		});
 		$scope.type = $routeParams.type;
 

@@ -359,4 +359,14 @@ app.service('Stats',
 	}
 ]);
 
+app.service('Agents',
+	['Notify', 'ClientAgentResource', 'ServerAgentResource',
+	function(Notify, ClientAgentResource, ServerAgentResource) {
+		return {
+			clients: ClientAgentResource.query(),
+			servers: ServerAgentResource.query()
+		}
+	}
+]);
+
 })();
