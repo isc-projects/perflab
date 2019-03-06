@@ -175,7 +175,7 @@ app.service('ConfigList',
 		configs.$promise.then(updateAll);
 
 		function configIndex(id) {
-			const index = configs.find(config => config._id === id);
+			const index = configs.findIndex(config => config._id === id);
 			if (index < 0) {
 				throw new Error("request for unexpected configuration ID");
 			}
