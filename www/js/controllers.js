@@ -34,7 +34,7 @@ app.controller('configListController',
 
 		// load previously selected protocol value
 		$scope.proto = localStorage.proto || undefined;
-		$scope.sort = localStorage.sort || "name";
+		$scope.configOrder = localStorage.configOrder || "name";
 		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
@@ -107,8 +107,8 @@ app.controller('configListController',
 			localStorage.proto = $scope.proto = proto;
 		}
 
-		$scope.setConfigOrder = function(sort) {
-			if (sort === 'pri') {
+		$scope.setConfigOrder = function(order) {
+			if (order === 'pri') {
 				$scope.configOrder = [
 					'-archived',
 					'-queue.running',
@@ -119,11 +119,11 @@ app.controller('configListController',
 			} else {
 				$scope.configOrder = 'name';
 			}
-			localStorage.sort = $scope.sort = sort;
+			localStorage.configOrder = $scope.configOrder = order;
 		}
 
-		// do initial sort and filter
-		$scope.setConfigOrder($scope.sort);
+		// do initial order and filter
+		$scope.setConfigOrder($scope.configOrder);
 	}
 ]);
 
