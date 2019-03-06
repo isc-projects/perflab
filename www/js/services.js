@@ -171,64 +171,62 @@ app.service('ConfigList',
 	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigListResource',
 	function($http, Notify, Beeper, OpLog, ConfigListResource) {
 
-		var configs = [], queue = [];
-		var confById = {};
-		var loading = true;
+		const configs = ConfigListResource.query();
+		configs.$promise.then(updateAll);
 
-		function updateState(conf) {
-			conf.progress = 100;
-			conf.testing = false;
-			if (conf.queue.running) {
-				var state = conf.queue.state || '';
+		function configIndex(id) {
+			const index = configs.find(config => config._id === id);
+			if (index < 0) {
+				throw new Error("request for unexpected configuration ID");
+			}
+			return index;
+		}
+
+		function configById(id) {
+			const index = configIndex(id);
+			return configs[index];
+		}
+
+		function updateState(config) {
+			config.progress = 100;
+			config.testing = false;
+			if (config.queue.running) {
+				var state = config.queue.state || '';
 				var match = state.match(/^test (\d+)\/(\d+)$/);
 				if (match) {
-					conf.testing = true;
-					conf.progress = 100.0 * (+match[1] / +match[2]);
+					config.testing = true;
+					config.progress = 100.0 * (+match[1] / +match[2]);
 				}
 			}
 		}
 
-		function reindex() {
-			confById = {};
-			configs.forEach(function(conf, index) {
-				conf.index = index;
-				confById[conf._id] = conf;
-				updateState(conf);
-			});
-		}
-
-		function getConfigs() {
-			ConfigListResource.query().$promise.then(function(data) {
-				configs.length = 0;
-				[].push.apply(configs, data);
-				reindex();
-				loading = false;
-			}).catch(Notify.danger);
+		function updateAll(configs) {
+			configs.forEach(updateState);
 		}
 
 		function insertConfig(event, doc) {
 			if (doc) {
-				return ConfigListResource.get({id: doc._id}).$promise.then(function(data) {
-					configs.push(data);
-					reindex();
+				return ConfigListResource.get({id: doc._id}).$promise.then(function(config) {
+					configs.push(config);
+					updateState(config);
 				}).catch(Notify.danger);
 			}
 		}
 
 		function deleteConfig(event, doc) {
-			//@ TODO - make more efficient
-			getConfigs();
+			if (!doc) return;
+			const index = configIndex(doc._id);
+			configs.slice(index, 1);
 		}
 
 		function updateConfig(event, doc) {
 			if (!doc) return;
-			var conf = confById[doc._id];
-			if (!conf) return;
+			let config = configById(doc._id);
 
 			if (doc.$set && doc.$set['queue.completed']) {
 				Beeper.play();
 				Notify.info({
-					message: `Run of ${conf.name} completed`,
+					message: `Run of ${config.name} completed`,
 					url: `#/config/run/${doc._id}/list`,
 					target: '_self'
 				}, {
@@ -237,11 +235,11 @@ app.service('ConfigList',
 			}
 
 			ConfigListResource.get({id: doc._id}).$promise.then(function(data) {
-				conf.name = data.name;
-				conf.queue = data.queue;
-				conf.type = data.type;
-				conf.archived = data.archived;
-				updateState(conf);
+				config.name = data.name;
+				config.queue = data.queue;
+				config.type = data.type;
+				config.archived = data.archived;
+				updateState(config);
 			});
 		}
 
@@ -254,14 +252,13 @@ app.service('ConfigList',
 		}
 
 		function togglePriority(id) {
-			if (confById[id] && confById[id].queue) {
-				var pri = confById[id].queue.priority || 0;
+			let config = configById(id);
+			if (config.queue) {
+				var pri = config.queue.priority || 0;
 				pri = pri ? 0 : 1;
 				return $http.put('/api/config/' + id + '/queue/priority/', {priority: pri}).catch(Notify.danger);
 			}
 		}
-
-		getConfigs();
 
 		OpLog.on('update.config', updateConfig);
 		OpLog.on('insert.config', insertConfig);
@@ -269,9 +266,6 @@ app.service('ConfigList',
 
 		return {
 			all: configs,
-			loading: function() {
-				return loading;
-			},
 			setEnabled: setEnabled,
 			setRepeat: setRepeat,
 			togglePriority: togglePriority
