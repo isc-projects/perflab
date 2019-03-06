@@ -86,6 +86,7 @@ app.controller('configListController',
 		$scope.setSort = function(sort) {
 			if (sort === 'pri') {
 				$scope.predicate = [
+					'-archived',
 					'-queue.running',
 					'-queue.enabled',
 					'-queue.priority',
