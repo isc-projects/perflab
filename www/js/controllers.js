@@ -32,7 +32,9 @@ app.controller('configListController',
 	['$scope', 'ConfigList', 'ServerAgentResource',
 	function($scope, ConfigList, ServerAgentResource) {
 
-		$scope.configs = ConfigList;
+		// load previously selected protocol value
+		$scope.proto = localStorage.proto || undefined;
+		$scope.sort = localStorage.sort || "name";
 		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 		$scope.agents = ServerAgentResource.query();
@@ -47,9 +49,9 @@ app.controller('configListController',
 				agentProtocol[agent.key] = proto;
 			});
 			$scope.protocols = Object.keys(protocols);
-
-			// load previously selected protocal value
-			$scope.setProto(localStorage.proto);
+			$scope.setProto($scope.proto);
+		}).then(function() {
+			$scope.configs = ConfigList;
 		});
 
 		$scope.toggleShowInactive = function(val) {
@@ -64,7 +66,6 @@ app.controller('configListController',
 			if (!$scope.proto) {
 				return true;
 			}
-
 			return $scope.proto === protoMap(agent.protocol);
 		}
 
@@ -122,7 +123,7 @@ app.controller('configListController',
 		}
 
 		// do initial sort and filter
-		$scope.setConfigOrder(localStorage.sort || "name");
+		$scope.setConfigOrder($scope.sort);
 	}
 ]);
 
