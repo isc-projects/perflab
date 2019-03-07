@@ -6,7 +6,7 @@ var module = angular.module('isc.resources', ['ngResource']);
 
 module.factory('TestResource', ['$resource',
 	function($resource) {
-		return $resource('/api/test/:id', {}, {
+		return $resource('/api/test/:id', { id: '@_id' }, {
 			query: {
 				url: '/api/run/test/:run_id/',
 				isArray: true
@@ -23,7 +23,7 @@ module.factory('MemoryResource', ['$resource',
 
 module.factory('RunResource', ['$resource',
 	function($resource) {
-		return $resource('/api/run/:id', {}, {
+		return $resource('/api/run/:id', { id: '@_id' }, {
 			query: {
 				url: '/api/config/run/:config_id/',
 				isArray: true
@@ -34,13 +34,18 @@ module.factory('RunResource', ['$resource',
 
 module.factory('ConfigListResource', ['$resource',
 	function($resource) {
-		return $resource('/api/config_list/:id');
+		return $resource('/api/config_list/:id', { id: '@_id' });
 	}
 ]);
 
 module.factory('ConfigResource', ['$resource',
 	function($resource) {
-		return $resource('/api/config/:id');
+		return $resource('/api/config/:id', { id: '@_id' }, {
+			update: {
+				method: 'PUT',
+				transformResponse: (data) => angular.fromJson(data).value
+			}
+		});
 	}
 ]);
 

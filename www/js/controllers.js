@@ -248,39 +248,70 @@ app.controller('testDetailController',
 ]);
 
 app.controller('configEditController',
-	['$scope', '$http', '$route', '$location', '$routeParams',
+	['$scope', '$route', '$location', '$routeParams',
 	 'Notify', 'RunResource', 'ConfigResource', 'SettingsResource',
-	 'ServerAgentResource', 'ClientAgentResource',
-	function($scope, $http, $route, $location, $routeParams,
+	 'Agents', 'ServerAgentResource', 'ClientAgentResource',
+	function($scope, $route, $location, $routeParams,
 			 Notify, RunResource, ConfigResource, SettingsResource,
-			 ServerAgentResource, ClientAgentResource)
+			 Agents, ServerAgentResource, ClientAgentResource)
 	{
 		let settings = $scope.settings = SettingsResource.get();
 		let id = $scope.id = $routeParams.id;
+		let config;
+
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
 			$scope.clients = ClientAgentResource.queryByProtocol({protocol: agent.protocol})
 		});
 		$scope.type = $routeParams.type;
 
+		// creating or cloning
 		if ($scope.id === undefined) {
-			if ($routeParams.clone !== undefined) {
-				$http.get('/api/config/' + $routeParams.clone).then(function(res) {
-					$scope.config = res.data;
-					$scope.config.name = 'Clone of ' + $scope.config.name;
-					$scope.config.notes = $scope.config.name + ' ' + Date().toString();
-					delete $scope.id;
-					delete $scope.config._id;
-					delete $scope.config.created;
-					delete $scope.config.updated;
-					$scope.configEdit.$setDirty();
-				}).catch(redirectNotify);
-			}
-			setDefaults();
-		} else {
-			resetForm();
 
-			// just used to check if this config has any results
+			// create a new resource
+			config = $scope.config = new ConfigResource();
+
+			if ($routeParams.clone === undefined) {
+				// creating
+				setDefaults();
+			} else {
+				// cloning
+				cloneConfig().then(() => {
+					$scope.configEdit.$setDirty();
+				});
+			}
+
+		} else {
+			// loading
+			resetForm();
+		}
+
+		function cloneConfig() {
+
+			// retrieve the original
+			let original = ConfigResource.get({ id: $routeParams.clone });
+
+			// copy properties once the resource is retrieved
+			return original.$promise.then(() =>  {
+				for (let [key, value] of Object.entries(original)) {
+					if (key.substring(0, 1) !== '$') {
+						$scope.config[key] = original[key];
+					}
+				}
+
+				// remove specific properties that the clone shouldn't have (yet)
+				config.name = 'Clone of ' + config.name;
+				config.notes = config.name + ' ' + Date().toString();
+				delete $scope.id;
+				delete config._id;
+				delete config.created;
+				delete config.updated;
+
+			}).catch(redirectNotify);
+		}
+
+		// used to check if this config has any results
+		function checkExisting() {
 			RunResource.query({config_id: id, limit: 1}, function(data) {
 				$scope.existing = !!(data && data.length);
 			}, Notify.danger);
@@ -296,18 +327,19 @@ app.controller('configEditController',
 
 		function resetForm() {
 			if ($scope.id) {
-				$http.get('/api/config/' + $scope.id).then(function(res) {
-					$scope.config = res.data;
-					$scope.configEdit.$setPristine();
+				config = $scope.config = ConfigResource.get({id: $scope.id});
+
+				config.$promise.then(() => {
 					setDefaults();
+					$scope.configEdit.$setPristine();
 				}).catch(redirectNotify);
+
 			} else {
 				setDefaults();
 			}
 		}
 
 		function setDefaults() {
-			var config = $scope.config = $scope.config || {};
 
 			config.flags = config.flags || {checkout: false};
 			config.wrapper = config.wrapper || [];
@@ -350,23 +382,23 @@ app.controller('configEditController',
 		$scope.save = function() {
 			$scope.saving = true;
 			if ($scope.id === undefined) {
-				$http.post('/api/config/', $scope.config).then(function(res) {
-					$scope.id = res.data._id;
+				$scope.config.$save().then(function(res) {
+					$scope.id = res._id;
 					$location.path('/config/' + $scope.config.type + '/' + $scope.id + '/edit').replace();
 					Notify.info('Saved');
 					$route.reload();
 				}).catch(Notify.danger).then(doneSaving);
 			} else {
-				$http.put('/api/config/' + $scope.id, $scope.config).then(function() {
+				$scope.config.$update().then(() => {
 					$scope.configEdit.$setPristine();
 					Notify.info('Saved');
-				}).catch(Notify.danger).then(doneSaving);
+				}, Notify.danger).then(doneSaving);
 			}
 		}
 
 		$scope.delete = function() {
 			$scope.saving = true;
-			$http.delete('/api/config/' + $scope.id, { params: { really: true }}).then(function() {
+			$scope.config.$delete({ really: true }).then(() => {
 				redirectNotify('Configuration deleted');
 			}).catch(Notify.danger).then(doneSaving);
 		}
@@ -374,17 +406,14 @@ app.controller('configEditController',
         $scope.toggleArchived = function() {
             if ($scope.id !== undefined) {
                 let c = $scope.config;
-				c.archived = !c.archived;
-                $http.put('/api/config/' + $scope.id, $scope.config).then(function() {
-					if (c.archived)  {
-						Notify.info('Configuration archived');
-					} else {
-						Notify.info('Configuration restored');
-					}
+                c.archived = !c.archived;
+                c.$update().then(() => {
+					const msg = 'Configuration ' + (c.archived ? 'archived' : 'restored');
+                    Notify.info(msg);
                 }).catch(Notify.danger).then(doneSaving);
             }
         }
-	}
+    }
 ]);
 
 app.controller('statsController', ['$scope', 'Stats',

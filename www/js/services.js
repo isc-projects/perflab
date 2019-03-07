@@ -216,7 +216,7 @@ app.service('ConfigList',
 		function deleteConfig(event, doc) {
 			if (!doc) return;
 			const index = configIndex(doc._id);
-			configs.slice(index, 1);
+			configs.splice(index, 1);
 		}
 
 		function updateConfig(event, doc) {
