@@ -29,8 +29,10 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'ConfigList', 'Agents',
-	function($scope, ConfigList, Agents) {
+	['$scope', 'ConfigList', 'Agents', 'Settings',
+	function($scope, ConfigList, Agents, Settings) {
+
+		// NB: "Settings" unused, but referenced here to trigger a load
 
 		// load previously selected protocol value
 		$scope.proto = localStorage.proto || undefined;
