@@ -257,7 +257,7 @@ app.controller('configEditController',
 	{
 		let settings = $scope.settings = SettingsResource.get();
 		let id = $scope.id = $routeParams.id;
-		let config;
+		let config, resetConfig;
 
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
@@ -277,13 +277,14 @@ app.controller('configEditController',
 			} else {
 				// cloning
 				cloneConfig().then(() => {
+					setDefaults();
 					$scope.configEdit.$setDirty();
 				});
 			}
 
 		} else {
 			// loading
-			resetForm();
+			loadConfig();
 		}
 
 		function cloneConfig() {
@@ -295,7 +296,7 @@ app.controller('configEditController',
 			return original.$promise.then(() =>  {
 				for (let [key, value] of Object.entries(original)) {
 					if (key.substring(0, 1) !== '$') {
-						$scope.config[key] = original[key];
+						config[key] = original[key];
 					}
 				}
 
@@ -325,9 +326,9 @@ app.controller('configEditController',
 			}, 3000);
 		}
 
-		function resetForm() {
+		function loadConfig() {
 			if ($scope.id) {
-				config = $scope.config = ConfigResource.get({id: $scope.id});
+				$scope.config = config = ConfigResource.get({id: $scope.id});
 
 				config.$promise.then(() => {
 					setDefaults();
@@ -371,25 +372,30 @@ app.controller('configEditController',
 			config.preTest = config.preTest || '';
 			config.postTest = config.postTest || '';
 			config.postRun = config.postRun || '';
+
+			resetConfig = angular.copy(config);
 		}
 
 		function doneSaving() {
 			$scope.saving = false;
 		}
 
-		$scope.reset = resetForm;
+		$scope.reset = function() {
+			$scope.config = config = angular.copy(resetConfig);
+			$scope.configEdit.$setPristine();
+		}
 
 		$scope.save = function() {
 			$scope.saving = true;
 			if ($scope.id === undefined) {
-				$scope.config.$save().then(function(res) {
+				config.$save().then(function(res) {
 					$scope.id = res._id;
-					$location.path('/config/' + $scope.config.type + '/' + $scope.id + '/edit').replace();
+					$location.path('/config/' + config.type + '/' + $scope.id + '/edit').replace();
 					Notify.info('Saved');
 					$route.reload();
 				}).catch(Notify.danger).then(doneSaving);
 			} else {
-				$scope.config.$update().then(() => {
+				config.$update().then(() => {
 					$scope.configEdit.$setPristine();
 					Notify.info('Saved');
 				}, Notify.danger).then(doneSaving);
@@ -398,17 +404,16 @@ app.controller('configEditController',
 
 		$scope.delete = function() {
 			$scope.saving = true;
-			$scope.config.$delete({ really: true }).then(() => {
+			config.$delete({ really: true }).then(() => {
 				redirectNotify('Configuration deleted');
 			}).catch(Notify.danger).then(doneSaving);
 		}
 
         $scope.toggleArchived = function() {
             if ($scope.id !== undefined) {
-                let c = $scope.config;
-                c.archived = !c.archived;
-                c.$update().then(() => {
-					const msg = 'Configuration ' + (c.archived ? 'archived' : 'restored');
+                config.archived = !config.archived;
+                config.$update().then(() => {
+					const msg = 'Configuration ' + (config.archived ? 'archived' : 'restored');
                     Notify.info(msg);
                 }).catch(Notify.danger).then(doneSaving);
             }
