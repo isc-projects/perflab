@@ -359,13 +359,21 @@ app.service('Stats',
 	}
 ]);
 
+
 app.service('Agents',
-	['Notify', 'ClientAgentResource', 'ServerAgentResource',
-	function(Notify, ClientAgentResource, ServerAgentResource) {
+	['ClientAgentResource', 'ServerAgentResource',
+	function(ClientAgentResource, ServerAgentResource) {
 		return {
 			clients: ClientAgentResource.query(),
 			servers: ServerAgentResource.query()
 		}
+	}
+]);
+
+app.service('Settings',
+	['SettingsResource',
+	function(SettingsResource) {
+		return SettingsResource.get();
 	}
 ]);
 

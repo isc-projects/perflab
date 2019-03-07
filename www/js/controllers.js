@@ -248,17 +248,19 @@ app.controller('testDetailController',
 ]);
 
 app.controller('configEditController',
-	['$scope', '$route', '$location', '$routeParams',
-	 'Notify', 'RunResource', 'ConfigResource', 'SettingsResource',
-	 'Agents', 'ServerAgentResource', 'ClientAgentResource',
-	function($scope, $route, $location, $routeParams,
-			 Notify, RunResource, ConfigResource, SettingsResource,
-			 Agents, ServerAgentResource, ClientAgentResource)
+	['$scope', '$route', '$location', '$q', '$routeParams',
+	 'Notify', 'RunResource', 'ConfigResource',
+	 'Settings', 'Agents',
+	 'ServerAgentResource', 'ClientAgentResource',
+	function($scope, $route, $location, $q, $routeParams,
+			 Notify, RunResource, ConfigResource,
+			 Settings, Agents,
+			 ServerAgentResource, ClientAgentResource)
 	{
-		let settings = $scope.settings = SettingsResource.get();
 		let id = $scope.id = $routeParams.id;
 		let config, resetConfig;
 
+		$scope.settings = Settings;
 		$scope.agent = ServerAgentResource.get({agent: $routeParams.type});
 		$scope.agent.$promise.then(function(agent) {
 			$scope.clients = ClientAgentResource.queryByProtocol({protocol: agent.protocol})
@@ -348,11 +350,10 @@ app.controller('configEditController',
 				config.mode = ($scope.agent.subtype && $scope.agent.subtypes[0]) || 'authoritative';
 			}
 
-			if (!config.client) {
-				settings.$promise.then(function(s) {
-					config.client = s.default_clients[$scope.agent.protocol];
-				});
-			}
+			// set default client
+			$q.all([Settings.$promise, $scope.agent.$promise]).then(() => {
+				config.client = config.client || Settings.default_clients[$scope.agent.protocol];
+			});
 
 			var args = config.args = config.args || {};
 			args.configure = args.configure || [];
