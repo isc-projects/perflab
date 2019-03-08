@@ -1,6 +1,6 @@
 (function() {
 
-"use strict";
+'use strict';
 
 var app = angular.module('perflabApp');
 
@@ -32,12 +32,12 @@ app.controller('configListController',
 	['$scope', 'ConfigList', 'Agents', 'Settings',
 	function($scope, ConfigList, Agents, Settings) {
 
-		// NB: "Settings" unused, but referenced here to trigger a load
+		// NB: 'Settings' unused, but referenced here to trigger a load
 		//	 ready in time for the configuration editor
 
 		// load previously selected protocol value
 		$scope.proto = localStorage.proto || undefined;
-		$scope.configOrder = localStorage.configOrder || "name";
+		$scope.configOrder = localStorage.configOrder || 'name';
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 
 		// set up protocol list
@@ -47,13 +47,14 @@ app.controller('configListController',
 
 			let protocols = {};
 			$scope.agents.forEach(agent => {
-				let proto = protoMap(agent.protocol) || "Unknown";
+				let proto = protoMap(agent.protocol) || 'Unknown';
 				protocols[proto] = 1;
 				agentProtocol[agent.key] = proto;
 			});
 			$scope.protocols = Object.keys(protocols);
 			$scope.setProtocol($scope.proto);
 		}).then(function() {
+			// don't bind config list until agent lists are loaded
 			$scope.configs = ConfigList;
 		});
 
@@ -191,7 +192,7 @@ app.controller('runListController',
 		}, Notify.danger);
 
 		function makelink(skip, limit) {
-			return "skip=" + skip + "&limit=" + limit;
+			return 'skip=' + skip + '&limit=' + limit;
 		}
 
 		OpLog.on('update.run', function(ev, doc) {

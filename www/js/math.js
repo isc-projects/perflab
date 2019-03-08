@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /* via https://msdn.microsoft.com/en-gb/magazine/mt620016.aspx */
 

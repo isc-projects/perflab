@@ -1,6 +1,6 @@
 (function() {
 
-"use strict";
+'use strict';
 
 var module = angular.module('isc.resources', ['ngResource']);
 

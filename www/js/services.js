@@ -1,7 +1,7 @@
 (function() {
 var app = angular.module('perflabApp');
 
-"use strict";
+'use strict';
 
 //
 // uses a WebSocket to receive info about updates to tables from a
@@ -118,12 +118,12 @@ app.service('LogWatcher',
 	['$rootScope', '$http', 'OpLog', 'Notify',
 	function($rootScope, $http, OpLog, Notify) {
 
-		var log = { "" : [] };
-		var byid = { "": {} };		// used to ensure IDs don't get duplicated
+		var log = { '' : [] };
+		var byid = { '': {} };		// used to ensure IDs don't get duplicated
 
 		function save(data, host) {
 
-			var key = host || "";
+			var key = host || '';
 			var idref = byid[key] = byid[key] || {};
 
 			if (data._id in idref) {
@@ -177,7 +177,7 @@ app.service('ConfigList',
 		function configIndex(id) {
 			const index = configs.findIndex(config => config._id === id);
 			if (index < 0) {
-				throw new Error("request for unexpected configuration ID");
+				throw new Error('request for unexpected configuration ID');
 			}
 			return index;
 		}
