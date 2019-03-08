@@ -11,7 +11,7 @@
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
 		  </button>
 		  <ul class="dropdown-menu dropdown-menu">
-			 <a class="dropdown-item" ng-repeat="agent in agents | filter:agentFilter" href="#/config/new/{{agent.key}}">{{agent.name}}</a>
+			 <a class="dropdown-item" ng-repeat="agent in agents | filter:agentFilter" href="#/config/new?type={{agent.key}}">{{agent.name}}</a>
 		  </ul>
 		</span>
 
@@ -40,7 +40,7 @@
 
 		  <span class="btn-group" ng-show="protocols.length > 1">
 			<span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleShowArchived()">
-			  <input type="checkbox" id="archived" ng-model="archived"/> Archived
+			  <input type="checkbox" id="archived" ng-model="archived"/> Show archived
 			</span>
 		  </span>
 

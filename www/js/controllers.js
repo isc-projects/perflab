@@ -408,14 +408,8 @@ app.controller('configEditController',
 		}
 
 		$scope.toggleArchived = function() {
-			const config = $scope.config;
-			if ($scope.id !== undefined) {
-				config.archived = !config.archived;
-				config.$update().then(() => {
-					const msg = 'Configuration ' + (config.archived ? 'archived' : 'restored');
-					Notify.info(msg);
-				}).catch(Notify.danger).then(doneSaving);
-			}
+			$scope.config.archived = !$scope.config.archived;
+			$scope.form.$setDirty();
 		}
 	}
 ]);
