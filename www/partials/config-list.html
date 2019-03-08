@@ -22,9 +22,9 @@
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Protocol
 			</button>
 			<ul class="dropdown-menu dropdown-menu">
-			  <a class="dropdown-item bfa-icon" ng-click="setProto(undefined)" ng-class="{'fa-check': !proto }" >All</a>
+			  <a class="dropdown-item bfa-icon" ng-click="setProtocol(undefined)" ng-class="{'fa-check': !proto }" >All</a>
 			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item bfa-icon" ng-repeat="p in protocols" ng-click="setProto(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
+			  <a class="dropdown-item bfa-icon" ng-repeat="p in protocols" ng-click="setProtocol(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
 			</ul>
 		  </span>
 

@@ -51,17 +51,16 @@ module.factory('ConfigResource', ['$resource',
 
 module.factory('ServerAgentResource', ['$resource',
 	function($resource) {
-		return $resource('/api/agent/server/:agent');
+		return $resource('/api/agent/server/:agent', {}, {
+			query: { isArray: false }
+		});
 	}
 ]);
 
 module.factory('ClientAgentResource', ['$resource',
 	function($resource) {
 		return $resource('/api/agent/client/:agent', {}, {
-			queryByProtocol: {
-				url: '/api/agent/client/_protocol/:protocol',
-				isArray: true
-			}
+			query: { isArray: false },
 		});
 	}
 ]);

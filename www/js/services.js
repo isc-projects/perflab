@@ -361,12 +361,37 @@ app.service('Stats',
 
 
 app.service('Agents',
-	['ClientAgentResource', 'ServerAgentResource',
-	function(ClientAgentResource, ServerAgentResource) {
-		return {
-			clients: ClientAgentResource.query(),
-			servers: ServerAgentResource.query()
+	['$q', 'ClientAgentResource', 'ServerAgentResource',
+	function($q, ClientAgentResource, ServerAgentResource) {
+
+		const clients = ClientAgentResource.query();
+		const servers = ServerAgentResource.query();
+		const $promise = $q.all([clients.$promise, servers.$promise]);
+
+		function getAgents(set, protocol) {
+			let r = [];
+			for (let [key, agent] of Object.entries(set)) {
+				if (key.substring(0, 1) === '$') continue;
+				if (protocol && (agent.protocol !== protocol)) {
+					continue;
+				}
+				agent.key = key;
+				r.push(agent);
+			}
+			return r;
 		}
+
+		const service = {
+			clients: protocol => getAgents(clients, protocol),
+			servers: protocol => getAgents(servers, protocol),
+			server: type => servers[type],
+			$resolved: false,
+			$promise
+		}
+
+		$promise.then(() => service.$resolved = true);
+
+		return service;
 	}
 ]);
 

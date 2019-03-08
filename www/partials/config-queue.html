@@ -3,7 +3,7 @@
   <span class="fas fa-fw" ng-class="config.queue.enabled ? (config.queue.repeat ? 'fa-redo-alt' : 'fa-play') : 'fa-pause'"></span>
 </button>
 <div class="dropdown-menu">
-	<a class="dropdown-item" ng-class="{disabled: !config.queue.enabled}" href="" ng-click="configs.setEnabled(config._id, false)"><span class="fas fa-fw fa-pause"></span> Disable</a>
+	<a class="dropdown-item" ng-class="{disabled: !config.queue.enabled}" href="" ng-click="configs.setEnabled(config._id, false)"><span class="fas fa-fw fa-pause"></span> Suspended</a>
 	<a class="dropdown-item" ng-class="{disabled: config.queue.enabled && !config.queue.repeat}" href="" ng-click="configs.setRepeat(config._id, false)"><span class="fas fa-fw fa-play"></span> Run once</a>
 	<a class="dropdown-item" ng-class="{disabled: config.queue.enabled && config.queue.repeat}" href="" ng-click="configs.setRepeat(config._id, true)"><span class="fas fa-fw fa-redo-alt"></span> Repeat</a>
 	<div class="dropdown-divider"></div>

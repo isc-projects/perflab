@@ -24,7 +24,7 @@ pre- and post-edit results.
 	  </span>
 	  </div>
 	  <div class="card-body">
-		<form name="configEdit">
+		<form name="form">
 		  <div class="form-group form-group-sm">
 			<label for="configName">Name</label>
 			<input type="text" required class="form-control" id="configName" placeholder="configuration name" ng-model="config.name"/>
@@ -38,7 +38,7 @@ pre- and post-edit results.
 			<input type="text" required class="form-control" id="configBranch" placeholder="branch / tag" ng-model="config.branch"/>
 			<div>
 			  <input id="configCheckout" type="checkbox" ng-model="config.flags.checkout">
-			  <label for="configCheckout">checkout before every run ({{:: settings.agents[type].repo.vcs || "git" | uppercase}} {{:: settings.agents[type].repo.url }})</label>
+			  <label for="configCheckout">checkout before every run ({{:: agent.repo.vcs || "git" | uppercase}} {{:: agent.repo.url }})</label>
 			</div>
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="agent.subtypes && agent.subtypes.length > 1">
@@ -84,7 +84,7 @@ pre- and post-edit results.
 			<label for="configClient">Test client application</label>
 			<select ng-required="config.client !== ''" class="form-control" id="configClient" ng-model="config.client">
 			  <option value="">- select client -</option>
-			  <option ng-repeat="client in clients" value="{{client.name}}">{{client.name}}</option>
+			  <option ng-repeat="client in clients" value="{{client.key}}">{{client.name}}</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="agent.protocol === 'dns'">
@@ -140,15 +140,15 @@ pre- and post-edit results.
 		  </div>
 </div>
 		  <div class="form-group">
-			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="configEdit.$invalid || configEdit.$pristine || saving" ng-click="save()">
+			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$pristine || saving" ng-click="save()">
 			  <span class="fas fa-fw fa-save"></span>Save</button>
-			<button type="reset" class="fixed-button btn btn-sm btn-primary" ng-disabled="configEdit.$pristine || saving" ng-click="reset()">
+			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$pristine || saving" ng-click="reset()">
 			  <span class="fas fa-fw fa-times-circle"></span>Reset</button>
-			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-sm btn-primary" ng-disabled="configEdit.$invalid || configEdit.$dirty || saving" ng-show="id !== undefined">
+			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$dirty || saving" ng-show="config._id !== undefined">
 			  <span class="fas fa-fw fa-clone"></span>Clone</a>
-			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()" ng-disabled="configEdit.$dirty || saving" ng-show="id !== undefined">
+			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()" ng-disabled="form.$dirty || saving" ng-show="config._id !== undefined">
 			  <span class="fas fa-fw fa-archive"></span>{{ config.archived ? "Restore" : "Archive" }}</button>
-			<button type="submit" class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="id !== undefined" ng-disabled="saving">
+			<button type="submit" class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="config._id !== undefined" ng-disabled="saving">
 			  <span class="fas fa-trash-alt"></span>Delete...</button>
 		  </div>
 		</form>
