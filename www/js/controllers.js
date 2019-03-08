@@ -38,7 +38,6 @@ app.controller('configListController',
 		// load previously selected protocol value
 		$scope.proto = localStorage.proto || undefined;
 		$scope.configOrder = localStorage.configOrder || "name";
-		$scope.inactive = JSON.parse(localStorage.inactive || 'false');
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 
 		// set up protocol list
@@ -71,9 +70,14 @@ app.controller('configListController',
 
 		$scope.configFilter = function(config) {
 			let q = config.queue;
-			let archived = config.archived;
 			let active = (q.enabled || q.running);
 
+			// check it doesn't match the protocol filter
+			if ($scope.proto && $scope.proto !== agentProtocol[config.type]) {
+				return false;
+			}
+
+			// check it doesn't match the search string
 			if ($scope.search) {
 				let search = $scope.search.trim().toLowerCase();
 				if (search.length && config.name.toLowerCase().indexOf(search) < 0) {
@@ -81,18 +85,12 @@ app.controller('configListController',
 				}
 			}
 
-			if ($scope.proto && $scope.proto !== agentProtocol[config.type]) {
+			// check if archived items are hidden
+			if (!$scope.archived && config.archived) {
 				return false;
 			}
 
-			if ($scope.archived) {
-				return true;
-			} else {
-				if (archived) {
-					return false;
-				}
-				return $scope.inactive ? true : active;
-			}
+			return true;
 		}
 
 		function protoMap(proto) {
