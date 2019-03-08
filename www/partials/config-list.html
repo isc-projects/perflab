@@ -10,7 +10,7 @@
 		  <button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
 		  </button>
-		  <ul class="dropdown-menu dropdown-menu">
+		  <ul class="dropdown-menu">
 			 <a class="dropdown-item" ng-repeat="agent in agents | filter:agentFilter" href="#/config/new?type={{agent.key}}">{{agent.name}}</a>
 		  </ul>
 		</span>
@@ -21,7 +21,7 @@
 			<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Protocol
 			</button>
-			<ul class="dropdown-menu dropdown-menu">
+			<ul class="dropdown-menu">
 			  <a class="dropdown-item bfa-icon" ng-click="setProtocol(undefined)" ng-class="{'fa-check': !proto }" >All</a>
 			  <div class="dropdown-divider"></div>
 			  <a class="dropdown-item bfa-icon" ng-repeat="p in protocols" ng-click="setProtocol(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
@@ -32,7 +32,7 @@
 			<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle" title="view settings"
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort
 			</button>
-			<div class="dropdown-menu dropdown-menu" class="fa-ul">
+			<div class="dropdown-menu" class="fa-ul">
 			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'name'}" href="" ng-click="setConfigOrder('name')">Name</a>
 			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'pri'}" href="" ng-click="setConfigOrder('pri')">Run order</a>
 			</div>
