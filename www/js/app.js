@@ -14,7 +14,7 @@ app.config(['$routeProvider',
 				templateUrl: 'partials/config-list.html',
 				controller: 'configListController'
 			})
-			.when('/config/new/:type', {
+			.when('/config/new', {
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})
@@ -22,7 +22,7 @@ app.config(['$routeProvider',
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})
-			.when('/config/edit/:type/:id', {
+			.when('/config/edit/:id', {
 				templateUrl: 'partials/config-edit.html',
 				controller: 'configEditController'
 			})

@@ -39,7 +39,7 @@ app.directive('cfgButtonExport', function() {
 
 app.directive('cfgButtonEdit', function() {
 	return {
-		template: '<perflab-button href="#/config/edit/{{config.type}}/{{config._id}}" icon="fa-cog" title="Edit" />',
+		template: '<perflab-button href="#/config/edit/{{config._id}}" icon="fa-cog" title="Edit" />',
 	}
 });
 

@@ -17,10 +17,15 @@ pre- and post-edit results.
 	  <div class="card">
 	  <div class="card-header">
 	  <span class="float-title">Configuration</span>
-	  <span class="float-right" ng-show="existing">
-		<cfg-button-graph />
-		<cfg-button-list />
-		<cfg-button-export />
+	  <span class="float-right">
+		<cfg-button-graph ng-cloak ng-show="existing" />
+		<cfg-button-list ng-cloak ng-show="existing" />
+		<cfg-button-export ng-cloak ng-show="existing" />
+		<span class="btn-group" ng-show="config._id">
+		  <span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()">
+			<input type="checkbox" id="archived" ng-model="config.archived"/> Archive
+		  </span>
+		</span>
 	  </span>
 	  </div>
 	  <div class="card-body">
@@ -146,8 +151,6 @@ pre- and post-edit results.
 			  <span class="fas fa-fw fa-times-circle"></span>Reset</button>
 			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$dirty || saving" ng-show="config._id !== undefined">
 			  <span class="fas fa-fw fa-clone"></span>Clone</a>
-			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()" ng-disabled="form.$dirty || saving" ng-show="config._id !== undefined">
-			  <span class="fas fa-fw fa-archive"></span>{{ config.archived ? "Restore" : "Archive" }}</button>
 			<button type="submit" class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="config._id !== undefined" ng-disabled="saving">
 			  <span class="fas fa-trash-alt"></span>Delete...</button>
 		  </div>
