@@ -21,11 +21,6 @@ pre- and post-edit results.
 		<cfg-button-graph ng-cloak ng-show="existing" />
 		<cfg-button-list ng-cloak ng-show="existing" />
 		<cfg-button-export ng-cloak ng-show="existing" />
-		<span class="btn-group" ng-show="config._id">
-		  <span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()">
-			<input type="checkbox" id="archived" ng-model="config.archived"/> Archive
-		  </span>
-		</span>
 	  </span>
 	  </div>
 	  <div class="card-body">
@@ -145,6 +140,11 @@ pre- and post-edit results.
 		  </div>
 </div>
 		  <div class="form-group">
+			<span class="btn-group" ng-show="config._id">
+			  <span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleArchived()">
+			    <input type="checkbox" id="archived" ng-model="config.archived"/> Archived
+			  </span>
+			</span>
 			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$pristine || saving" ng-click="save()">
 			  <span class="fas fa-fw fa-save"></span>Save</button>
 			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$pristine || saving" ng-click="reset()">
