@@ -35,10 +35,6 @@ app.controller('configListController',
 		// NB: 'Settings' unused, but referenced here to trigger a load
 		//	 ready in time for the configuration editor
 
-		// load UI settings
-		$scope.configOrder = localStorage.configOrder || 'name';
-		$scope.archived = JSON.parse(localStorage.archived || 'false');
-
 		// set up protocol list
 		Agents.$promise.then(function() {
 			$scope.agents = Agents.servers();
@@ -52,7 +48,6 @@ app.controller('configListController',
 				protos[name].push(agent);
 				$scope.agentMap[agent.key] = agent;
 			});
-			$scope.setProtocol(localStorage.proto);
 			$scope.protoCount = Object.keys(protos).length;
 
 		}).then(function() {
@@ -60,10 +55,44 @@ app.controller('configListController',
 			$scope.configs = ConfigList;
 		});
 
-		$scope.toggleShowArchived = function(val) {
-			localStorage.archived = $scope.archived = !$scope.archived;
+		// load and track configuration sort order
+		try {
+			$scope.$watch('configOrder', (order) => {
+				if (order === 'pri') {
+					$scope.configOrderSetting = [
+						'-archived',
+						'-queue.running',
+						'-queue.enabled',
+						'-queue.priority',
+						'queue.completed'
+					];
+				} else {
+					$scope.configOrderSetting = 'name';
+				}
+				localStorage.configOrder = JSON.stringify(order);
+			});
+			$scope.configOrder = JSON.parse(localStorage.configOrder);
+		} catch {
+			$scope.configOrder = "name";
 		}
 
+		// load and track "archived" flag
+		try {
+			$scope.$watch('archived', (val) => localStorage.archived = JSON.stringify(val));
+			$scope.archived = JSON.parse(localStorage.archived);
+		} catch {
+			$scope.archived = false;
+		}
+
+		// load and track protocol filter field
+		try {
+			$scope.$watch('proto', (proto) => { console.log(proto); localStorage.proto = JSON.stringify(proto) }) ;
+			$scope.proto = JSON.parse(localStorage.proto);
+		} catch {
+			$scope.proto = null;
+		}
+
+		// filter list of agents by selected protocol
 		$scope.agentFilter = function(agent) {
 			if (!$scope.proto) {
 				return true;
@@ -71,6 +100,7 @@ app.controller('configListController',
 			return $scope.proto === protoName(agent.protocol);
 		}
 
+		// filter visible configs
 		$scope.configFilter = function(config) {
 			let q = config.queue;
 			let active = (q.enabled || q.running);
@@ -99,31 +129,6 @@ app.controller('configListController',
 		function protoName(proto) {
 			return proto ? proto.replace(/\d/g, '').toUpperCase() : undefined;
 		}
-
-		$scope.setProtocol = function(proto) {
-			if ($scope.protocols[proto] === undefined) {
-				proto = undefined;
-			}
-			localStorage.proto = $scope.proto = proto;
-		}
-
-		$scope.setConfigOrder = function(order) {
-			if (order === 'pri') {
-				$scope.configOrder = [
-					'-archived',
-					'-queue.running',
-					'-queue.enabled',
-					'-queue.priority',
-					'queue.completed'
-				];
-			} else {
-				$scope.configOrder = 'name';
-			}
-			localStorage.configOrder = $scope.configOrder = order;
-		}
-
-		// do initial order and filter
-		$scope.setConfigOrder($scope.configOrder);
 	}
 ]);
 

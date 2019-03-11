@@ -25,9 +25,9 @@
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Protocol
 			</button>
 			<ul class="dropdown-menu">
-			  <a class="dropdown-item bfa-icon" ng-click="setProtocol(undefined)" ng-class="{'fa-check': !proto }" >All</a>
+			  <a class="dropdown-item bfa-icon" ng-click="proto = null" ng-class="{'fa-check': !proto }" >All</a>
 			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item bfa-icon" ng-repeat="(p, a) in protocols" ng-click="setProtocol(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
+			  <a class="dropdown-item bfa-icon" ng-repeat="(p, a) in protocols" ng-click="$parent.proto = p" ng-class="{'fa-check': proto === p}">{{p}}</a>
 			</ul>
 		  </span>
 
@@ -36,14 +36,14 @@
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort
 			</button>
 			<div class="dropdown-menu" class="fa-ul">
-			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'name'}" href="" ng-click="setConfigOrder('name')">Name</a>
-			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'pri'}" href="" ng-click="setConfigOrder('pri')">Run order</a>
+			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'name'}" href="" ng-click="configOrder = 'name'">Name</a>
+			  <a class="dropdown-item bfa-icon" ng-class="{'fa-check': configOrder === 'pri'}" href="" ng-click="configOrder = 'pri'">Run order</a>
 			</div>
 		  </span>
 
 		  <span class="btn-group">
-			<span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleShowArchived()">
-			  <input type="checkbox" id="archived" ng-model="archived"/> Show archived
+			<span href="" class="fixed-button btn btn-sm btn-primary" ng-click="archived = !archived">
+			  <input type="checkbox" ng-model="archived"/> Show archived
 			</span>
 		  </span>
 
@@ -55,7 +55,7 @@
 	  <div class="table-responsive-md">
 		<table class="table table-sm table-striped config-list">
 		  <tbody>
-			<tr perflab-config-entry ng-repeat="config in filtered_configs = (configs.all | filter:configFilter | orderBy:configOrder) track by config._id" class="config" />
+			<tr perflab-config-entry ng-repeat="config in filtered_configs = (configs.all | filter:configFilter | orderBy:configOrderSetting) track by config._id" class="config" />
 		  </tbody>
 		</table>
 	  </div>
