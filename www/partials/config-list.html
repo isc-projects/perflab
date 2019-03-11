@@ -11,20 +11,23 @@
 			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">New
 		  </button>
 		  <ul class="dropdown-menu">
-			 <a class="dropdown-item" ng-repeat="agent in agents | filter:agentFilter" href="#/config/new?type={{agent.key}}">{{agent.name}}</a>
+			<ng-repeat ng-repeat="(p, a) in protocols">
+			  <h6 class="dropdown-header" ng-show="!proto">{{p}}</h6>
+			  <a class="dropdown-item" ng-repeat="agent in a | filter:agentFilter | orderBy:'name'" href="#/config/new?type={{agent.key}}">{{agent.name}}</a>
+			</ng-repeat>
 		  </ul>
 		</span>
 
 		<span class="text-right ml-auto">
 
-		  <span class="btn-group" ng-show="protocols.length > 1">
+		  <span class="btn-group" ng-show="protoCount > 1">
 			<button type="button" class="fixed-button btn btn-sm btn-primary dropdown-toggle"
 			  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Protocol
 			</button>
 			<ul class="dropdown-menu">
 			  <a class="dropdown-item bfa-icon" ng-click="setProtocol(undefined)" ng-class="{'fa-check': !proto }" >All</a>
 			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item bfa-icon" ng-repeat="p in protocols" ng-click="setProtocol(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
+			  <a class="dropdown-item bfa-icon" ng-repeat="(p, a) in protocols" ng-click="setProtocol(p)" ng-class="{'fa-check': proto === p}">{{p}}</a>
 			</ul>
 		  </span>
 
@@ -38,7 +41,7 @@
 			</div>
 		  </span>
 
-		  <span class="btn-group" ng-show="protocols.length > 1">
+		  <span class="btn-group">
 			<span href="" class="fixed-button btn btn-sm btn-primary" ng-click="toggleShowArchived()">
 			  <input type="checkbox" id="archived" ng-model="archived"/> Show archived
 			</span>

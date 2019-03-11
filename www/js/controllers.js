@@ -35,24 +35,26 @@ app.controller('configListController',
 		// NB: 'Settings' unused, but referenced here to trigger a load
 		//	 ready in time for the configuration editor
 
-		// load previously selected protocol value
-		$scope.proto = localStorage.proto || undefined;
+		// load UI settings
 		$scope.configOrder = localStorage.configOrder || 'name';
 		$scope.archived = JSON.parse(localStorage.archived || 'false');
 
 		// set up protocol list
-		let agentProtocol = {};
 		Agents.$promise.then(function() {
 			$scope.agents = Agents.servers();
+			$scope.agentMap = {};
 
-			let protocols = {};
+			let protos = $scope.protocols = {};
 			$scope.agents.forEach(agent => {
-				let proto = protoMap(agent.protocol) || 'Unknown';
-				protocols[proto] = 1;
-				agentProtocol[agent.key] = proto;
+				let name = protoName(agent.protocol) || 'Unknown';
+				agent.protoName = name;
+				protos[name] = protos[name] || [];
+				protos[name].push(agent);
+				$scope.agentMap[agent.key] = agent;
 			});
-			$scope.protocols = Object.keys(protocols);
-			$scope.setProtocol($scope.proto);
+			$scope.setProtocol(localStorage.proto);
+			$scope.protoCount = Object.keys(protos).length;
+
 		}).then(function() {
 			// don't bind config list until agent lists are loaded
 			$scope.configs = ConfigList;
@@ -66,7 +68,7 @@ app.controller('configListController',
 			if (!$scope.proto) {
 				return true;
 			}
-			return $scope.proto === protoMap(agent.protocol);
+			return $scope.proto === protoName(agent.protocol);
 		}
 
 		$scope.configFilter = function(config) {
@@ -74,7 +76,7 @@ app.controller('configListController',
 			let active = (q.enabled || q.running);
 
 			// check it doesn't match the protocol filter
-			if ($scope.proto && $scope.proto !== agentProtocol[config.type]) {
+			if ($scope.proto && $scope.proto !== $scope.agentMap[config.type].protoName) {
 				return false;
 			}
 
@@ -94,13 +96,12 @@ app.controller('configListController',
 			return true;
 		}
 
-		function protoMap(proto) {
+		function protoName(proto) {
 			return proto ? proto.replace(/\d/g, '').toUpperCase() : undefined;
 		}
 
 		$scope.setProtocol = function(proto) {
-			proto = protoMap(proto);
-			if ($scope.protocols.indexOf(proto) < 0) {
+			if ($scope.protocols[proto] === undefined) {
 				proto = undefined;
 			}
 			localStorage.proto = $scope.proto = proto;
