@@ -86,7 +86,7 @@ app.controller('configListController',
 
 		// load and track protocol filter field
 		try {
-			$scope.$watch('proto', (proto) => { console.log(proto); localStorage.proto = JSON.stringify(proto) }) ;
+			$scope.$watch('proto', (proto) => localStorage.proto = JSON.stringify(proto));
 			$scope.proto = JSON.parse(localStorage.proto);
 		} catch {
 			$scope.proto = null;
