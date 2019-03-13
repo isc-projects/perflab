@@ -26,16 +26,16 @@ app.service('OpLog',
 				var coll = msg.ns;
 				var op = ops[msg.op];
 				if (op) {
-					$rootScope.$broadcast('oplog.' + op + '.' + coll, msg.doc);
-					$rootScope.$applyAsync();		// force Angular to notice
+					$rootScope.$applyAsync(function() {
+						$rootScope.$emit('oplog.' + op + '.' + coll, msg.doc);
+					});
 				}
 			}
 		})();
 
 		return {
-			'on': function(ev, handler, scope) {
-				scope = scope || $rootScope;
-				scope.$on('oplog.' + ev, handler);
+			'on': function(ev, handler) {
+				$rootScope.$on('oplog.' + ev, handler);
 			}
 		};
 	}
@@ -115,8 +115,8 @@ app.service('SystemControl',
 // real-time changes to the collection.
 //
 app.service('LogWatcher',
-	['$rootScope', '$http', 'OpLog', 'Notify',
-	function($rootScope, $http, OpLog, Notify) {
+	['$http', 'OpLog', 'Notify',
+	function($http, OpLog, Notify) {
 
 		var log = { '' : [] };
 		var byid = { '': {} };		// used to ensure IDs don't get duplicated
