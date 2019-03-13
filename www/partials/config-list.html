@@ -55,7 +55,7 @@
 	  <div class="table-responsive-md">
 		<table class="table table-sm table-striped config-list">
 		  <tbody>
-			<tr perflab-config-entry ng-repeat="config in filtered_configs = (configs.all | filter:configFilter | orderBy:configOrderSetting) track by config._id" class="config" />
+			<tr perflab-config-entry ng-repeat="config in filtered_configs = (configView) track by config._id" class="config" />
 		  </tbody>
 		</table>
 	  </div>

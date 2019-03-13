@@ -50,26 +50,15 @@ app.controller('configListController',
 			});
 			$scope.protoCount = Object.keys(protos).length;
 
-		}).then(function() {
-			// don't bind config list until agent lists are loaded
+			// start downloading the configs
 			$scope.configs = ConfigList;
 		});
 
 		// load and track configuration sort order
 		try {
 			$scope.$watch('configOrder', (order) => {
-				if (order === 'pri') {
-					$scope.configOrderSetting = [
-						'-archived',
-						'-queue.running',
-						'-queue.enabled',
-						'-queue.priority',
-						'queue.completed'
-					];
-				} else {
-					$scope.configOrderSetting = 'name';
-				}
 				localStorage.configOrder = JSON.stringify(order);
+				updateConfigView();
 			});
 			$scope.configOrder = JSON.parse(localStorage.configOrder);
 		} catch {
@@ -78,7 +67,10 @@ app.controller('configListController',
 
 		// load and track "archived" flag
 		try {
-			$scope.$watch('archived', (val) => localStorage.archived = JSON.stringify(val));
+			$scope.$watch('archived', (val) => {
+				localStorage.archived = JSON.stringify(val);
+				updateConfigView();
+			});
 			$scope.archived = JSON.parse(localStorage.archived);
 		} catch {
 			$scope.archived = false;
@@ -86,11 +78,17 @@ app.controller('configListController',
 
 		// load and track protocol filter field
 		try {
-			$scope.$watch('proto', (proto) => localStorage.proto = JSON.stringify(proto));
+			$scope.$watch('proto', (proto) => {
+				localStorage.proto = JSON.stringify(proto);
+				updateConfigView();
+			});
 			$scope.proto = JSON.parse(localStorage.proto);
 		} catch {
 			$scope.proto = null;
 		}
+
+		// track changes to the config lists
+		$scope.$watch('configs', updateConfigView, true);
 
 		// filter list of agents by selected protocol
 		$scope.agentFilter = function(agent) {
@@ -124,6 +122,34 @@ app.controller('configListController',
 			}
 
 			return true;
+		}
+
+		function updateConfigView() {
+			if (!$scope.configs) return;
+
+			$scope.configs.all.$promise.then(function(configs) {
+				const pred = ($scope.configOrder === 'name') ? sortByName : sortByPriority;
+				$scope.configView = configs.filter($scope.configFilter).sort(pred);
+			});
+		}
+
+		function sortByName(a, b) {
+			return a.name.localeCompare(b.name, { sensitivity: 'base' });
+		}
+
+		function sortByPriority(a, b) {
+			const qa = a.queue, qb = b.queue;
+
+			// compare running status (descending)
+			let r = (~~qb.running) - (~~qa.running);
+			if (r) return r;
+
+			// compare priority (descending)
+			r = (qb.priority || 0) - (qa.priority || 0);
+			if (r) return r;
+
+			// compare completion times (ascending)
+			return (qa.completed.localeCompare(qb.completed));
 		}
 
 		function protoName(proto) {
