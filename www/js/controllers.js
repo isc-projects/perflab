@@ -90,6 +90,9 @@ app.controller('configListController',
 		// track changes to the config lists
 		$scope.$watch('configs', updateConfigView, true);
 
+		// track changes to the search box
+		$scope.$watch('search', updateConfigView);
+
 		// filter list of agents by selected protocol
 		$scope.agentFilter = function(agent) {
 			if (!$scope.proto) {
@@ -99,6 +102,8 @@ app.controller('configListController',
 		}
 
 		// filter visible configs
+		let re = null;
+
 		$scope.configFilter = function(config) {
 			let q = config.queue;
 			let active = (q.enabled || q.running);
@@ -110,9 +115,16 @@ app.controller('configListController',
 
 			// check it doesn't match the search string
 			if ($scope.search) {
-				let search = $scope.search.trim().toLowerCase();
-				if (search.length && config.name.toLowerCase().indexOf(search) < 0) {
-					return false;
+				let tmp = $scope.search.trim();
+				if (tmp.length) {
+					try {
+						re = new RegExp(tmp, 'i');
+					} catch {
+						// ignored
+					}
+					if (re && !re.test(config.name)) {
+						return false;
+					}
 				}
 			}
 
@@ -146,6 +158,10 @@ app.controller('configListController',
 
 			// compare priority (descending)
 			r = (qb.priority || 0) - (qa.priority || 0);
+			if (r) return r;
+
+			// compare enabled (descending)
+			r = (~~qb.enabled) - (~~qa.enabled);
 			if (r) return r;
 
 			// compare completion times (ascending)
