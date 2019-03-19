@@ -1,10 +1,15 @@
-const app = angular.module('perflabApp',
-	['ngRoute', 'ngAnimate', 'ngSanitize',
-	 'dygraphs-directive',
-	 'isc.modules', 'isc.resources']);
+const app = angular.module('perflabApp', [
+	'ngRoute',
+	'ngAnimate',
+	'ngSanitize',
+	'dygraphs-directive',
+	'isc.modules',
+	'isc.resources'
+]);
 
-app.config(['$routeProvider',
-	function($routeProvider) {
+app.config([
+	'$routeProvider',
+	($routeProvider) => {
 		$routeProvider
 			.when('/logs/', {
 				templateUrl: 'partials/log-view.html',
@@ -53,14 +58,16 @@ app.config(['$routeProvider',
 	}
 ]);
 
-app.config(['$resourceProvider',
-	function($resourceProvider) {
+app.config([
+	'$resourceProvider',
+	($resourceProvider) => {
 		$resourceProvider.defaults.stripTrailingSlashes = false;
 	}
 ]);
 
-app.config(['$locationProvider',
-	function($locationProvider) {
+app.config([
+	'$locationProvider',
+	($locationProvider) => {
 		$locationProvider.hashPrefix('');
 	}
 ]);
