@@ -1,7 +1,3 @@
-(function() {
-
-"use strict";
-
 var app = angular.module('perflabApp');
 
 app.controller('memoryGraphController',
@@ -41,5 +37,3 @@ app.controller('memoryGraphController',
 		}).catch(Notify.danger);
 	}
 ]);
-
-})();

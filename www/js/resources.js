@@ -1,7 +1,3 @@
-(function() {
-
-'use strict';
-
 let module = angular.module('isc.resources', ['ngResource']);
 
 module.factory('TestResource', ['$resource',
@@ -54,5 +50,3 @@ module.factory('ClientAgentResource', ['$resource',
 module.factory('SettingsResource', ['$resource',
 	($resource) => $resource('/api/settings/')
 ]);
-
-})();

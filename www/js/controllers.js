@@ -1,7 +1,3 @@
-(function() {
-
-'use strict';
-
 var app = angular.module('perflabApp');
 
 app.controller('logViewController', ['$scope', 'LogWatcher',
@@ -495,5 +491,3 @@ app.controller('beepController', ['$scope', 'Beeper',
 		$scope.beeper = Beeper;
 	}
 ]);
-
-})();

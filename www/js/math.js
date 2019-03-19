@@ -1,5 +1,3 @@
-'use strict';
-
 /* via https://msdn.microsoft.com/en-gb/magazine/mt620016.aspx */
 
 // input = z-value (-inf to +inf)

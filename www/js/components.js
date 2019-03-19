@@ -1,7 +1,3 @@
-(function() {
-
-"use strict";
-
 var app = angular.module('perflabApp');
 
 app.directive('cfgButtonQueue', function() {
@@ -66,5 +62,3 @@ app.directive('perflabConfigEntry', function() {
 		templateUrl: 'partials/config-list-entry.html'
 	}
 });
-
-})();

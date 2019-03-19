@@ -1,7 +1,3 @@
-(function() {
-
-"use strict";
-
 var app = angular.module('perflabApp');
 
 app.controller('runGraphController',
@@ -183,5 +179,3 @@ function formatter(v, o, s, d, r, c) {
 			   nvf.call(this, range[0] + range[1], o, s, d, r, c);
 	}
 }
-
-})();

@@ -1,7 +1,4 @@
-(function() {
 var app = angular.module('perflabApp');
-
-'use strict';
 
 //
 // uses a WebSocket to receive info about updates to tables from a
@@ -401,5 +398,3 @@ app.service('Settings',
 		return SettingsResource.get();
 	}
 ]);
-
-})();
