@@ -1,4 +1,4 @@
-var app = angular.module('perflabApp');
+const app = angular.module('perflabApp');
 
 //
 // uses a WebSocket to receive info about updates to tables from a

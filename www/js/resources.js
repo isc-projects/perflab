@@ -1,6 +1,7 @@
-let module = angular.module('isc.resources', ['ngResource']);
+const module = angular.module('isc.resources', ['ngResource']);
 
-module.factory('TestResource', ['$resource',
+module.factory('TestResource',
+	['$resource',
 	($resource) => $resource('/api/test/:id', { id: '@_id' }, {
 			query: {
 				url: '/api/run/test/:run_id/',
@@ -9,11 +10,13 @@ module.factory('TestResource', ['$resource',
 		})
 ]);
 
-module.factory('MemoryResource', ['$resource',
+module.factory('MemoryResource',
+	['$resource',
 	($resource) => $resource('/api/run/memory/:run_id/')
 ]);
 
-module.factory('RunResource', ['$resource',
+module.factory('RunResource',
+	['$resource',
 	$resource => $resource('/api/run/:id', { id: '@_id' }, {
 			query: {
 				url: '/api/config/run/:config_id/',
@@ -22,11 +25,13 @@ module.factory('RunResource', ['$resource',
 	})
 ]);
 
-module.factory('ConfigListResource', ['$resource',
+module.factory('ConfigListResource',
+	['$resource',
 	($resource) => $resource('/api/config_list/:id', { id: '@_id' })
 ]);
 
-module.factory('ConfigResource', ['$resource',
+module.factory('ConfigResource',
+	['$resource',
 	($resource) => $resource('/api/config/:id', { id: '@_id' }, {
 			update: {
 				method: 'PUT',
@@ -35,18 +40,21 @@ module.factory('ConfigResource', ['$resource',
 	})
 ]);
 
-module.factory('ServerAgentResource', ['$resource',
+module.factory('ServerAgentResource',
+	['$resource',
 	($resource) => $resource('/api/agent/server/:agent', {}, {
 			query: { isArray: false }
 	})
 ]);
 
-module.factory('ClientAgentResource', ['$resource',
+module.factory('ClientAgentResource',
+	['$resource',
 	($resource) => $resource('/api/agent/client/:agent', {}, {
 			query: { isArray: false },
 	})
 ]);
 
-module.factory('SettingsResource', ['$resource',
+module.factory('SettingsResource',
+	['$resource',
 	($resource) => $resource('/api/settings/')
 ]);

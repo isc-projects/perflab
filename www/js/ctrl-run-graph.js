@@ -1,4 +1,4 @@
-var app = angular.module('perflabApp');
+const app = angular.module('perflabApp');
 
 app.controller('runGraphController',
 	['$scope', '$route', '$routeParams', '$location',

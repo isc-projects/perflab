@@ -1,4 +1,4 @@
-var app = angular.module('perflabApp',
+const app = angular.module('perflabApp',
 	['ngRoute', 'ngAnimate', 'ngSanitize',
 	 'dygraphs-directive',
 	 'isc.modules', 'isc.resources']);

@@ -1,11 +1,11 @@
-var app = angular.module('perflabApp');
+const app = angular.module('perflabApp');
 
 app.controller('memoryGraphController',
 	['$scope', '$route', '$routeParams', '$location',
 	 'Notify', 'ConfigResource', 'RunResource', 'MemoryResource',
 	function ($scope, $route, $routeParams, $location,
-			  Notify, ConfigResource, RunResource, MemoryResource) {
-
+			  Notify, ConfigResource, RunResource, MemoryResource)
+	{
 		var id = $routeParams.run_id;
 
 		$scope.graph = {

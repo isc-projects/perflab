@@ -1,6 +1,7 @@
-var app = angular.module('perflabApp');
+const app = angular.module('perflabApp');
 
-app.controller('logViewController', ['$scope', 'LogWatcher',
+app.controller('logViewController',
+	['$scope', 'LogWatcher',
 	function ($scope, LogWatcher) {
 
 		$scope.logwatch = LogWatcher;
@@ -468,7 +469,8 @@ app.controller('configEditController',
 	}
 ]);
 
-app.controller('statsController', ['$scope', 'Stats',
+app.controller('statsController',
+	['$scope', 'Stats',
 	function($scope, Stats) {
 		$scope.stats = Stats;
 
@@ -478,7 +480,8 @@ app.controller('statsController', ['$scope', 'Stats',
 	}
 ]);
 
-app.controller('statsResultsController', ['$scope', 'Stats',
+app.controller('statsResultsController',
+	['$scope', 'Stats',
 	function($scope, Stats) {
 		$('#stats').on('show.bs.modal', function() {
 			$scope.data = Stats.calculate();
@@ -486,7 +489,8 @@ app.controller('statsResultsController', ['$scope', 'Stats',
 	}
 ]);
 
-app.controller('beepController', ['$scope', 'Beeper',
+app.controller('beepController',
+	['$scope', 'Beeper',
 	function($scope, Beeper) {
 		$scope.beeper = Beeper;
 	}
