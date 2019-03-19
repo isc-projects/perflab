@@ -44,7 +44,7 @@ function Notify() {
 		notify(e, o);
 	}
 
-	function info(e, ops) {
+	function info(e, opts) {
 		const o = $.extend({}, opts, {type: 'info'});
 		notify(e, o);
 	}

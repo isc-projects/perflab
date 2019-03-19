@@ -5,36 +5,37 @@ const app = angular.module('perflabApp');
 // MongoDB oplog tail, and allows listeners to subscribe to those
 // updates
 //
-app.service('OpLog',
-	[ '$rootScope', '$timeout', 'Notify',
-	function($rootScope, $timeout, Notify) {
+app.service('OpLog', [
+	'$rootScope', '$timeout', 'Notify',
+	function ($rootScope, $timeout, Notify) {
+
 		(function connect() {
-			var ops = {'i': 'insert', 'u': 'update', 'd': 'delete'};
-			var proto = (window.location.protocol == 'https:') ? 'wss:' : 'ws:';
-			var url = proto + '//' + window.location.hostname + ':' +
-					  window.location.port + '/oplog';
-			var ws = new WebSocket(url);
+
+			const loc = window.location;
+			const ops = {'i': 'insert', 'u': 'update', 'd': 'delete'};
+			const proto = (loc.protocol === 'https:') ? 'wss:' : 'ws:';
+			const url = `${proto}//${loc.hostname}:${loc.port}/oplog`;
+
+			const ws = new WebSocket(url);
 			ws.onclose = function() {
 				Notify.danger('WebSocket closed - retrying in 10s');
 				$timeout(connect, 10000);
 			}
 			ws.onmessage = function(ev) {
-				var msg = JSON.parse(ev.data);
-				var coll = msg.ns;
-				var op = ops[msg.op];
+				const msg = JSON.parse(ev.data);
+				const coll = msg.ns;
+				const op = ops[msg.op];
 				if (op) {
-					$rootScope.$applyAsync(function() {
+					$rootScope.$applyAsync(() => {
 						$rootScope.$emit('oplog.' + op + '.' + coll, msg.doc);
 					});
 				}
 			}
 		})();
 
-		return {
-			'on': function(ev, handler) {
-				$rootScope.$on('oplog.' + ev, handler);
-			}
-		};
+		const on = (ev, handler) => $rootScope.$on(`oplog.${ev}`, handler);
+
+		return { on };
 	}
 ]);
 
@@ -42,11 +43,11 @@ app.service('OpLog',
 // service that exposes the global system state, and
 // monitors for changes to that state (via OpLog)
 //
-app.service('SystemControl',
-	['$http', 'Notify', 'OpLog',
-	function($http, Notify, OpLog) {
+app.service('SystemControl', [
+	'$http', 'OpLog', 'Notify',
+	function ($http, OpLog, Notify) {
 
-		var service = {
+		const service = {
 			pause: function() {
 				$http.put('/api/control/paused/', {paused: true});
 			},
@@ -111,28 +112,28 @@ app.service('SystemControl',
 // the 'log' collection over REST, then uses OpLog to watch for
 // real-time changes to the collection.
 //
-app.service('LogWatcher',
-	['$http', 'OpLog', 'Notify',
+app.service('LogWatcher', [
+	'$http', 'OpLog', 'Notify',
 	function($http, OpLog, Notify) {
 
-		var log = { '' : [] };
-		var byid = { '': {} };		// used to ensure IDs don't get duplicated
+		const log = { '' : [] };
+		const byid = { '': {} };		// used to ensure IDs don't get duplicated
 
 		function save(data, host) {
 
-			var key = host || '';
-			var idref = byid[key] = byid[key] || {};
+			const key = host || '';
+			const idref = byid[key] = byid[key] || {};
 
 			if (data._id in idref) {
 				return;
 			}
 
-			var ref = log[key] = log[key] || [];
+			const ref = log[key] = log[key] || [];
 			ref.push(data);
 			idref[data._id] = 1;
 
 			if (ref.length > 300) {
-				var first = ref.shift();
+				const first = ref.shift();
 				delete idref[first._id];
 			}
 		}
@@ -164,8 +165,8 @@ app.service('LogWatcher',
 // also supports changing the queue 'enabled' and 'repeat' state for
 // individual configurations
 //
-app.service('ConfigList',
-	['$http', 'Notify', 'Beeper', 'OpLog', 'ConfigListResource',
+app.service('ConfigList', [
+	'$http', 'Notify', 'Beeper', 'OpLog', 'ConfigListResource',
 	function($http, Notify, Beeper, OpLog, ConfigListResource) {
 
 		const configs = ConfigListResource.query();
@@ -188,8 +189,8 @@ app.service('ConfigList',
 			config.progress = 100;
 			config.testing = false;
 			if (config.queue.running) {
-				var state = config.queue.state || '';
-				var match = state.match(/^test (\d+)\/(\d+)$/);
+				const state = config.queue.state || '';
+				const match = state.match(/^test (\d+)\/(\d+)$/);
 				if (match) {
 					config.testing = true;
 					config.progress = 100.0 * (+match[1] / +match[2]);
@@ -241,19 +242,20 @@ app.service('ConfigList',
 		}
 
 		function setEnabled(id, enabled)  {
-			return $http.put('/api/config/' + id + '/queue/enabled/', {enabled: !!enabled}).catch(Notify.danger);
+			enabled = !!enabled;
+			return $http.put(`/api/config/${id}/queue/enabled/`, {enabled}).catch(Notify.danger);
 		}
 
 		function setRepeat(id, repeat)  {
-			return $http.put('/api/config/' + id + '/queue/repeat/', {repeat: !!repeat}).catch(Notify.danger);
+			repeat = !!repeat;
+			return $http.put(`/api/config/${id}/queue/repeat/`, {repeat}).catch(Notify.danger);
 		}
 
 		function togglePriority(id) {
 			let config = configById(id);
 			if (config.queue) {
-				var pri = config.queue.priority || 0;
-				pri = pri ? 0 : 1;
-				return $http.put('/api/config/' + id + '/queue/priority/', {priority: pri}).catch(Notify.danger);
+				const priority = config.queue.priority ? 0 : 1;
+				return $http.put(`/api/config/${id}/queue/priority/`, {priority}).catch(Notify.danger);
 			}
 		}
 
@@ -263,18 +265,16 @@ app.service('ConfigList',
 
 		return {
 			all: configs,
-			setEnabled: setEnabled,
-			setRepeat: setRepeat,
-			togglePriority: togglePriority
+			setEnabled, setRepeat, togglePriority
 		}
 	}
 ]);
 
-app.service('Stats',
-	[function() {
+app.service('Stats', [
+	function() {
 
-		var defaults = JSON.stringify({a:{}, b:{}});
-		var stats = JSON.parse(localStorage.stats || defaults);
+		const defaults = JSON.stringify({a:{}, b:{}});
+		const stats = JSON.parse(localStorage.stats || defaults);
 
 		function store() {
 			localStorage.stats = JSON.stringify(stats);
@@ -286,37 +286,34 @@ app.service('Stats',
 					return stats[group][k];
 				})
 			)
-			.filter(function(n) { return !isNaN(n); })
-			.sort(function(a, b) { return a - b });
+			.filter((n) => !isNaN(n))
+			.sort((a, b) => a - b);
 		}
 
 		function calculate() {
 
-			var a = getData('a');
-			var b = getData('b');
+			const a = getData('a');
+			const b = getData('b');
 
-			function info(data) {
-				return {
-					count: data.length,
-					mean: ss.mean(data),
-					stddev: ss.sampleStandardDeviation(data),
-					median: ss.quantileSorted(data, 0.5)
-				};
-			}
+			const info = (data) => ({
+				count: data.length,
+				mean: ss.mean(data),
+				stddev: ss.sampleStandardDeviation(data),
+				median: ss.quantileSorted(data, 0.5)
+			});
 
-			var t = ss.tTestTwoSample(a, b, 0);
-			var p = Math.studentP(t, a.length + b.length - 2);
+			const t = ss.tTestTwoSample(a, b, 0);
+			const p = Math.studentP(t, a.length + b.length - 2);
 
 			return {
 				a: info(a),
 				b: info(b),
-				t: t,
-				p: p
+				t, p
 			};
 		}
 
 		return {
-			calculate: calculate,
+			calculate,
 
 			ready: function() {
 				return !!(Object.keys(stats.a).length && Object.keys(stats.b).length);
