@@ -173,7 +173,9 @@ app.controller('configListController',
 			if (r) return r;
 
 			// compare completion times (ascending)
-			return (qa.completed.localeCompare(qb.completed));
+			let qac = qa.completed || '';
+			let qbc = qb.completed || '';
+			return (qac.localeCompare(qbc));
 		}
 
 		function protoName(proto) {
@@ -207,7 +209,6 @@ app.controller('runListController',
 
 		$scope.skipto = function(arg) {
 			$location.search(arg);
-			$route.reload();
 		};
 
 		$scope.getgroup = function(run) {
@@ -228,11 +229,11 @@ app.controller('runListController',
 			}
 		};
 
-		ConfigResource.get({id: id}, function(config) {
+		ConfigResource.get({id}, function(config) {
 			$scope.config = config;
 		}, Notify.danger);
 
-		RunResource.query({config_id: id, skip: skip, limit: limit}, function(runs) {
+		RunResource.query({config_id: id, skip, limit}, function(runs) {
 			$scope.runs = runs;
 
 			var link = {};
@@ -248,7 +249,7 @@ app.controller('runListController',
 		}, Notify.danger);
 
 		function makelink(skip, limit) {
-			return 'skip=' + skip + '&limit=' + limit;
+			return {skip, limit};
 		}
 
 		OpLog.on('update.run', function(ev, doc) {
@@ -362,8 +363,8 @@ app.controller('configEditController',
 			config.$promise.then(() => {
 
 				// change default name and add note
-				config.name = 'Clone of ' + config.name;
-				config.notes = config.name + ' ' + Date().toString();
+				config.name = `Clone of ${config.name}`;
+				config.notes = `${config.name} ${Date()}`;
 
 				// remove specific properties that the clone shouldn't have (yet)
 				delete config._id;
@@ -416,7 +417,7 @@ app.controller('configEditController',
 
 		function redirectNotify(e) {
 			Notify.danger(e);
-			setTimeout(function() {
+			setTimeout(() => {
 				$location.path('/config/');
 				$route.reload();
 			}, 3000);
@@ -428,9 +429,8 @@ app.controller('configEditController',
 
 		function save() {
 			$scope.config.$save().then(function(config) {
-				$location.path('/config/' + config.type + '/' + config._id + '/edit').replace();
+				$location.path(`/config/edit/${config._id}`).search({}).replace();
 				Notify.info('Saved');
-				$route.reload();
 			}).catch(Notify.danger).then(doneSaving);
 		}
 

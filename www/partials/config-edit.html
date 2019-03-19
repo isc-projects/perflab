@@ -145,13 +145,13 @@ pre- and post-edit results.
 			    <input type="checkbox" id="archived" ng-model="config.archived"/> Archived
 			  </span>
 			</span>
-			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$pristine || saving" ng-click="save()">
+			<button class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$pristine || saving" ng-click="save()">
 			  <span class="fas fa-fw fa-save"></span>Save</button>
-			<button type="submit" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$pristine || saving" ng-click="reset()">
+			<button class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$pristine || saving" ng-click="reset()">
 			  <span class="fas fa-fw fa-times-circle"></span>Reset</button>
 			<a href="#/config/clone/{{::config.type}}/{{::config._id}}" class="fixed-button btn btn-sm btn-primary" ng-disabled="form.$invalid || form.$dirty || saving" ng-show="config._id !== undefined">
 			  <span class="fas fa-fw fa-clone"></span>Clone</a>
-			<button type="submit" class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="config._id !== undefined" ng-disabled="saving">
+			<button class="fixed-button btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete" ng-show="config._id !== undefined" ng-disabled="saving">
 			  <span class="fas fa-trash-alt"></span>Delete...</button>
 		  </div>
 		</form>
@@ -171,8 +171,8 @@ pre- and post-edit results.
 		  This <u>will</u> permanently remove all related data.
 		</div>
 		<div class="modal-footer">
-		  <button type="button" class="btn btn-default btn-outline-primary btn-sm" data-dismiss="modal">Cancel</button>
-		  <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="delete()">Delete</button>
+		  <button class="btn btn-default btn-outline-primary btn-sm" data-dismiss="modal">Cancel</button>
+		  <button class="btn btn-danger btn-sm" data-dismiss="modal" ng-click="delete()">Delete</button>
 		</div>
 	  </div>
 	</div>
