@@ -39,22 +39,23 @@ function Notify() {
 		$.notify(message, opts);
 	}
 
-	return {
-		notify: notify,
-		danger: function(e, opts) {
-			var o = $.extend({}, opts, {type: 'danger'});
-			notify(e, o);
-		},
-		info: function(e, opts)	{
-			var o = $.extend({}, opts, {type: 'info'});
-			notify(e, o);
-		}
+	function danger(e, opts) {
+		const o = $.extend({}, opts, {type: 'danger'});
+		notify(e, o);
 	}
+
+	function info(e, ops) {
+		const o = $.extend({}, opts, {type: 'info'});
+		notify(e, o);
+	}
+
+	return { notify, info, danger };
 }
 
 function Beeper($rootScope) {
-	var audio;
-	var muteState;
+
+	let audio;
+	let muteState;
 
 	if (window.Audio) {
 		audio = new Audio('/sounds/Robot_blip-Marianne_Gagnon-120342607.mp3');
@@ -94,9 +95,5 @@ function Beeper($rootScope) {
 		}
 	}
 
-	return {
-		play: play,
-		muted: muted,
-		toggleMute: toggleMute
-	}
+	return { play, muted, toggleMute }
 }
