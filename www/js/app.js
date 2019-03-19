@@ -12,7 +12,8 @@ app.config(['$routeProvider',
 			})
 			.when('/config/', {
 				templateUrl: 'partials/config-list.html',
-				controller: 'configListController'
+				controller: 'configListController',
+				reloadOnSearch: false
 			})
 			.when('/config/new', {
 				templateUrl: 'partials/config-edit.html',

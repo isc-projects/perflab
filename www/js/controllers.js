@@ -29,11 +29,14 @@ app.controller('logViewController', ['$scope', 'LogWatcher',
 ]);
 
 app.controller('configListController',
-	['$scope', 'ConfigList', 'Agents', 'Settings',
-	function($scope, ConfigList, Agents, Settings) {
+	['$scope', '$routeParams', '$location', 'ConfigList', 'Agents', 'Settings',
+	function($scope, $routeParams, $location, ConfigList, Agents, Settings) {
 
 		// NB: 'Settings' unused, but referenced here to trigger a load
 		//	 ready in time for the configuration editor
+
+		// URL parameters
+		$scope.search = $routeParams.search;
 
 		// set up protocol list
 		Agents.$promise.then(function() {
@@ -91,7 +94,15 @@ app.controller('configListController',
 		$scope.$watch('configs', updateConfigView, true);
 
 		// track changes to the search box
-		$scope.$watch('search', updateConfigView);
+		$scope.$watch('search', (search) => {
+			if (typeof search === "string") {
+				if (search.trim().length === 0) {
+					search = null;
+				}
+				$location.search({search}).replace();
+			}
+			updateConfigView();
+		});
 
 		// filter list of agents by selected protocol
 		$scope.agentFilter = function(agent) {
