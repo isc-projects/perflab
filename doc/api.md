@@ -248,19 +248,19 @@ the specified Run.
 
 #### `GET /api/agent/server/`
 
-Get all Server Agent description objects.
+> Get all Server Agent description objects.
 
 #### `GET /api/agent/client/`
 
-Get all Client Agent description objects.
+> Get all Client Agent description objects.
 
 #### `GET /api/agent/server/:name`
 
-Get a single Server Agent description object.
+> Get a single Server Agent description object.
 
 #### `GET /api/agent/client/:name`
 
-Get a single Client Agent description object.
+> Get a single Client Agent description object.
 
 ### Log Records
 
