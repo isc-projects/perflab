@@ -215,7 +215,7 @@ true}` or `{repeat: false}`.
 
 #### `GET /api/config/:id/queue/priority`
 
-> Gets the Config's queue priority value - returns `{priorty:
+> Gets the Config's queue priority value - returns `{priority:
 <Integer>}`
 
 #### `PUT /api/config/:id/queue/priority`
