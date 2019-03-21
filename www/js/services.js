@@ -49,10 +49,10 @@ app.service('SystemControl', [
 
 		const service = {
 			pause: function() {
-				$http.put('/api/control/paused/', {paused: true});
+				$http.put('/api/control/paused', {paused: true});
 			},
 			unpause: function() {
-				$http.put('/api/control/paused/', {paused: false});
+				$http.put('/api/control/paused', {paused: false});
 			},
 			paused: undefined,
 			running: {}
@@ -243,19 +243,19 @@ app.service('ConfigList', [
 
 		function setEnabled(id, enabled)  {
 			enabled = !!enabled;
-			return $http.put(`/api/config/${id}/queue/enabled/`, {enabled}).catch(Notify.danger);
+			return $http.put(`/api/config/${id}/queue/enabled`, {enabled}).catch(Notify.danger);
 		}
 
 		function setRepeat(id, repeat)  {
 			repeat = !!repeat;
-			return $http.put(`/api/config/${id}/queue/repeat/`, {repeat}).catch(Notify.danger);
+			return $http.put(`/api/config/${id}/queue/repeat`, {repeat}).catch(Notify.danger);
 		}
 
 		function togglePriority(id) {
 			let config = configById(id);
 			if (config.queue) {
 				const priority = config.queue.priority ? 0 : 1;
-				return $http.put(`/api/config/${id}/queue/priority/`, {priority}).catch(Notify.danger);
+				return $http.put(`/api/config/${id}/queue/priority`, {priority}).catch(Notify.danger);
 			}
 		}
 
