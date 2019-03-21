@@ -211,12 +211,14 @@ true}` or `{repeat: false}`.
 #### `PUT /api/config/:id/queue/enabled/`
 
 > Change the Config's queue auto-repeat status - requires a body of
-`{repeat: true}` or `{repeast: false}`.
+`{repeat: true}` or `{repeat: false}`.
 
 #### `GET /api/config/run/:id/`
 
 > Get a list of all of the Run objects (in abbreviated form) for the
-specified Config.
+specified Config.  Run objects are always returned in reverse order
+(i.e. most recent first).  A portion of the result set can be extracted
+by passing query parameters `skip` and `limit`.
 
 #### `GET /api/config/run/:id/stats`
 
@@ -232,7 +234,8 @@ in CSV format.
 #### `GET /api/run/test/:id/`
 
 > Get a list of all of the Test objects (in abbreviated form) for
-the specified Run.
+the specified Run.  Test objects are always returned in order
+of creation (i.e. most recent last).
 
 #### `GET /api/run/memory/:id/`
 
