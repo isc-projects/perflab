@@ -198,7 +198,7 @@ be `true` to actually take effect.
 > Gets the queue status - returns `{enabled: true}` or `{enabled:
 false}`.
 
-#### `PUT /api/config/:id/queue/enabled/`
+#### `PUT /api/config/:id/queue/enabled`
 
 > Change the queue status - requires a body of `{enabled: true}` or
 `{enabled: false}`.
@@ -208,10 +208,20 @@ false}`.
 > Gets the Config's queue auto-repeat status - returns `{repeat:
 true}` or `{repeat: false}`.
 
-#### `PUT /api/config/:id/queue/enabled/`
+#### `PUT /api/config/:id/queue/repeat`
 
 > Change the Config's queue auto-repeat status - requires a body of
 `{repeat: true}` or `{repeat: false}`.
+
+#### `GET /api/config/:id/queue/priority`
+
+> Gets the Config's queue priority value - returns `{priorty:
+<Integer>}`
+
+#### `PUT /api/config/:id/queue/priority`
+
+> Change the Config's queue priority - requires a body of
+`{priority: <Integer>}`
 
 #### `GET /api/config/run/:id/`
 
@@ -292,7 +302,7 @@ global `paused` button is pressed or not.
 > Gets the global "paused" status - returns `{paused: true}` or
 `{paused: false}`.
 
-#### `PUT /api/control/paused/`
+#### `PUT /api/control/paused`
 
 > Change the global "paused" status - requires a body of `{paused:
 true}` or `{paused: false}`.
