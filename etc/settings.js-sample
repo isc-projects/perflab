@@ -95,7 +95,7 @@ module.exports = {
 	 * used by default.
 	 */
 	default_clients: {
-		dns: 'dnsperf'
+		dns: 'dnsperf',
 		dhcp4: 'perfdhcp4',
 		dhcp6: 'perfdhcp6'
 	},
