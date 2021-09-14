@@ -66,10 +66,10 @@ module.exports = {
 
 	agents: {
 		bind: {
-			repo: { vcs: 'git', url: 'https://source.isc.org/git/bind9.git' }
+			repo: { vcs: 'git', url: 'https://gitlab.isc.org/isc-projects/bind9.git' }
 		},
 		nsd: {
-			repo: { vcs: 'svn', url: 'http://www.nlnetlabs.nl/svn/nsd/tags/' }
+			repo: { vcs: 'git', url: 'https://github.com/NLnetLabs/nsd.git' }
 		},
 		knot: {
 			repo: { vcs: 'git', url: 'git://git.nic.cz/knot-dns.git' }
@@ -78,7 +78,7 @@ module.exports = {
 			repo: { vcs: 'git', url: 'https://github.com/isc-projects/dns-echo-user.git' }
 		},
 		dhcpd: {
-			repo: { url: 'https://source.isc.org/git/dhcp.git' }
+			repo: { vcs: 'git', url: 'https://gitlab.isc.org/isc-projects/dhcp.git' }
 		},
 		kea4: {
 			repo: { url: 'https://gitlab.isc.org/isc-projects/kea.git' }
