@@ -61,6 +61,7 @@ See `doc/scripts.md` for more information on script hooks.
 |`postRun`| `String` | The path to a script to call after each Run of Tests |
 |`preTest`|`String`| The path to a script to call before each Test |
 |`postTest`|`String`| The path to a script to call after each Test |
+|`wrapper`|`Object`| An array of strings to prepend to the daemon command line |
 
 NB: not all test agents support `preConfigure` and `preBuild`.
 
