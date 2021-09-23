@@ -55,6 +55,7 @@ See `doc/scripts.md` for more information on script hooks.
 |Property| Type| Description |
 |--|--|--|
 |`args`|`Object`| A nested object containing arrays of additional command line parameters for each phase |
+|`flags`|`Object`| An object containing flags exposed to agents; currently the only flag `checkout` forces execution of all stages including full cleanup & rebuild before each run |
 |`preConfigure`|`String`| The path to a script to call before running `./configure` |
 |`preBuild`|`String`| The path to a script to call before running `make` |
 |`preRun`|`String`| The path to a script to call before each Run of Tests |
