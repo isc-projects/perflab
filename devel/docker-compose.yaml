@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  mongo:
+    build: mongo
+    ports:
+      - "127.0.0.1:27017:27017"
+    command: ["--replSet", "rs"]
+    hostname: "mongo"
+
+  perflab_web:
+    build:
+      context: ..
+      dockerfile: Dockerfile.devel
+    ports:
+      - "127.0.0.1:8000:8000"
+    command: ["/perflab/perflab-httpd.js"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    links:
+      - mongo
+    init: true
+
+  perflab_agent:
+    build:
+      context: ..
+      dockerfile: Dockerfile.devel
+    command: ["/perflab/perflab-tester.js"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    links:
+      - mongo
+    init: true
+
+  mongoexpress:
+    image: mongo-express
+    ports:
+      - "127.0.0.1:8081:8081"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    links:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "mongo"

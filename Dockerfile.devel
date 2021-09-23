@@ -1,0 +1,90 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get -y install npm git
+# for scripts/install-server.js
+RUN apt-get -y install rsync
+
+RUN mkdir /perflab
+RUN mkdir /perflab/data
+ADD package.json /perflab/
+
+WORKDIR /perflab
+RUN npm install
+
+# BIND 9.17.18 depedencies
+RUN apt-get -y install          \
+        autoconf                \
+        automake                \
+        autotools-dev           \
+        bash-completion         \
+        bc                      \
+        bear                    \
+        bison                   \
+        build-essential         \
+        ccache                  \
+        docbook-xsl             \
+        gdb                     \
+        git                     \
+        idn2                    \
+        libcap2-dev             \
+        libcmocka-dev           \
+        libdb-dev               \
+        libgeoip-dev            \
+        libidn2-0-dev           \
+        libio-socket-inet6-perl \
+        libjemalloc-dev         \
+        libjson-c-dev           \
+        libjson-perl            \
+        libkrb5-dev             \
+        libldap2-dev            \
+        liblmdb-dev             \
+        liblua5.1-0-dev         \
+        liblua5.2-dev           \
+        libmaxminddb-dev        \
+        libnet-dns-perl         \
+        libnghttp2-dev          \
+        libsqlite3-dev          \
+        libssl-dev              \
+        libtool                 \
+        libuv1-dev              \
+        libxml-simple-perl      \
+        libxml2-dev             \
+        libxml2-utils           \
+        net-tools               \
+        perl                    \
+        pkg-config              \
+        procps                  \
+        python3                 \
+        python3-dnspython       \
+        python3-hypothesis      \
+        python3-pip             \
+        python3-ply             \
+        python3-pytest          \
+        python3-requests        \
+        sudo                    \
+        tzdata                  \
+        xsltproc                \
+        zip                     \
+        zlib1g-dev
+
+# dnsperf
+RUN apt-get -y install curl
+RUN echo deb http://ppa.launchpad.net/dns-oarc/dnsperf/ubuntu focal main > /etc/apt/sources.list.d/dns-oarc-ubuntu-dnsperf-focal.list
+RUN curl 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x474db6112d0c6432' | apt-key add -
+RUN apt-get update
+RUN apt-get -y install dnsperf
+
+# Perflab dependencies for lib/agents/
+RUN apt-get -y install libcap2-bin
+
+ADD . /perflab
+
+# default setup
+RUN devel/perflab-monkeypatch/config.sh
+
+# no-SSH hack for all-in-one agent container
+RUN devel/perflab-monkeypatch/monkeypatch-localhost.sh
