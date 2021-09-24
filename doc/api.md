@@ -104,6 +104,8 @@ executed.
 |`commit`|`String`| The last VCS commit message for the server |
 |`completed`|`Date`| When this Run completed execution |
 |`created`|`Date`| When this Run was created |
+|`logMatched`|`Date`| When child process of this Run logged its "started" message |
+|`started`|`Date`| When child process of this Run was started |
 |`stats`|`Object`| The `min`, `max`, `count`, `stddev` and `average` test results |
 |`status`|`Integer`| The exit (status) code returned by the server |
 |`stderr`|`String`| The accumulated `stderr` of all build and execution phases |
