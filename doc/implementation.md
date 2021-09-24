@@ -32,6 +32,7 @@ particularly when passing callback functions.
 * `lib/agents/_base.js` - utility classes for forking a UNIX command and capturing its output and exit status (Executor), and a subclass of that for handling compilation with make style dependencies (Builder)
 * `lib/agents/bind.js` - instance of Builder that knows how to get BIND from git, configure it, make it, install it, and then finally execute it (see also lib/agents/knot.js and lib/agents/nsd.js)
 * `lib/agents/dnsperf.js` - instance of Executor that knows how to run dnsperf and then extract the QPS result from the output
+* `lib/agents/starttime.js` - instance of Executor that knows how to read Builder instance metadata and then extracts daemon startup time
 
 #### Web Server Code
 
