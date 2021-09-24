@@ -75,7 +75,7 @@ pre.log {
 	padding: 0px 0px 0px 4px;
 }
 
-.log.stdout, .log.stderr {
+.log.stdout, .log.stderr, .log.perflab {
 	background-color: inherit;
 }
 
@@ -92,6 +92,9 @@ pre.log {
 	border-left: 4px solid #c00000;
 }
 
+.log.perflab {
+	border-left: 4px solid #c0c000;
+}
 .dygraph-legend {
 	opacity: 0.92;
 	padding: 4px;
