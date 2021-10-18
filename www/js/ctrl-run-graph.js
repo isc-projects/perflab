@@ -54,7 +54,7 @@ app.controller('runGraphController',
 				var s = run.stats;
 				var r = [
 					new Date(run.created),
-					[s.average, s.stddev],
+					[s.average, s.stddev ? s.stddev : 0],
 					[(s.min + s.max) / 2, (s.max - s.min) / 2],
 				];
 				r.id = run._id;		// slight hack - r is now an array with properties
