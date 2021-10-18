@@ -108,8 +108,16 @@ function plotter(e) {
 		var topY = area.h * sets[1][p].y_top + area.y;
 		var bottomY = area.h * sets[1][p].y_bottom + area.y;
 		var centerX = area.x + sets[0][p].x * area.w;
-		ctx.moveTo(centerX, topY);
-		ctx.lineTo(centerX, bottomY);
+		let crosshair_size = 2;
+		if (Math.abs(topY - bottomY) > crosshair_size) {
+			ctx.moveTo(centerX, topY);
+			ctx.lineTo(centerX, bottomY);
+		} else {  // a single point, draw it as crosshair
+			ctx.moveTo(centerX + crosshair_size, topY + crosshair_size);
+			ctx.lineTo(centerX - crosshair_size, topY - crosshair_size);
+			ctx.moveTo(centerX - crosshair_size, topY + crosshair_size);
+			ctx.lineTo(centerX + crosshair_size, topY - crosshair_size);
+		}
 		ctx.closePath();
 		ctx.stroke();
 
