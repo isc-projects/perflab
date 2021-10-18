@@ -26,7 +26,7 @@
 			  <tbody>
 				<tr ng-repeat="test in tests track by test._id">
 				  <td width="2em" class="text-right">{{$index + 1}}</td>
-				  <td class="time"><a href="#/test/{{test._id}}">{{test.created}}</td>
+				  <td class="time"><a href="#/test/{{test._id}}">{{test.created}}</a>{{ ($first && !$last) ? ' (first test, ignored in run statistics)' : '' }}</td>
 				  <td class="count text-right">{{test.count === undefined ? '-' : test.count.toFixed(1)}}</td>
 				</tr>
 			  </tbody>
