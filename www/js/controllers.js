@@ -223,7 +223,9 @@ app.controller('runListController',
 					data = data.map(function(d) {
 						return d.count;
 					});
-					data.shift();		// ignore first point
+					if (data.length > 1) {
+						data.shift();		// ignore first point
+					}
 					Stats.setgroup(run._id, data, group);
 				}, Notify.danger);
 			}
