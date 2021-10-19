@@ -14,7 +14,7 @@ dbo.query((db) => {
 	db.collection('run').find({},{_id:1}).toArray().then((runs) => {
 		return Promise.each(runs, (run) => {
 			console.log(run._id);
-			return dbo.updateStatsByRunId(run._id);
+			return dbo.updateRunStats(run);
 		});
 	});
 });
