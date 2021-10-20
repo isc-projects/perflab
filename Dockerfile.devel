@@ -87,4 +87,5 @@ ADD . /perflab
 RUN devel/perflab-monkeypatch/config.sh
 
 # no-SSH hack for all-in-one agent container
+ENV MAKEFLAGS=-j
 RUN devel/perflab-monkeypatch/monkeypatch-localhost.sh
