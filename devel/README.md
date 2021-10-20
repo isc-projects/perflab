@@ -31,6 +31,8 @@ It runs client & server processes in the same container.
 - Perflab HTTP interface server on 127.0.0.1 port 8000
 - MongoDB Express HTTP interface on 127.0.0.1 port 8081
 - MongoDB on 127.0.0.1 port 27017
+- NodeJS remote debugger for Perflab HTTP on 127.0.0.1 port 9222
+- NodeJS remote debugger for Perflab agent on 127.0.0.1 port 9229
 
 4. Rebuild from sources and restart as needed.
 Database is persisted in the MongoDB container:
