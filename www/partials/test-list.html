@@ -5,6 +5,7 @@
 		<div class="card-header" ng-show="config.$resolved">
 		  Tests of configuration "{{config.name}}" started at {{run.created}}
 		  <span class="float-right">
+			<a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>
 			<cfg-button-edit />
 			<run-button-memory />
 		  </span>
