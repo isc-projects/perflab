@@ -169,8 +169,6 @@ the entire configuration table settings.
 #### `GET /api/config_list/`
 
 > Get an array of all active configurations in abbreviated form.
-Optionally takes a query parameter of `?archived=true`  to also
-include archived configurations.
 
 #### `GET /api/config_list/:id`
 
