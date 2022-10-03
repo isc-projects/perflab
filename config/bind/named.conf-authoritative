@@ -16,6 +16,7 @@ logging {
 	category default { default_stderr; };
 	category general { notice_stderr; };
 	category unmatched { null; };
+	category update { null; };
 	category security { null; };
 };
 
