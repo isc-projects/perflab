@@ -78,6 +78,8 @@ pre- and post-edit results.
 			  <option value="kilo-records">1 zone, 1k A/AAAA records</option>
 			  <option value="mega-small">1M small zones</option>
 			  <option value="kilo-small">1k small zones</option>
+			  <option value="update-empty">2 zones, allow-update, empty</option>
+			  <option value="update-megarr">2 zones, allow-update, 1M names with AAAA/PTR+DHCID</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="clients && clients.length > 1">
@@ -94,6 +96,8 @@ pre- and post-edit results.
 			  <option ng-if="config.mode !== 'recursive'" value="default">Nominum default</option>
 			  <option ng-if="config.mode !== 'recursive'" value="mega-small">1M small zones, 5% NXD</option>
 			  <option ng-if="config.mode !== 'recursive'" value="kilo-small">1k small zones, 5% NXD</option>
+			  <option ng-if="config.mode !== 'recursive'" value="update-clean-start">UPDATE, expect empty zones (dnsperf -u -n 1)</option>
+			  <option ng-if="config.mode !== 'recursive'" value="update-renumber">UPDATE, expect 1M names with AAAA/PTR+DHCID and renumber all of them (dnsperf -u -n 1)</option>
 			  <option ng-if="config.mode === 'recursive'" value="mega-small">1M zones, 5% NXD</option>
 				<option ng-repeat="set in settings.querysets[config.mode]" value="{{set.file}}">{{set.name}}</option>
 			</select>
