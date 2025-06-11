@@ -1,5 +1,4 @@
-version: '3.1'
-
+---
 services:
   mongo:
     build: mongo
@@ -7,6 +6,12 @@ services:
       - "127.0.0.1:27017:27017"
     command: ["--replSet", "rs"]
     hostname: "mongo"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongo", "test"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
 
   perflab_web:
     build:
@@ -20,8 +25,6 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    links:
-      - mongo
     init: true
 
   perflab_agent:
@@ -35,8 +38,6 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    links:
-      - mongo
     init: true
 
   mongoexpress:
@@ -46,7 +47,5 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    links:
-      - mongo
     environment:
-      ME_CONFIG_MONGODB_SERVER: "mongo"
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017
