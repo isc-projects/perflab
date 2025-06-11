@@ -5,7 +5,7 @@ services:
     build: mongo
     ports:
       - "127.0.0.1:27017:27017"
-    command: ["--replSet", "rs", "--logappend", "--logpath", "/dev/null"]
+    command: ["--replSet", "rs"]
     hostname: "mongo"
 
   perflab_web:
