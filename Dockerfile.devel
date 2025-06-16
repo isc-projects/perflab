@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -50,10 +50,12 @@ RUN apt-get -y install          \
         libsqlite3-dev          \
         libssl-dev              \
         libtool                 \
+        liburcu-dev             \
         libuv1-dev              \
         libxml-simple-perl      \
         libxml2-dev             \
         libxml2-utils           \
+        meson                   \
         net-tools               \
         perl                    \
         pkg-config              \
@@ -72,10 +74,6 @@ RUN apt-get -y install          \
         zlib1g-dev
 
 # dnsperf
-RUN apt-get -y install curl
-RUN echo deb http://ppa.launchpad.net/dns-oarc/dnsperf/ubuntu focal main > /etc/apt/sources.list.d/dns-oarc-ubuntu-dnsperf-focal.list
-RUN curl 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x474db6112d0c6432' | apt-key add -
-RUN apt-get update
 RUN apt-get -y install dnsperf
 
 # Perflab dependencies for lib/agents/
