@@ -42,7 +42,7 @@ module.exports = {
 	 * server basis to control which programs are tested on that
 	 * server.  Omit or set to { } if not required.
 	 */
-	queueFilter: {type: {$in: ['bind', 'echo', 'knot', 'nsd']}},
+        queueFilter: {type: {$in: ['bind', 'bind_meson', 'echo', 'knot', 'nsd']}},
 
 	/*
 	 * alternative version for DHCP testing */
