@@ -1,3 +1,6 @@
+<td width="30">
+  <input type="checkbox" ng-model="$parent.selectedConfigs[config._id]" />
+</td>
 <td class="name" ng-class="{archived:config.archived}">
   <span ng-if="config.queue.state === 'error'" class="fas fa-exclamation-triangle"></span>
   {{config.name}}

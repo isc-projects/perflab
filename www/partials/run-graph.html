@@ -6,7 +6,7 @@
 		  <span>Runs of configuration "{{config.name}}"</span>
 		  <span class="float-right">
 <a href="#/config/run/{{config._id}}/list/" class="icon-button btn btn-sm btn-primary"><span class="fas fa-bars" title="List"></span></a>
-<a href="/api/config/run/{{config._id}}/stats" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>
+<a href="/api/batch/stats?ids={{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-download" title="Export CSV"></span></a>
 <a href="#/config/edit/{{config.type}}/{{config._id}}" class="icon-button btn btn-sm btn-primary"><span class="fas fa-cog" title="Edit"></span></a>
 			</a>
 		  </span>

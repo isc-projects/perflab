@@ -26,14 +26,18 @@ app.controller('logViewController',
 ]);
 
 app.controller('configListController',
-	['$scope', '$routeParams', '$location', 'ConfigList', 'Agents', 'Settings',
-	function($scope, $routeParams, $location, ConfigList, Agents, Settings) {
+	['$scope', '$routeParams', '$location', '$http', 'ConfigList', 'Agents', 'Settings', 'Notify',
+	function($scope, $routeParams, $location, $http, ConfigList, Agents, Settings, Notify) {
 
 		// NB: 'Settings' unused, but referenced here to trigger a load
 		//	 ready in time for the configuration editor
 
 		// URL parameters
 		$scope.search = $routeParams.search;
+
+		// Multi-selection state
+		$scope.selectedConfigs = {};
+		$scope.selectAll = false;
 
 		// set up protocol list
 		Agents.$promise.then(function() {
@@ -181,6 +185,71 @@ app.controller('configListController',
 		function protoName(proto) {
 			return proto ? proto.replace(/\d/g, '').toUpperCase() : undefined;
 		}
+
+		// Multi-selection functions
+		$scope.toggleSelectAll = function() {
+			$scope.selectAll = !$scope.selectAll;
+			if ($scope.configView) {
+				$scope.configView.forEach(function(config) {
+					$scope.selectedConfigs[config._id] = $scope.selectAll;
+				});
+			}
+		};
+
+		$scope.getSelectedIds = function() {
+			return Object.keys($scope.selectedConfigs).filter(id => $scope.selectedConfigs[id]);
+		};
+
+		$scope.downloadSelectedCSV = function() {
+			const selectedIds = $scope.getSelectedIds();
+			if (selectedIds.length === 0) {
+				Notify.warning('Please select at least one configuration');
+				return;
+			}
+			const url = `/api/batch/stats?ids=${selectedIds.join(',')}`;
+			window.open(url, '_blank');
+		};
+
+		$scope.clearSelection = function() {
+			$scope.selectedConfigs = {};
+			$scope.selectAll = false;
+		};
+
+		$scope.archiveSelected = function() {
+			const selectedIds = $scope.getSelectedIds();
+			if (selectedIds.length === 0) {
+				Notify.warning('Please select at least one configuration');
+				return;
+			}
+
+			$http.put(`/api/batch/archive?ids=${selectedIds.join(',')}`)
+				.then(function(response) {
+					Notify.info(`Successfully archived ${selectedIds.length} configuration(s)`);
+					$scope.clearSelection();
+					// Config list will update automatically via OpLog
+				})
+				.catch(Notify.danger);
+		};
+
+		$scope.deleteSelected = function() {
+			const selectedIds = $scope.getSelectedIds();
+			if (selectedIds.length === 0) {
+				Notify.warning('Please select at least one configuration');
+				return;
+			}
+			
+			if (!confirm(`DELETE ${selectedIds.length} configuration(s) and all their test data? This cannot be undone!`)) {
+				return;
+			}
+
+			$http.delete(`/api/batch/?ids=${selectedIds.join(',')}&really=true`)
+				.then(function(response) {
+					Notify.info(`Successfully deleted ${selectedIds.length} configuration(s)`);
+					$scope.clearSelection();
+					// Config list will update automatically via OpLog
+				})
+				.catch(Notify.danger);
+		};
 	}
 ]);
 
@@ -306,10 +375,10 @@ app.controller('testDetailController',
 ]);
 
 app.controller('configEditController',
-	['$scope', '$route', '$location', '$q', '$routeParams',
+	['$scope', '$route', '$location', '$q', '$routeParams', '$http',
 	 'Notify', 'RunResource', 'ConfigResource',
 	 'Settings', 'Agents',
-	function($scope, $route, $location, $q, $routeParams,
+	function($scope, $route, $location, $q, $routeParams, $http,
 			 Notify, RunResource, ConfigResource,
 			 Settings, Agents)
 	{
