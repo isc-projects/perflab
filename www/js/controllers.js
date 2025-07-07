@@ -206,7 +206,7 @@ app.controller('configListController',
 				Notify.warning('Please select at least one configuration');
 				return;
 			}
-			const url = `/api/config/batch/stats?ids=${selectedIds.join(',')}`;
+			const url = `/api/batch/stats?ids=${selectedIds.join(',')}`;
 			window.open(url, '_blank');
 		};
 
@@ -222,7 +222,7 @@ app.controller('configListController',
 				return;
 			}
 
-			$http.put(`/api/config/batch/archive?ids=${selectedIds.join(',')}`)
+			$http.put(`/api/batch/archive?ids=${selectedIds.join(',')}`)
 				.then(function(response) {
 					Notify.info(`Successfully archived ${selectedIds.length} configuration(s)`);
 					$scope.clearSelection();
@@ -242,7 +242,7 @@ app.controller('configListController',
 				return;
 			}
 
-			$http.delete(`/api/config/batch?ids=${selectedIds.join(',')}&really=true`)
+			$http.delete(`/api/batch/?ids=${selectedIds.join(',')}&really=true`)
 				.then(function(response) {
 					Notify.info(`Successfully deleted ${selectedIds.length} configuration(s)`);
 					$scope.clearSelection();

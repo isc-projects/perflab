@@ -243,17 +243,17 @@ These endpoints operate on multiple configurations simultaneously.
 All batch operations require the query parameter `ids` containing
 a comma-separated list of Config IDs.
 
-#### `GET /api/config/batch/stats`
+#### `GET /api/batch/stats`
 
 > Get CSV statistics for multiple configurations. Returns CSV file with dynamic
 filename in format `{hash}-{timestamp}.csv` where hash is derived from
 the sorted ID list.
 
-#### `PUT /api/config/batch/archive`
+#### `PUT /api/batch/archive`
 
 > Archive multiple configurations.
 
-#### `DELETE /api/config/batch`
+#### `DELETE /api/batch/`
 
 > Delete multiple configurations and all their associated test data.
 Requires query parameter `really` be `true` to actually take effect.
