@@ -237,6 +237,27 @@ by passing query parameters `skip` and `limit`.
 > Get the complete list of Run statistics for the specified Config
 in CSV format.
 
+### Batch Operations
+
+These endpoints operate on multiple configurations simultaneously.
+All batch operations require the query parameter `ids` containing
+a comma-separated list of Config IDs.
+
+#### `GET /api/config/batch/stats`
+
+> Get CSV statistics for multiple configurations. Returns CSV file with dynamic
+filename in format `{hash}-{timestamp}.csv` where hash is derived from
+the sorted ID list.
+
+#### `PUT /api/config/batch/archive`
+
+> Archive multiple configurations.
+
+#### `DELETE /api/config/batch`
+
+> Delete multiple configurations and all their associated test data.
+Requires query parameter `really` be `true` to actually take effect.
+
 ### Run Objects
 
 #### `GET /api/run/:id`
