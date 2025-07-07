@@ -4,16 +4,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
-RUN apt-get -y install npm git
-# for scripts/install-server.js
-RUN apt-get -y install rsync
-
-RUN mkdir /perflab
-RUN mkdir /perflab/data
-ADD package.json /perflab/
-
-WORKDIR /perflab
-RUN npm install
 
 # BIND 9.17.18 depedencies
 RUN apt-get -y install          \
@@ -73,12 +63,21 @@ RUN apt-get -y install          \
         zip                     \
         zlib1g-dev
 
-# dnsperf
-RUN apt-get -y install dnsperf
+# Perflab dependencies:
+#  dnsperf -- for the client
+#  libcap2-bin -- for lib/agents/
+#  rsync for scripts/install-server.js
+RUN apt-get -y install npm \
+                       git \
+                       dnsperf \
+                       libcap2-bin \
+                       rsync
 
-# Perflab dependencies for lib/agents/
-RUN apt-get -y install libcap2-bin
+RUN mkdir --parents /perflab/data
+ADD package.json /perflab/
 
+WORKDIR /perflab
+RUN npm install
 ADD . /perflab
 
 # default setup
