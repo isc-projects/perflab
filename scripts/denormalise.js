@@ -15,7 +15,7 @@ let mongoCF = require('../etc/mongo'),
 	let configs = await db.getConfigs();
 	for (let config of configs) {
 		console.log(config._id.toString());
-		let runs = await db.getRunsByConfigId(config._id);
+		let runs = await db.getRunsByConfigIds([config._id]);
 		for (let run of runs) {
 			await dbh.collection('test').update(
 				{run_id: run._id, config_id: {$exists: false}},

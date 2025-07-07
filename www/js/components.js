@@ -20,7 +20,7 @@ app.directive('cfgButtonList', () => ({
 }));
 
 app.directive('cfgButtonExport', () => ({
-	template: '<perflab-button href="/api/config/run/{{config._id}}/stats" icon="fa-download" title="Export CSV" />',
+	template: '<perflab-button href="/api/config/batch/stats?ids={{config._id}}" icon="fa-download" title="Export CSV" />',
 }));
 
 app.directive('cfgButtonEdit', () => ({
