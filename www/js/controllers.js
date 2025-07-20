@@ -200,13 +200,46 @@ app.controller('configListController',
 			return Object.keys($scope.selectedConfigs).filter(id => $scope.selectedConfigs[id]);
 		};
 
-		$scope.downloadSelectedCSV = function() {
+		$scope.getDateFromPeriod = function(period) {
+			const now = new Date();
+			let date;
+			
+			switch (period) {
+				case '1month':
+					date = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+					break;
+				case '3months':
+					date = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+					break;
+				case '6months':
+					date = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+					break;
+				case '1year':
+					date = new Date(now.getFullYear() - 1, now.getMonth(), 1);
+					break;
+				case 'ytd':
+					date = new Date(now.getFullYear(), 0, 1);
+					break;
+				default:
+					return '';
+			}
+			
+			return date.toISOString();
+		};
+
+		$scope.downloadSelectedCSV = function(period) {
 			const selectedIds = $scope.getSelectedIds();
 			if (selectedIds.length === 0) {
 				Notify.warning('Please select at least one configuration');
 				return;
 			}
-			const url = `/api/batch/stats?ids=${selectedIds.join(',')}`;
+			
+			let url = `/api/batch/stats?ids=${selectedIds.join(',')}`;
+			if (period) {
+				const fromDatetime = $scope.getDateFromPeriod(period);
+				url += `&from_datetime=${encodeURIComponent(fromDatetime)}`;
+			}
+			
 			window.open(url, '_blank');
 		};
 
