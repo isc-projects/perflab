@@ -51,6 +51,16 @@
 			<button class="btn btn-sm btn-success" ng-click="downloadSelectedCSV()">
 			  <span class="fas fa-download"></span> Download CSV ({{getSelectedIds().length}})
 			</button>
+			<button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			  <span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<div class="dropdown-menu">
+			  <a class="dropdown-item" ng-click="downloadSelectedCSV('1month')">Last Month</a>
+			  <a class="dropdown-item" ng-click="downloadSelectedCSV('3months')">Last 3 Months</a>
+			  <a class="dropdown-item" ng-click="downloadSelectedCSV('6months')">Last 6 Months</a>
+			  <a class="dropdown-item" ng-click="downloadSelectedCSV('1year')">Last Year</a>
+			  <a class="dropdown-item" ng-click="downloadSelectedCSV('ytd')">Year to Date</a>
+			</div>
 			<button class="btn btn-sm btn-warning" ng-click="archiveSelected()">
 			  <span class="fas fa-archive"></span> Archive ({{getSelectedIds().length}})
 			</button>
