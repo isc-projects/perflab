@@ -83,6 +83,10 @@ ADD . /perflab
 # default setup
 RUN devel/perflab-monkeypatch/config.sh
 RUN scripts/install-server.js
+RUN cp /perflab/data/zones/small /perflab/data/zones/custom-zone1 && \
+    cp /perflab/data/zones/small /perflab/data/zones/custom-zone2 && \
+    echo 'zone "custom1.example" { type master; file "zones/custom-zone1"; };' > /perflab/data/config/bind/zones-custom-zone1.conf && \
+    echo 'zone "custom2.example" { type master; file "zones/custom-zone2"; };' > /perflab/data/config/bind/zones-custom-zone2.conf
 
 # no-SSH hack for all-in-one agent container
 ENV MAKEFLAGS=-j

@@ -80,6 +80,7 @@ pre- and post-edit results.
 			  <option value="kilo-small">1k small zones</option>
 			  <option value="update-empty">2 zones, allow-update, empty</option>
 			  <option value="update-megarr">2 zones, allow-update, 1M names with AAAA/PTR+DHCID</option>
+			  <option ng-repeat="set in settings.zonesets" value="{{set.file}}">{{set.name}}</option>
 			</select>
 		  </div>
 		  <div class="form-group form-group-sm" ng-if="clients && clients.length > 1">
