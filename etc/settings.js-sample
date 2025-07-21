@@ -120,5 +120,15 @@ module.exports = {
 		recursive: [
 			{	file: 'test_b', name: 'Test Recursive' }
 		]
-	}
+	},
+
+	/*
+	 * for DNS testing, additional zone sets can be added to the UI
+	 * by adding them to the web server's settings.js file and then
+	 * restarting the web server.
+	 */
+	zonesets: [
+		{	file: 'custom-zone1', name: 'Custom Zone Set 1' },
+		{	file: 'custom-zone2', name: 'Custom Zone Set 2' }
+	]
 };
