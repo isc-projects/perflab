@@ -20,8 +20,8 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
       - "127.0.0.1:9222:9222"
-    entrypoint: ["node", "--inspect=0.0.0.0:9222"]
-    command: ["/perflab/perflab-httpd.js"]
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["/usr/sbin/sshd -D & exec node --inspect=0.0.0.0:9222 /perflab/perflab-httpd.js"]
     depends_on:
       mongo:
         condition: service_healthy
@@ -31,8 +31,8 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile.devel
-    entrypoint: ["node", "--inspect=0.0.0.0:9229"]
-    command: ["/perflab/perflab-tester.js"]
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["/usr/sbin/sshd -D & exec node --inspect=0.0.0.0:9229 /perflab/perflab-tester.js"]
     ports:
       - "127.0.0.1:9229:9229"
     depends_on:
