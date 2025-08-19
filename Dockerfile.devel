@@ -107,8 +107,7 @@ RUN echo "Host localhost" > ~/.ssh/config && \
     echo "    UserKnownHostsFile /dev/null" >> ~/.ssh/config && \
     chmod 600 ~/.ssh/config
 
-# Configure SSH server to accept environment variables and allow root login
-RUN echo "AcceptEnv LANG LC_* LD_LIBRARY_PATH" >> /etc/ssh/sshd_config && \
-    echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+# Configure SSH server to allow root login
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 
 WORKDIR /perflab
