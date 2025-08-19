@@ -67,11 +67,13 @@ RUN apt-get -y install          \
 #  dnsperf -- for the client
 #  libcap2-bin -- for lib/agents/
 #  rsync for scripts/install-server.js
+#  openssh-server -- for SSH to localhost instead of monkeypatch
 RUN apt-get -y install npm \
                        git \
                        dnsperf \
                        libcap2-bin \
-                       rsync
+                       rsync \
+                       openssh-server
 
 RUN mkdir --parents /perflab/data
 ADD package.json /perflab/
@@ -88,6 +90,25 @@ RUN cp /perflab/data/zones/small /perflab/data/zones/custom-zone1 && \
     echo 'zone "custom1.example" { type master; file "zones/custom-zone1"; };' > /perflab/data/config/bind/zones-custom-zone1.conf && \
     echo 'zone "custom2.example" { type master; file "zones/custom-zone2"; };' > /perflab/data/config/bind/zones-custom-zone2.conf
 
-# no-SSH hack for all-in-one agent container
+# Configure SSH for localhost access instead of monkeypatch
 ENV MAKEFLAGS=-j
-RUN devel/perflab-monkeypatch/monkeypatch-localhost.sh
+
+# Set up SSH server and keys for localhost access
+RUN mkdir /var/run/sshd && \
+    ssh-keygen -A && \
+    ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" && \
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+    chmod 600 ~/.ssh/authorized_keys && \
+    chmod 700 ~/.ssh
+
+# Configure SSH client to skip host key verification for localhost  
+RUN echo "Host localhost" > ~/.ssh/config && \
+    echo "    StrictHostKeyChecking no" >> ~/.ssh/config && \
+    echo "    UserKnownHostsFile /dev/null" >> ~/.ssh/config && \
+    chmod 600 ~/.ssh/config
+
+# Configure SSH server to accept environment variables and allow root login
+RUN echo "AcceptEnv LANG LC_* LD_LIBRARY_PATH" >> /etc/ssh/sshd_config && \
+    echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+
+WORKDIR /perflab
