@@ -1,79 +1,72 @@
-FROM ubuntu:22.04
+FROM alpine:3.19
 
-ENV DEBIAN_FRONTEND=noninteractive
+# Install build dependencies and runtime tools
+RUN apk add --no-cache --verbose \
+        autoconf \
+        automake \
+        bash \
+        bash-completion \
+        bc \
+        bison \
+        build-base \
+        ccache \
+        docbook-xsl \
+        gdb \
+        git \
+        gnutls-dev \
+        libidn2 \
+        libcap-dev \
+        db-dev \
+        libidn2-dev \
+        perl-io-socket-inet6 \
+        jemalloc-dev \
+        json-c-dev \
+        perl-json \
+        krb5-dev \
+        openldap-dev \
+        lmdb-dev \
+        lua5.1-dev \
+        lua5.2-dev \
+        libmaxminddb-dev \
+        libedit-dev \
+        perl-net-dns \
+        nghttp2-dev \
+        sqlite-dev \
+        openssl-dev \
+        libtool \
+        userspace-rcu-dev \
+        libuv-dev \
+        perl-xml-simple \
+        libxml2-dev \
+        libxml2-utils \
+        meson \
+        net-tools \
+        perl \
+        pkgconfig \
+        procps \
+        python3 \
+        py3-dnspython \
+        py3-hypothesis \
+        py3-pip \
+        py3-ply \
+        py3-pytest \
+        py3-requests \
+        sudo \
+        tzdata \
+        libxslt \
+        zip \
+        zlib-dev \
+        npm \
+        libcap-utils \
+        rsync \
+        openssh \
+        openssh-server \
+        openssh-keygen
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
-
-# BIND 9.17.18 depedencies
-RUN apt-get -y install          \
-        autoconf                \
-        automake                \
-        autotools-dev           \
-        bash-completion         \
-        bc                      \
-        bear                    \
-        bison                   \
-        build-essential         \
-        ccache                  \
-        docbook-xsl             \
-        gdb                     \
-        git                     \
-        idn2                    \
-        libcap2-dev             \
-        libcmocka-dev           \
-        libdb-dev               \
-        libgeoip-dev            \
-        libidn2-0-dev           \
-        libio-socket-inet6-perl \
-        libjemalloc-dev         \
-        libjson-c-dev           \
-        libjson-perl            \
-        libkrb5-dev             \
-        libldap2-dev            \
-        liblmdb-dev             \
-        liblua5.1-0-dev         \
-        liblua5.2-dev           \
-        libmaxminddb-dev        \
-        libnet-dns-perl         \
-        libnghttp2-dev          \
-        libsqlite3-dev          \
-        libssl-dev              \
-        libtool                 \
-        liburcu-dev             \
-        libuv1-dev              \
-        libxml-simple-perl      \
-        libxml2-dev             \
-        libxml2-utils           \
-        meson                   \
-        net-tools               \
-        perl                    \
-        pkg-config              \
-        procps                  \
-        python3                 \
-        python3-dnspython       \
-        python3-hypothesis      \
-        python3-pip             \
-        python3-ply             \
-        python3-pytest          \
-        python3-requests        \
-        sudo                    \
-        tzdata                  \
-        xsltproc                \
-        zip                     \
-        zlib1g-dev
-
-# Perflab dependencies:
-#  dnsperf -- for the client
-#  libcap2-bin -- for lib/agents/
-#  rsync for scripts/install-server.js
-#  openssh-server -- for SSH to localhost instead of monkeypatch
-RUN apt-get -y install npm \
-                       git \
-                       dnsperf \
-                       libcap2-bin \
-                       rsync \
-                       openssh-server
+# Install missing packages from testing/community repos or build from source
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+        cmocka-dev \
+        dnsperf
 
 RUN mkdir --parents /perflab/data
 ADD package.json /perflab/
@@ -94,7 +87,7 @@ RUN cp /perflab/data/zones/small /perflab/data/zones/custom-zone1 && \
 ENV MAKEFLAGS=-j
 
 # Set up SSH server and keys for localhost access
-RUN mkdir /var/run/sshd && \
+RUN mkdir -p /var/run/sshd ~/.ssh && \
     ssh-keygen -A && \
     ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" && \
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
@@ -103,6 +96,9 @@ RUN mkdir /var/run/sshd && \
 
 # Configure SSH client to skip host key verification for localhost  
 RUN echo "Host localhost" > ~/.ssh/config && \
+    echo "    StrictHostKeyChecking no" >> ~/.ssh/config && \
+    echo "    UserKnownHostsFile /dev/null" >> ~/.ssh/config && \
+    echo "Host 127.0.0.1" >> ~/.ssh/config && \
     echo "    StrictHostKeyChecking no" >> ~/.ssh/config && \
     echo "    UserKnownHostsFile /dev/null" >> ~/.ssh/config && \
     chmod 600 ~/.ssh/config
