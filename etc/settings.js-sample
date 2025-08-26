@@ -72,7 +72,7 @@ module.exports = {
 			repo: { vcs: 'git', url: 'https://github.com/NLnetLabs/nsd.git' }
 		},
 		knot: {
-			repo: { vcs: 'git', url: 'git://git.nic.cz/knot-dns.git' }
+			repo: { vcs: 'git', url: 'https://gitlab.nic.cz/knot/knot-dns' }
 		},
 		echo: {
 			repo: { vcs: 'git', url: 'https://github.com/isc-projects/dns-echo-user.git' }
