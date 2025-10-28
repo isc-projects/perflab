@@ -21,7 +21,7 @@
 			  <th>A</th><th>B</th>
 			  <th class="text-right">Tests</th>
 			  <th class="text-right">QPS</th>
-			  <th class="text-right">StdDev</th>
+			  <th class="text-right">Memory</th>
 			</tr>
 		  </thead>
 		  <tbody>
@@ -31,7 +31,7 @@
 			  <td class=""><input type="checkbox" ng-checked="getgroup(run) === 'b'" ng-click="statsToggle(run, 'b')"/></td>
 			  <td class="tests text-right">{{run.stats ? run.stats.count : "-"}}</td>
 			  <td class="average text-right">{{run.stats ? run.stats.average.toFixed(1) : "-"}}</td>
-			  <td class="stddev text-right">{{run.stats ? run.stats.stddev.toFixed(1) : "-"}}</td>
+			  <td class="memory text-right">{{run.peak_mem ? run.peak_mem.toFixed(1) + ' MB' : "-"}}</td>
 			</tr>
 		  </tbody>
 		</table>
