@@ -30,7 +30,7 @@ app.controller('memoryGraphController',
 			$scope.graph.data = data.map(function(rec) {
 				return [
 					new Date(rec.ts),
-					rec.data[0] * 4096 / 1048576,
+					rec.data[1] * 4096 / 1048576,
 					rec.data[5] * 4096 / 1048576
 				];
 			}).sort(function(a, b) { return a[0] - b[0] });
