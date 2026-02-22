@@ -39,6 +39,7 @@ services:
       mongo:
         condition: service_healthy
     init: true
+    privileged: true
 
   mongoexpress:
     image: mongo-express

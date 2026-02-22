@@ -61,7 +61,8 @@ RUN apk add --no-cache --verbose \
         rsync \
         openssh \
         openssh-server \
-        openssh-keygen
+        openssh-keygen \
+        perf
 
 # Install missing packages from testing/community repos or build from source
 RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \

@@ -264,6 +264,64 @@ app.controller('configListController',
 				.catch(Notify.danger);
 		};
 
+		// Batch clone
+		$scope.batchClone = { branch: '', configureArgs: '', namePattern: '' };
+
+		function applyNamePattern(name, pattern, branch) {
+			let vars = { BRANCH: branch || '' };
+			name.split('/').forEach(function(p, i) { vars[i + 1] = p; });
+			return pattern.replace(/\$\{(\w+)\}/g, function(_, key) { return vars[key] || ''; });
+		}
+
+		$scope.openBatchClone = function() {
+			$scope.batchClone = { branch: '', configureArgs: '', namePattern: '${1}/${BRANCH}/${3}/${4}' };
+			updateBatchClonePreview();
+			$('#batchCloneModal').modal('show');
+		};
+
+		$scope.batchClonePreview = [];
+
+		function updateBatchClonePreview() {
+			const selectedIds = $scope.getSelectedIds();
+			if (!$scope.configs || !$scope.configs.all) {
+				$scope.batchClonePreview = [];
+				return;
+			}
+			$scope.batchClonePreview = $scope.configs.all.filter(c => selectedIds.indexOf(c._id) >= 0).map(function(config) {
+				let newName = config.name;
+				if ($scope.batchClone.namePattern) {
+					newName = applyNamePattern(config.name, $scope.batchClone.namePattern, $scope.batchClone.branch);
+				}
+				return { original: config.name, newName: newName };
+			});
+		}
+
+		$scope.$watchGroup(['batchClone.branch', 'batchClone.configureArgs', 'batchClone.namePattern'], updateBatchClonePreview);
+
+		$scope.executeBatchClone = function() {
+			const selectedIds = $scope.getSelectedIds();
+			if (selectedIds.length === 0) return;
+
+			let overrides = {};
+			if ($scope.batchClone.branch) {
+				overrides.branch = $scope.batchClone.branch;
+			}
+			if ($scope.batchClone.namePattern) {
+				overrides.namePattern = $scope.batchClone.namePattern;
+			}
+			if ($scope.batchClone.configureArgs) {
+				overrides.args = { configure: $scope.batchClone.configureArgs };
+			}
+
+			$http.post(`/api/batch/clone?ids=${selectedIds.join(',')}`, { overrides: overrides })
+				.then(function() {
+					$('#batchCloneModal').modal('hide');
+					Notify.info(`Successfully cloned ${selectedIds.length} configuration(s)`);
+					$scope.clearSelection();
+				})
+				.catch(Notify.danger);
+		};
+
 		$scope.deleteSelected = function() {
 			const selectedIds = $scope.getSelectedIds();
 			if (selectedIds.length === 0) {
