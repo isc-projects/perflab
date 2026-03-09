@@ -12,7 +12,7 @@ let mongoCF = require('./etc/mongo'),
 (async () => {
 	try {
 		let dbo = await new Database(mongoCF).init();
-		httpd(mongoCF, settings, Agents, dbo, __dirname + '/www');
+		httpd(settings, Agents, dbo, __dirname + '/www');
 	} catch (e) {
 		console.trace(e);
 	}

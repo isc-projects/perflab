@@ -16,6 +16,13 @@
 module.exports = {
 
 	/*
+	 * the URL of the perflab-httpd REST API.  The tester process
+	 * routes all database writes through the httpd so that change
+	 * notifications are emitted for real-time UI updates.
+	 */
+	apiUrl:		'http://<web-server-host>:8000/api',
+
+	/*
 	 * the location where configurations and test-results are
 	 * stored - this should not be same as the the installation
 	 * path of the perflab software.

@@ -2,18 +2,16 @@
 
 'use strict';
 
-let Database = require('./lib/database'),
+let ApiClient = require('./lib/api-client'),
 	Tester = require('./lib/tester'),
 	Queue = require('./lib/queue'),
-	mongoCF = require('./etc/mongo'),
 	settings = require('./etc/settings');
 
 (async function() {
 
 	try {
 
-		let db = await new Database(mongoCF).init();
-		await db.createIndexes();
+		let db = new ApiClient(settings.apiUrl || 'http://localhost:8000/api');
 
 		let tester = new Tester(db, settings);
 		let queue = new Queue(db, settings, tester);

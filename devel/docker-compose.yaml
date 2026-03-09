@@ -25,6 +25,11 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:8000/api/control/paused', function(r) { process.exit(r.statusCode === 200 ? 0 : 1) }).on('error', function() { process.exit(1) })\""]
+      interval: 5s
+      timeout: 2s
+      retries: 10
     init: true
 
   perflab_agent:
@@ -36,7 +41,7 @@ services:
     ports:
       - "127.0.0.1:9229:9229"
     depends_on:
-      mongo:
+      perflab_web:
         condition: service_healthy
     init: true
     privileged: true

@@ -9,6 +9,7 @@ sed -i -e 's/localhost/mongo/g' /perflab/etc/mongo.js
 cp -v etc/settings.js-sample /perflab/etc/settings.js
 sed -i -e 's#/path/to/data#/perflab/data#' /perflab/etc/settings.js
 sed -i -e "s/'<d[^>]*-host>'/'127.0.0.1'/" /perflab/etc/settings.js
+sed -i -e "s|<web-server-host>|perflab_web|" /perflab/etc/settings.js
 
 cp -rv config /perflab/data/
 
