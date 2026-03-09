@@ -1,4 +1,0 @@
-module.exports = {
-	schema:	'perflab',
-	url:	'mongodb://localhost/perflab'
-};

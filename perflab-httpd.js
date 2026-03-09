@@ -6,14 +6,11 @@ let httpd = require('./lib/httpd'),
 	Database = require('./lib/database'),
 	Agents = require('./lib/agents');
 
-let mongoCF = require('./etc/mongo'),
-	settings = require('./etc/settings');
+let settings = require('./etc/settings');
 
-(async () => {
-	try {
-		let dbo = await new Database(mongoCF).init();
-		httpd(settings, Agents, dbo, __dirname + '/www');
-	} catch (e) {
-		console.trace(e);
-	}
-})();
+try {
+	let dbo = new Database(settings.dbPath || (settings.path + '/perflab.db'));
+	httpd(settings, Agents, dbo, __dirname + '/www');
+} catch (e) {
+	console.trace(e);
+}

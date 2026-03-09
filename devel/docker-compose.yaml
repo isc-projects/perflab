@@ -1,18 +1,5 @@
 ---
 services:
-  mongo:
-    build: mongo
-    ports:
-      - "127.0.0.1:27017:27017"
-    command: ["--replSet", "rs"]
-    hostname: "mongo"
-    restart: always
-    healthcheck:
-      test: ["CMD", "mongo", "test"]
-      interval: 5s
-      timeout: 2s
-      retries: 5
-
   perflab_web:
     build:
       context: ..
@@ -22,9 +9,6 @@ services:
       - "127.0.0.1:9222:9222"
     entrypoint: ["/bin/bash", "-c"]
     command: ["/usr/sbin/sshd -D & exec node --inspect=0.0.0.0:9222 /perflab/perflab-httpd.js"]
-    depends_on:
-      mongo:
-        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:8000/api/control/paused', function(r) { process.exit(r.statusCode === 200 ? 0 : 1) }).on('error', function() { process.exit(1) })\""]
       interval: 5s
@@ -45,13 +29,3 @@ services:
         condition: service_healthy
     init: true
     privileged: true
-
-  mongoexpress:
-    image: mongo-express
-    ports:
-      - "127.0.0.1:8081:8081"
-    depends_on:
-      mongo:
-        condition: service_healthy
-    environment:
-      ME_CONFIG_MONGODB_URL: "mongodb://mongo:27017"

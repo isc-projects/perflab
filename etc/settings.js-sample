@@ -2,7 +2,7 @@
  * in the expected configuration there are three machines used for
  * perflab testing:
  *
- * - the backend server which runs the webserver and MongoDB
+ * - the backend server which runs the webserver and SQLite database
  * - the server which runs the perflab-tester agent, and the
  *   daemons that are under test
  * - a client machine which sends test traffic to the test server
@@ -28,6 +28,12 @@ module.exports = {
 	 * path of the perflab software.
 	 */
 	path:		'/path/to/data',
+
+	/*
+	 * path to the SQLite database file.  If not set, defaults to
+	 * <path>/perflab.db
+	 */
+	// dbPath:	'/path/to/data/perflab.db',
 
 	/*
 	 * enter your server host names here
