@@ -120,22 +120,22 @@ console.log(res.stdout.toString());
 
 console.log('Generating zone config and data files');
 fmtWrite(1e3, '', fmtConfBind, `${configPath}/bind/zones-kilo-small.conf`);
-fmtWrite(1e3, '', fmtConfNSD,  `${configPath}/nsd/zones-kilo-small.conf`);
-fmtWrite(1e3, '', fmtConfKnot,  `${configPath}/knot/zones-kilo-small.conf`);
+// fmtWrite(1e3, '', fmtConfNSD,  `${configPath}/nsd/zones-kilo-small.conf`);
+// fmtWrite(1e3, '', fmtConfKnot,  `${configPath}/knot/zones-kilo-small.conf`);
 fmtWrite(1e6, '', fmtConfBind, `${configPath}/bind/zones-mega-small.conf`);
-fmtWrite(1e6, '', fmtConfNSD,  `${configPath}/nsd/zones-mega-small.conf`);
-fmtWrite(1e6, '', fmtConfKnot,  `${configPath}/knot/zones-mega-small.conf`);
+// fmtWrite(1e6, '', fmtConfNSD,  `${configPath}/nsd/zones-mega-small.conf`);
+// fmtWrite(1e6, '', fmtConfKnot,  `${configPath}/knot/zones-mega-small.conf`);
 
 fmtWrite(1e3, fmtHead, fmtRR, `${zonePath}/kilo-records`);
 fmtWrite(1e3, fmtHead, fmtNS, `${zonePath}/kilo-delegations`);
 fmtWrite(1e6, fmtHead, fmtRR, `${zonePath}/mega-records`);
 fmtWrite(1e6, fmtHead, fmtNS, `${zonePath}/mega-delegations`);
 
-fmtWrite(1e6, fmtHead, fmtAAAA, `${zonePath}/mega-records-dhcid`);
-fmtWrite(1e6, fmtHead, fmtPTRv6, `${zonePath}/reverse-ipv6-mega-records`);
+// fmtWrite(1e6, fmtHead, fmtAAAA, `${zonePath}/mega-records-dhcid`);
+// fmtWrite(1e6, fmtHead, fmtPTRv6, `${zonePath}/reverse-ipv6-mega-records`);
 
-fmtWrite(1e6, '', fmtRFC4703sec531update, `${querySet}/update-clean-start`);
-fmtWrite(1e6, '', fmtRFC4703sec532update, `${querySet}/update-renumber`);
+// fmtWrite(1e6, '', fmtRFC4703sec531update, `${querySet}/update-clean-start`);
+// fmtWrite(1e6, '', fmtRFC4703sec532update, `${querySet}/update-renumber`);
 
 function fmtWrite(n, fmtHead, fmtRep, outFile) {
 	let i = 0;
